@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>神龙汽车 · 数据中台</title>
+<!--
+  神龙数据中台 · 集成壳 (Integration Shell)  v1.0
+  ─────────────────────────────────────────────
+  顶部一级分类：数据管理 / 指标体系 / 营销体系 / 数据场景 / 自助分析 + 账户登录信息
+  左侧二级分类：按分层或业务域分组，支持展开/收起
+  内容承载：GTP-demo 五大模块以 iframe 加载，内容零删减
+  双向跟随：壳 ↔ 模块 postMessage 同步（页面高亮、跨模块跳转）
+-->
+<style>
+:root{
+  --navy1:#0B2447;--navy2:#123B66;--navy3:#1A4A7E;
+  --blue:#2F7BF6;--blue-d:#1E63D0;--blue-bg:#EDF3FE;
+  --ink:#1F2937;--ink2:#475569;--ink3:#94A3B8;
+  --line:#E5E9F2;--line2:#D5DBE8;--bg:#EEF1F6;--card:#FFFFFF;
+  --gold:#F5B940;--green:#22A06B;--red:#E5484D;
+  --side-w:248px;--top-h:60px;--crumb-h:44px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font:400 14px/1.6 "PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#C7CEDC;border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── 顶部一级导航 ───────── */
+.topbar{height:var(--top-h);display:flex;align-items:center;gap:20px;padding:0 20px;
+  background:linear-gradient(120deg,var(--navy1) 0%,var(--navy2) 55%,var(--navy3) 100%);
+  color:#fff;position:relative;z-index:30;box-shadow:0 2px 10px rgba(11,36,71,.28)}
+.brand{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.brand-logo{width:37px;height:37px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font:700 19px/1 "Noto Serif SC",serif;color:#0B2447;
+  background:linear-gradient(135deg,#FFD98A,var(--gold));box-shadow:0 2px 8px rgba(245,185,64,.4)}
+.brand-cn{font:700 16px/1.25 "Noto Serif SC",serif;white-space:nowrap;letter-spacing:.02em}
+.brand-en{font:500 8.5px/1.3 Arial;letter-spacing:.2em;color:#8FA9C9;white-space:nowrap}
+.topnav{display:flex;gap:4px;height:100%;flex:1;min-width:0;justify-content:center}
+.topnav-item{display:flex;align-items:center;gap:7px;padding:0 17px;height:100%;position:relative;
+  font:500 14px/1 var(--sans,'PingFang SC');color:#A9BDD8;white-space:nowrap;transition:color .15s,background .15s;border-radius:0}
+.topnav-item .ic{font-size:15px}
+.topnav-item:hover{color:#fff;background:rgba(255,255,255,.06)}
+.topnav-item.on{color:#fff;font-weight:600}
+.topnav-item.on::after{content:'';position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:3px 3px 0 0;
+  background:linear-gradient(90deg,var(--gold),#F08A3C)}
+.top-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.sys-status{display:flex;align-items:center;gap:6px;font:400 11.5px/1 var(--sans);color:#9FC3A8;white-space:nowrap}
+.sys-status .sdot{width:7px;height:7px;border-radius:50%;background:var(--green);position:relative}
+.sys-status .sdot::after{content:'';position:absolute;inset:-3px;border:1px solid var(--green);border-radius:50%;animation:pu 2s infinite}
+@keyframes pu{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.7);opacity:0}}
+.clock{font:500 11.5px/1 Consolas,monospace;color:#8FA9C9;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tr-divider{width:1px;height:22px;background:rgba(255,255,255,.16)}
+.account{position:relative}
+.account-btn{display:flex;align-items:center;gap:9px;padding:5px 8px;border-radius:8px;transition:background .15s;color:#fff}
+.account-btn:hover{background:rgba(255,255,255,.09)}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font:600 13px/1 var(--sans);color:#0B2447;background:linear-gradient(135deg,#9CC2FF,#5B93F7);flex-shrink:0}
+.acc-info{text-align:left;line-height:1.25}
+.acc-info b{display:block;font:600 12.5px/1.25 var(--sans)}
+.acc-info small{display:block;font:400 10px/1.3 var(--sans);color:#8FA9C9}
+.acc-arrow{font-size:9px;color:#8FA9C9;transition:transform .2s}
+.account.open .acc-arrow{transform:rotate(180deg)}
+.acc-menu{position:absolute;right:0;top:calc(100% + 9px);width:196px;background:#fff;border-radius:10px;
+  box-shadow:0 12px 34px rgba(15,35,70,.22);border:1px solid var(--line);padding:6px;
+  opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s;z-index:50}
+.account.open .acc-menu{opacity:1;visibility:visible;transform:none}
+.acc-menu::before{content:'';position:absolute;top:-5px;right:22px;width:10px;height:10px;background:#fff;transform:rotate(45deg);border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.acc-head{padding:10px 12px;border-bottom:1px solid var(--line);margin-bottom:5px}
+.acc-head b{font:600 13px/1.4 var(--sans);color:var(--ink);display:block}
+.acc-head small{font:400 11px/1.4 var(--sans);color:var(--ink3)}
+.acc-item{display:flex;align-items:center;gap:9px;width:100%;padding:8.5px 11px;border-radius:7px;font:400 12.5px var(--sans);color:var(--ink2);text-align:left;transition:.12s}
+.acc-item:hover{background:var(--blue-bg);color:var(--blue-d)}
+.acc-item .ic{font-size:13px;width:16px;text-align:center}
+.acc-item.danger:hover{background:#FDEDEE;color:var(--red)}
+.acc-badge{margin-left:auto;font:600 9.5px/1 var(--sans);background:var(--red);color:#fff;border-radius:8px;padding:2.5px 6px}
+
+/* ───────── 主体布局 ───────── */
+.layout{display:flex;height:calc(100vh - var(--top-h))}
+
+/* ───────── 左侧二级导航 ───────── */
+.sidebar{width:var(--side-w);flex-shrink:0;background:var(--card);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0}
+.side-module{padding:15px 16px 13px;border-bottom:1px solid var(--line)}
+.sm-row{display:flex;align-items:center;gap:9px}
+.sm-emoji{width:30px;height:30px;border-radius:8px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sm-name{font:700 15px/1.3 var(--sans);color:var(--ink)}
+.sm-count{margin-left:auto;font:600 10px/1 var(--sans);color:var(--blue);background:var(--blue-bg);border-radius:9px;padding:3.5px 8px;white-space:nowrap}
+.sm-desc{font:400 11px/1.6 var(--sans);color:var(--ink3);margin-top:7px}
+.side-scroll{flex:1;overflow-y:auto;padding:10px 10px 14px;min-height:0}
+.group{margin-bottom:4px}
+.group-head{display:flex;align-items:center;gap:8px;width:100%;padding:8.5px 8px;border-radius:7px;
+  font:600 12px/1 var(--sans);letter-spacing:.04em;color:var(--ink2);transition:background .13s;user-select:none}
+.group-head:hover{background:#F2F5FA}
+.g-arrow{margin-left:auto;font-size:9px;color:var(--ink3);transition:transform .22s;transform:rotate(90deg)}
+.group.open .g-arrow{transform:rotate(270deg)}
+.g-bar{width:3px;height:12px;border-radius:2px;background:var(--line2);flex-shrink:0;transition:background .15s}
+.group.open .g-bar{background:var(--blue)}
+.submenu{display:none;padding:2px 0 4px 10px}
+.group.open .submenu{display:block;animation:sl .2s ease}
+@keyframes sl{from{opacity:0;transform:translateY(-4px)}to{opacity:1}}
+.sub-item{display:flex;align-items:center;gap:8px;position:relative;width:100%;text-align:left;
+  padding:7.5px 10px 7.5px 14px;border-radius:7px;font:400 13px/1.45 var(--sans);color:var(--ink2);
+  transition:.13s;margin:1px 0}
+.sub-item::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:0;border-radius:2px;background:var(--blue);transition:height .15s}
+.sub-item:hover{background:#F2F5FA;color:var(--ink)}
+.sub-item.on{background:var(--blue-bg);color:var(--blue-d);font-weight:600}
+.sub-item.on::before{height:15px}
+.sub-item.flash{animation:fl .9s ease}
+@keyframes fl{0%{background:#FFF3D6}100%{}}
+.sub-item .di{width:5px;height:5px;border-radius:50%;background:var(--line2);flex-shrink:0}
+.sub-item.on .di{background:var(--blue)}
+.side-foot{border-top:1px solid var(--line);padding:10px 16px;font:400 10.5px/1.7 var(--sans);color:var(--ink3)}
+.side-foot b{color:var(--ink2);font-weight:600}
+
+/* ───────── 内容区 ───────── */
+.stage{flex:1;display:flex;flex-direction:column;min-width:0}
+.crumb{height:var(--crumb-h);background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:8px;padding:0 18px;flex-shrink:0}
+.crumb .c1{font:600 13px var(--sans);color:var(--ink)}
+.crumb .sep{color:var(--ink3);font-size:12px}
+.crumb .c2{font:400 13px var(--sans);color:var(--ink2)}
+.crumb-tag{font:600 10px/1 var(--sans);color:var(--blue);background:var(--blue-bg);border-radius:8px;padding:3px 8px;margin-left:4px}
+.crumb-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.cbtn{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:7px;border:1px solid var(--line2);
+  font:400 12px var(--sans);color:var(--ink2);background:#fff;transition:.13s}
+.cbtn:hover{border-color:var(--blue);color:var(--blue-d);background:var(--blue-bg)}
+.frame-wrap{flex:1;position:relative;min-height:0;background:#F5F7FB}
+iframe{width:100%;height:100%;border:none;display:block;transition:opacity .25s}
+.load-bar{position:absolute;top:0;left:0;right:0;height:3px;overflow:hidden;display:none;z-index:5}
+.load-bar.on{display:block}
+.load-bar i{position:absolute;top:0;left:-40%;width:40%;height:100%;border-radius:3px;
+  background:linear-gradient(90deg,transparent,var(--blue),var(--gold));animation:lb 1.1s linear infinite}
+@keyframes lb{to{left:110%}}
+.load-mask{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  background:rgba(245,247,251,.72);backdrop-filter:blur(2px);z-index:4}
+.load-mask.on{display:flex}
+.spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--line2);border-top-color:var(--blue);animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.load-mask p{font:400 12.5px var(--sans);color:var(--ink2)}
+
+/* toast */
+.toast{position:fixed;bottom:34px;left:50%;transform:translate(-50%,16px);background:rgba(15,30,55,.92);color:#fff;
+  padding:10px 20px;border-radius:9px;font:400 13px var(--sans);opacity:0;pointer-events:none;transition:.25s;z-index:99;
+  box-shadow:0 8px 26px rgba(10,25,55,.3)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1100px){
+  .brand-en,.sys-status,.clock{display:none}
+  .topnav-item span.lbl{display:none}
+  .topnav-item .ic{font-size:19px}
+  :root{--side-w:210px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ 顶部：一级分类 + 账户 ═══ -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-logo">神</div>
+    <div>
+      <div class="brand-cn">神龙汽车数据中台</div>
+      <div class="brand-en">SHENLONG DATA PLATFORM</div>
+    </div>
+  </div>
+
+  <nav class="topnav" id="topnav"></nav>
+
+  <div class="top-right">
+    <span class="sys-status"><span class="sdot"></span>系统运行正常</span>
+    <span class="clock" id="clock"></span>
+    <span class="tr-divider"></span>
+    <div class="account" id="account">
+      <button class="account-btn" id="accBtn">
+        <span class="avatar">张</span>
+        <span class="acc-info"><b>张明</b><small>数据中台 · 管理员</small></span>
+        <span class="acc-arrow">▼</span>
+      </button>
+      <div class="acc-menu">
+        <div class="acc-head"><b>张明</b><small>zhangming@shenlong.com.cn</small></div>
+        <button class="acc-item" data-act="个人中心"><span class="ic">👤</span>个人中心</button>
+        <button class="acc-item" data-act="消息通知"><span class="ic">🔔</span>消息通知<span class="acc-badge">3</span></button>
+        <button class="acc-item" data-act="切换角色"><span class="ic">🔁</span>切换角色</button>
+        <button class="acc-item danger" data-act="退出登录"><span class="ic">⏻</span>退出登录</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ═══ 左侧：二级分类（分层 / 业务域分组） ═══ -->
+  <aside class="sidebar">
+    <div class="side-module">
+      <div class="sm-row">
+        <span class="sm-emoji" id="smEmoji">🗄️</span>
+        <span class="sm-name" id="smName">数据管理</span>
+        <span class="sm-count" id="smCount"></span>
+      </div>
+      <div class="sm-desc" id="smDesc"></div>
+    </div>
+    <div class="side-scroll" id="sideGroups"></div>
+    <div class="side-foot"><b>神龙数据中台 DEMO</b> · v1.0<br>点击分组标题可展开 / 收起导航</div>
+  </aside>
+
+  <!-- ═══ 内容承载区 ═══ -->
+  <main class="stage">
+    <div class="crumb">
+      <span class="c1" id="crumbM">数据管理</span>
+      <span class="sep">/</span>
+      <span class="c2" id="crumbP">数据接入中心</span>
+      <span class="crumb-tag" id="crumbTag">DEMO</span>
+      <div class="crumb-right">
+        <button class="cbtn" id="btnRefresh">⟳ 刷新</button>
+        <button class="cbtn" id="btnExpand">⛶ 全屏</button>
+      </div>
+    </div>
+    <div class="frame-wrap" id="frameWrap">
+      <div class="load-bar" id="loadBar"><i></i></div>
+      <div class="load-mask" id="loadMask"><div class="spinner"></div><p>正在加载模块…</p></div>
+      <iframe id="frame" title="模块内容"></iframe>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════ 模块注册表（内容均来自 GTP-demo，零删减） ═══════════════ */
+const MODULES = {
+  data: {
+    name:'数据管理', emoji:'🗄️', file:'GTP-demo/数据管理.html', def:'ingestion',
+    desc:'统一管理多源数据接入、数据治理、主数据与统一ID、数据资产目录',
+    groups:[
+      { t:'数据接入与资产', items:[
+        {id:'ingestion', n:'数据接入中心'},
+        {id:'governance',n:'数据治理中心'},
+        {id:'master',    n:'主数据与统一ID'},
+        {id:'catalog',   n:'数据资产目录'} ]},
+      { t:'系统说明', items:[
+        {n:'Demo说明', fn:"showToast('当前为前端可交互演示版本')"} ]}
+    ]
+  },
+  metric: {
+    name:'指标体系', emoji:'📊', file:'GTP-demo/指标体系.html', def:'metric-home',
+    desc:'统一指标定义、口径、血缘、质量和权限的全生命周期管理，附标签体系与口径治理',
+    groups:[
+      { t:'指标管理', items:[
+        {id:'metric-home',      n:'指标管理平台'},
+        {id:'metric-dictionary',n:'指标字典'},
+        {id:'metric-north',     n:'指标树与北极星'},
+        {id:'metric-quality',   n:'指标质量监控'},
+        {id:'metric-lineage',   n:'指标血缘与影响分析'},
+        {id:'metric-permission',n:'指标权限管理'},
+        {id:'chatbi',           n:'ChatBI指标问答'} ]},
+      { t:'标签体系', items:[
+        {id:'tag-home',      n:'标签管理平台'},
+        {id:'tag-life',      n:'标签生命周期管理'},
+        {id:'tag-monitor',   n:'标签质量监控'},
+        {id:'tag-permission',n:'标签权限管理'} ]},
+      { t:'口径治理', items:[
+        {id:'arb-home',  n:'指标口径仲裁中心'},
+        {id:'arb-detail',n:'争议处理工作台'},
+        {id:'version',   n:'口径版本管理'},
+        {id:'notice',    n:'变更公示中心'} ]},
+      { t:'业务域', items:[
+        {n:'营销域', fn:"filterDomain('营销域')"},
+        {n:'销售域', fn:"filterDomain('销售域')"},
+        {n:'服务域', fn:"filterDomain('服务域')"},
+        {n:'用户域', fn:"filterDomain('用户域')"},
+        {n:'经营域', fn:"filterDomain('经营域')"} ]}
+    ]
+  },
+  marketing: {
+    name:'营销体系', emoji:'🎯', file:'GTP-demo/营销体系.html', def:'sales',
+    desc:'覆盖销售线索、市场投放、用户运营、管理决策与售后的全链路营销数据体系',
+    groups:[
+      { t:'销售与线索', items:[
+        {id:'sales', n:'销售线索工作台'},
+        {id:'dealer',n:'经销商门户'} ]},
+      { t:'市场投放', items:[
+        {id:'media',  n:'市场投放工作台'},
+        {id:'product',n:'产品配置洞察'} ]},
+      { t:'运营与触达', items:[
+        {id:'audience', n:'人群圈选与触达'},
+        {id:'lifecycle',n:'生命周期运营'} ]},
+      { t:'管理与决策', items:[
+        {id:'cockpit',n:'管理层驾驶舱'},
+        {id:'insight',n:'专题洞察工作台'} ]},
+      { t:'售后与客户', items:[
+        {id:'afterSales',n:'售后服务工作台'} ]}
+    ]
+  },
+  scene: {
+    name:'数据场景', emoji:'🧩', file:'GTP-demo/数据场景.html', def:'scene-home',
+    desc:'统一运营 8 大场景群、31 个营销场景，覆盖潜客增长到车主生命周期',
+    groups:[
+      { t:'核心增长场景', items:[
+        {id:'scene-home', n:'场景运营总控台'},
+        {id:'prospect',   n:'潜客增长'},
+        {id:'model',      n:'车型营销'},
+        {id:'test-order', n:'试驾与订单转化'} ]},
+      { t:'车主运营场景', items:[
+        {id:'new-owner',    n:'新车主运营'},
+        {id:'owner-service',n:'车主活跃与服务'},
+        {id:'upgrade',      n:'增换购与裂变'} ]},
+      { t:'智能与用户声音', items:[
+        {id:'ai-scene', n:'智能数据场景'},
+        {id:'voc',      n:'用户声音 VOC'} ]}
+    ]
+  },
+  analysis: {
+    name:'自助分析', emoji:'🔎', file:'GTP-demo/自助分析.html', def:'drag',
+    desc:'拖拽式自助分析、自然语言问数、看板中心与实验归因，人人都是数据分析师',
+    groups:[
+      { t:'分析入口', items:[
+        {id:'drag',      n:'拖拽式自助分析'},
+        {id:'chatbi',    n:'自然语言问数'},
+        {id:'datasets',  n:'数据集市场'},
+        {id:'dashboards',n:'可视化看板中心'} ]},
+      { t:'分析能力', items:[
+        {id:'templates',n:'分析模板库'},
+        {id:'advanced', n:'高级分析'},
+        {id:'share',    n:'数据导出与分享'} ]},
+      { t:'平台运营', items:[
+        {id:'operation', n:'数据运营后台'},
+        {id:'experiment',n:'实验与归因平台'} ]}
+    ]
+  }
+};
+const ORDER = ['data','metric','marketing','scene','analysis'];
+
+/* ═══════════════ 状态 ═══════════════ */
+const frame = document.getElementById('frame');
+let cur = null;                    // 当前模块 key
+let pendingPage = null;            // iframe 加载完成后需跳转的页面
+let curPage = null;                // 当前页面 id（用于跟随）
+const lastPage = {};               // 各模块记忆的页面
+const groupOpen = {};              // 分组展开状态 groupOpen[key#gi]=bool
+const groupDefaults = {};          // 各模块默认展开的分组
+
+/* ═══════════════ 顶部导航渲染 ═══════════════ */
+const topnav = document.getElementById('topnav');
+ORDER.forEach(k=>{
+  const m = MODULES[k];
+  const b = document.createElement('button');
+  b.className = 'topnav-item'; b.dataset.key = k;
+  b.innerHTML = '<span class="ic">'+m.emoji+'</span><span class="lbl">'+m.name+'</span>';
+  b.addEventListener('click', ()=>switchModule(k));
+  topnav.appendChild(b);
+});
+
+/* ═══════════════ 侧栏渲染 ═══════════════ */
+function defaultGroupOf(key){
+  if(groupDefaults[key] !== undefined) return groupDefaults[key];
+  const m = MODULES[key];
+  const target = lastPage[key] || m.def;
+  let gi = 0;
+  m.groups.forEach((g,i)=>{ if(g.items.some(it=>it.id===target)) gi = i; });
+  groupDefaults[key] = gi;
+  return gi;
+}
+
+function renderSidebar(key){
+  const m = MODULES[key];
+  document.getElementById('smEmoji').textContent = m.emoji;
+  document.getElementById('smName').textContent = m.name;
+  const cnt = m.groups.reduce((s,g)=>s+g.items.length,0);
+  document.getElementById('smCount').textContent = cnt + ' 个功能';
+  document.getElementById('smDesc').textContent = m.desc;
+
+  const box = document.getElementById('sideGroups');
+  box.innerHTML = '';
+  const dg = defaultGroupOf(key);
+
+  m.groups.forEach((g,gi)=>{
+    const gd = document.createElement('div');
+    gd.className = 'group' + ((groupOpen[key+'#'+gi] !== undefined ? groupOpen[key+'#'+gi] : gi===dg) ? ' open' : '');
+    const head = document.createElement('button');
+    head.className = 'group-head';
+    head.innerHTML = '<span class="g-bar"></span><span>'+g.t+'</span><span class="g-arrow">▶</span>';
+    head.addEventListener('click', ()=>{
+      gd.classList.toggle('open');
+      groupOpen[key+'#'+gi] = gd.classList.contains('open');
+    });
+    const sm = document.createElement('div');
+    sm.className = 'submenu';
+    g.items.forEach(it=>{
+      const b = document.createElement('button');
+      b.className = 'sub-item';
+      b.innerHTML = '<span class="di"></span><span>'+it.n+'</span>';
+      b.dataset.page = it.id || '';
+      b.addEventListener('click', ()=>{
+        if(it.fn){
+          b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+          sendCmd({fn: it.fn});
+        }else{
+          setActive(it.id, false);
+          sendCmd({goto: it.id});
+        }
+      });
+      sm.appendChild(b);
+    });
+    gd.appendChild(head); gd.appendChild(sm);
+    box.appendChild(gd);
+  });
+}
+
+/* 高亮某个页面（sync=true 时自动展开所在分组） */
+function setActive(pageId, sync){
+  curPage = pageId;
+  const box = document.getElementById('sideGroups');
+  let hit = null;
+  box.querySelectorAll('.sub-item').forEach(b=>{ b.classList.remove('on'); if(b.dataset.page===pageId) hit=b; });
+  const m = MODULES[cur];
+  let label = pageId;
+  if(hit){
+    hit.classList.add('on');
+    label = hit.textContent.trim();
+    if(sync){
+      const gd = hit.closest('.group');
+      if(gd && !gd.classList.contains('open')) gd.querySelector('.group-head').click();
+      hit.scrollIntoView({block:'nearest'});
+    }
+  }else{
+    /* 业务域筛选等动作项：定位文案 */
+    m.groups.forEach(g=>g.items.forEach(it=>{ if(it.n===label) label=it.n; }));
+  }
+  document.getElementById('crumbM').textContent = m.name;
+  document.getElementById('crumbP').textContent = label;
+}
+
+/* ═══════════════ 模块切换 ═══════════════ */
+function switchModule(key, page){
+  if(cur === key){
+    if(page) { setActive(page,false); sendCmd({goto:page}); }
+    return;
+  }
+  cur = key;
+  curPage = null;
+  pendingPage = page || lastPage[key] || null;
+  topnav.querySelectorAll('.topnav-item').forEach(b=>b.classList.toggle('on', b.dataset.key===key));
+  document.getElementById('crumbM').textContent = MODULES[key].name;
+  document.getElementById('crumbP').textContent = '加载中…';
+  renderSidebar(key);
+  loading(true);
+  frame.style.opacity = .35;
+  frame.src = encodeURI(MODULES[key].file);
+}
+
+function loading(on){
+  document.getElementById('loadBar').classList.toggle('on', on);
+  document.getElementById('loadMask').classList.toggle('on', on);
+}
+
+frame.addEventListener('load', ()=>{
+  loading(false);
+  frame.style.opacity = 1;
+  if(pendingPage){
+    const p = pendingPage; pendingPage = null;
+    sendCmd({goto: p});
+  }
+});
+
+/* ═══════════════ 与模块的双向同步 ═══════════════ */
+function sendCmd(msg){
+  try{ frame.contentWindow.postMessage(Object.assign({__slCmd:1}, msg), '*'); }catch(e){}
+}
+window.addEventListener('message', ev=>{
+  const d = ev.data;
+  if(!d || d.__sl !== 1) return;
+  if(d.page){
+    lastPage[d.mod] = d.page;
+    if(d.mod === cur) setActive(d.page, true);
+  }
+  if(d.module && MODULES[d.module]) switchModule(d.module);
+});
+
+/* ═══════════════ 工具条 / 账户 / 时钟 ═══════════════ */
+document.getElementById('btnRefresh').addEventListener('click', ()=>{
+  loading(true);
+  const p = curPage;
+  frame.contentWindow.location.reload();
+  if(p) pendingPage = p;
+});
+document.getElementById('btnExpand').addEventListener('click', ()=>{
+  const w = document.getElementById('frameWrap');
+  if(!document.fullscreenElement){ (w.requestFullscreen||w.webkitRequestFullscreen).call(w); }
+  else document.exitFullscreen();
+});
+
+const account = document.getElementById('account');
+document.getElementById('accBtn').addEventListener('click', e=>{
+  e.stopPropagation();
+  account.classList.toggle('open');
+});
+document.addEventListener('click', ()=>account.classList.remove('open'));
+account.querySelectorAll('.acc-item').forEach(b=>{
+  b.addEventListener('click', ()=>{ showToast('「'+b.dataset.act+'」为演示功能，正式环境开放'); });
+});
+
+let toastTimer;
+function showToast(t){
+  const el = document.getElementById('toast');
+  el.textContent = t; el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('on'), 2200);
+}
+
+function tick(){
+  document.getElementById('clock').textContent = new Date().toLocaleString('zh-CN',{hour12:false});
+}
+setInterval(tick,1000); tick();
+
+/* ═══════════════ 启动 ═══════════════ */
+switchModule('data');
+</script>
+</body>
+</html>

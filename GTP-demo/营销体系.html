@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>神龙汽车数据中台 · 营销体系</title>
+
+<style>
+:root{
+  --blue:#246bfe;
+  --blue-light:#edf4ff;
+  --navy:#111c36;
+  --bg:#f4f6fa;
+  --card:#fff;
+  --text:#17233b;
+  --muted:#7b879b;
+  --border:#e5eaf2;
+  --green:#1fa463;
+  --orange:#e69a2c;
+  --red:#e45555;
+  --purple:#8066e8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  color:var(--text);
+  background:var(--bg);
+  font:14px Arial,"Microsoft YaHei",sans-serif
+}
+button,input,select,textarea{font-family:inherit}
+button{
+  padding:9px 14px;
+  border:0;
+  border-radius:6px;
+  color:#fff;
+  background:var(--blue);
+  cursor:pointer
+}
+button:hover{filter:brightness(.94)}
+button.light{color:var(--blue);background:var(--blue-light)}
+button.gray{color:#5c6880;background:#f0f2f6}
+button.red{background:var(--red)}
+input,select,textarea{
+  min-width:150px;
+  padding:9px 11px;
+  border:1px solid #dce2eb;
+  border-radius:6px;
+  outline:none;
+  background:#fff
+}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+
+.top{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  height:70px;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 26px;
+  color:#fff;
+  background:var(--navy)
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:235px
+}
+.logo{
+  display:flex;
+  width:38px;
+  height:38px;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  color:var(--blue);
+  background:#fff;
+  font-weight:bold
+}
+.brand b{font-size:17px}
+.brand small{
+  display:block;
+  margin-top:4px;
+  color:#aeb9d0;
+  font-size:11px
+}
+.topnav{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  height:100%
+}
+.top-item{
+  padding:12px 16px;
+  border-radius:7px;
+  color:#bdc7dc;
+  cursor:pointer
+}
+.top-item:hover,.top-item.active{
+  color:#fff;
+  background:var(--blue)
+}
+.account{
+  display:flex;
+  min-width:190px;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px
+}
+.avatar{
+  display:flex;
+  width:32px;
+  height:32px;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:var(--blue)
+}
+.account small{
+  display:block;
+  margin-top:3px;
+  color:#aeb9d0;
+  font-size:11px
+}
+
+.layout{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{
+  width:250px;
+  flex-shrink:0;
+  padding:20px 14px;
+  border-right:1px solid var(--border);
+  background:#fff
+}
+.side-title{
+  margin:2px 10px 15px;
+  color:var(--muted);
+  font-size:12px
+}
+.group{margin-bottom:10px}
+.group-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 12px;
+  border-radius:7px;
+  color:#33415c;
+  font-weight:bold;
+  cursor:pointer
+}
+.group-head:hover,.group-head.open{
+  color:var(--blue);
+  background:var(--blue-light)
+}
+.arrow{transition:.2s}
+.group-head.open .arrow{transform:rotate(90deg)}
+.submenu{display:none;padding-left:12px}
+.submenu.show{display:block}
+.subitem{
+  padding:10px 12px;
+  margin:3px 0;
+  border-left:2px solid transparent;
+  border-radius:0 6px 6px 0;
+  color:#69768d;
+  cursor:pointer
+}
+.subitem:hover,.subitem.active{
+  border-left-color:var(--blue);
+  color:var(--blue);
+  background:var(--blue-light)
+}
+
+.content{
+  flex:1;
+  min-width:0;
+  padding:23px 28px;
+  overflow:auto
+}
+.header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:18px
+}
+.header h1{margin:0;font-size:24px}
+.header p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:13px
+}
+.header-right{
+  color:var(--muted);
+  font-size:12px
+}
+.page{display:none}
+.page.active{display:block}
+
+.tabs{
+  display:flex;
+  gap:4px;
+  margin-bottom:17px;
+  padding:5px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff
+}
+.tab{
+  color:#66748b;
+  background:transparent
+}
+.tab.active{
+  color:var(--blue);
+  background:var(--blue-light)
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  margin-bottom:17px
+}
+.card,.panel{
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 2px 10px rgba(30,50,90,.04)
+}
+.card{padding:16px}
+.card-label{color:var(--muted);font-size:12px}
+.card-value{
+  margin:10px 0 7px;
+  font-size:25px;
+  font-weight:bold
+}
+.card-desc{color:var(--green);font-size:12px}
+.card-desc.warn{color:var(--orange)}
+.card-desc.danger{color:var(--red)}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px
+}
+.panel{
+  padding:17px;
+  margin-bottom:16px
+}
+.title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  font-weight:bold
+}
+.title small{color:var(--muted);font-weight:normal}
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-bottom:15px
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px
+}
+th{
+  padding:11px;
+  color:#65728a;
+  text-align:left;
+  white-space:nowrap;
+  background:#f7f9fc
+}
+td{
+  padding:11px;
+  border-bottom:1px solid #edf0f4;
+  white-space:nowrap
+}
+tr:hover{background:#fafcff}
+
+.badge{
+  display:inline-block;
+  padding:4px 9px;
+  border-radius:14px;
+  color:var(--blue);
+  background:var(--blue-light);
+  font-size:12px
+}
+.badge.green{color:var(--green);background:#eaf8f1}
+.badge.orange{color:#ad711e;background:#fff5e3}
+.badge.red{color:var(--red);background:#fff0f0}
+.badge.purple{color:var(--purple);background:#f1edff}
+
+.progress{
+  width:110px;
+  height:7px;
+  overflow:hidden;
+  border-radius:10px;
+  background:#edf0f5
+}
+.progress i{
+  display:block;
+  height:100%;
+  border-radius:10px;
+  background:var(--blue)
+}
+.progress.green i{background:var(--green)}
+.progress.orange i{background:var(--orange)}
+
+.alert{
+  padding:11px 0;
+  border-bottom:1px solid #edf0f4
+}
+.alert:last-child{border-bottom:0}
+.alert small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted)
+}
+.dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  margin-right:6px;
+  border-radius:50%;
+  background:var(--green)
+}
+.dot.orange{background:var(--orange)}
+.dot.red{background:var(--red)}
+
+.funnel-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:14px 0
+}
+.funnel-name{width:75px}
+.funnel-bar{
+  flex:1;
+  height:20px;
+  overflow:hidden;
+  border-radius:15px;
+  background:#edf0f5
+}
+.funnel-bar i{
+  display:block;
+  height:100%;
+  border-radius:15px;
+  background:linear-gradient(90deg,#69b2ff,var(--blue))
+}
+.funnel-num{
+  width:65px;
+  color:var(--muted);
+  text-align:right
+}
+
+.chart{
+  display:flex;
+  height:150px;
+  align-items:end;
+  gap:10px;
+  border-bottom:1px solid var(--border)
+}
+.chart i{
+  display:block;
+  flex:1;
+  min-width:8px;
+  border-radius:4px 4px 0 0;
+  background:linear-gradient(#75b6ff,var(--blue))
+}
+.mini-trend{
+  display:flex;
+  height:42px;
+  align-items:end;
+  gap:4px
+}
+.mini-trend i{
+  display:block;
+  width:8px;
+  border-radius:3px 3px 0 0;
+  background:var(--blue)
+}
+
+.score{
+  font-size:34px;
+  font-weight:bold;
+  color:var(--blue)
+}
+.stage-flow{
+  display:flex;
+  gap:6px;
+  overflow:auto;
+  padding:5px 0 12px
+}
+.stage{
+  min-width:100px;
+  padding:12px 8px;
+  border:1px solid #c8d8ff;
+  border-radius:8px;
+  color:var(--blue);
+  text-align:center;
+  background:var(--blue-light)
+}
+.stage small{
+  display:block;
+  margin-top:5px;
+  color:var(--muted)
+}
+
+.tag-box{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  min-height:120px;
+  padding:14px;
+  border:1px dashed #b9c9e9;
+  border-radius:8px;
+  background:#fbfdff
+}
+.tag{
+  height:max-content;
+  padding:8px 11px;
+  border-radius:16px;
+  color:var(--blue);
+  background:var(--blue-light);
+  cursor:pointer
+}
+.tag:hover{background:#d9e8ff}
+
+.lifecycle{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:9px
+}
+.life{
+  padding:13px 5px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  text-align:center;
+  cursor:pointer
+}
+.life:hover,.life.active{
+  border-color:var(--blue);
+  color:var(--blue);
+  background:var(--blue-light)
+}
+
+.kpi-big{
+  margin:10px 0;
+  color:var(--blue);
+  font-size:42px;
+  font-weight:bold
+}
+.lineage{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:100px;
+  overflow:auto
+}
+.lineage-node{
+  min-width:100px;
+  padding:12px 8px;
+  border:1px solid #c3d5ff;
+  border-radius:8px;
+  color:var(--blue);
+  text-align:center;
+  background:var(--blue-light)
+}
+.lineage-arrow{
+  color:#9aa8bd;
+  font-size:20px
+}
+
+.modal-mask{
+  position:fixed;
+  z-index:40;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,20,40,.5)
+}
+.modal{
+  width:880px;
+  max-width:94%;
+  max-height:88vh;
+  overflow:auto;
+  padding:22px;
+  border-radius:10px;
+  background:#fff
+}
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:17px
+}
+.modal-head h2{margin:0;font-size:19px}
+.close{
+  color:#8994a8;
+  font-size:26px;
+  cursor:pointer
+}
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:17px
+}
+.detail{
+  padding:13px;
+  border-radius:7px;
+  background:#f7f9fc
+}
+.detail label{
+  display:block;
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:12px
+}
+.empty{
+  padding:35px;
+  color:#8994a8;
+  text-align:center
+}
+.toast{
+  position:fixed;
+  right:25px;
+  bottom:24px;
+  z-index:60;
+  display:none;
+  padding:12px 18px;
+  border-radius:7px;
+  color:#fff;
+  background:#1d2b4c
+}
+
+@media(max-width:1200px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .lifecycle{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:900px){
+  .brand{min-width:auto}
+  .brand-text,.account-info{display:none}
+  .top-item{padding:10px 7px;font-size:12px}
+  .grid2{grid-template-columns:1fr}
+  .lifecycle{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:650px){
+  .sidebar{width:72px}
+  .side-title,.group-head b,.subitem{font-size:0}
+  .group-head{justify-content:center}
+  .submenu.show{display:none}
+  .top-item{font-size:0}
+  .top-item:first-letter{font-size:18px}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .lifecycle{grid-template-columns:repeat(2,1fr)}
+  .content{padding:16px 12px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<!-- 顶部一级分类 -->
+<header class="top">
+  <div class="brand">
+    <div class="logo">神</div>
+    <div class="brand-text">
+      <b>神龙汽车数据中台</b>
+      <small>Data Intelligence Platform</small>
+    </div>
+  </div>
+
+  <nav class="topnav">
+    <div class="top-item" data-top="data">🗄️ 数据管理</div>
+    <div class="top-item" data-top="metric">📊 指标体系</div>
+    <div class="top-item active" data-top="marketing">🎯 营销体系</div>
+    <div class="top-item" data-top="scene">🧩 数据场景</div>
+    <div class="top-item" data-top="analysis">🔎 自助分析</div>
+  </nav>
+
+  <div class="account">
+    <div class="avatar">张</div>
+    <div class="account-info">
+      <b>张明</b>
+      <small>营销数据中心 · 管理员</small>
+    </div>
+    <span>⌄</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- 左侧二级分类 -->
+<aside class="sidebar">
+  <div class="side-title">营销体系导航</div>
+
+  <div class="group">
+    <div class="group-head open" onclick="toggleGroup(this)">
+      <b>销售与线索</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu show">
+      <div class="subitem active" data-page="sales">销售线索工作台</div>
+      <div class="subitem" data-page="dealer">经销商门户</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-head" onclick="toggleGroup(this)">
+      <b>市场投放</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu">
+      <div class="subitem" data-page="media">市场投放工作台</div>
+      <div class="subitem" data-page="product">产品配置洞察</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-head" onclick="toggleGroup(this)">
+      <b>运营与触达</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu">
+      <div class="subitem" data-page="audience">人群圈选与触达</div>
+      <div class="subitem" data-page="lifecycle">生命周期运营</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-head" onclick="toggleGroup(this)">
+      <b>管理与决策</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu">
+      <div class="subitem" data-page="cockpit">管理层驾驶舱</div>
+      <div class="subitem" data-page="insight">专题洞察工作台</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-head" onclick="toggleGroup(this)">
+      <b>售后与客户</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu">
+      <div class="subitem" data-page="afterSales">售后服务工作台</div>
+    </div>
+  </div>
+</aside>
+
+<!-- 主内容 -->
+<main class="content">
+  <div class="header">
+    <div>
+      <h1 id="pageTitle">销售线索工作台</h1>
+      <p id="pageDesc">让销售顾问和DCC每天知道先跟谁、怎么跟、漏到哪</p>
+    </div>
+    <div class="header-right">
+      <span>● 营销服务正常</span>
+      <span id="clock"></span>
+    </div>
+  </div>
+
+<!-- 一、销售线索工作台 -->
+<section id="sales" class="page active">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'sales-overview')">今日工作台</button>
+    <button class="tab" onclick="switchTab(this,'sales-leads')">线索列表</button>
+    <button class="tab" onclick="switchTab(this,'sales-funnel')">销售漏斗</button>
+    <button class="tab" onclick="switchTab(this,'sales-agent')">销售Agent</button>
+  </div>
+
+  <div id="sales-overview" class="inner">
+    <div class="cards">
+      <div class="card"><div class="card-label">今日待跟进</div><div class="card-value">38</div><div class="card-desc danger">高意向12条</div></div>
+      <div class="card"><div class="card-label">今日已跟进</div><div class="card-value">64</div><div class="card-desc">完成率 82.4%</div></div>
+      <div class="card"><div class="card-label">超时未跟进</div><div class="card-value">7</div><div class="card-desc danger">需立即处理</div></div>
+      <div class="card"><div class="card-label">本月成交</div><div class="card-value">28</div><div class="card-desc">较上月 ↑14.2%</div></div>
+      <div class="card"><div class="card-label">个人排名</div><div class="card-value">第3名</div><div class="card-desc">门店共18名销售</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">
+          今日必跟清单
+          <span class="badge red">按意向分排序</span>
+        </div>
+
+        <table>
+          <tr><th>客户</th><th>意向分</th><th>最新行为</th><th>距上次跟进</th><th>推荐动作</th><th>操作</th></tr>
+          <tr><td>李先生</td><td><b style="color:var(--red)">96 ↑</b></td><td>连续浏览凡尔赛配置页</td><td>2天</td><td>电话+企微</td><td><button class="light" onclick="showLead('李先生')">跟进</button></td></tr>
+          <tr><td>王女士</td><td><b style="color:var(--red)">91 ↑</b></td><td>查看金融方案3次</td><td>1天</td><td>推荐金融方案</td><td><button class="light" onclick="showLead('王女士')">跟进</button></td></tr>
+          <tr><td>陈先生</td><td><b style="color:var(--orange)">86 →</b></td><td>完成试驾，未报价</td><td>3天</td><td>二次邀约</td><td><button class="light" onclick="showLead('陈先生')">跟进</button></td></tr>
+          <tr><td>赵女士</td><td><b style="color:var(--orange)">82 ↓</b></td><td>浏览竞品对比内容</td><td>5天</td><td>竞品话术</td><td><button class="light" onclick="showLead('赵女士')">跟进</button></td></tr>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="title">销售Agent提醒</div>
+        <div class="alert"><b><span class="dot red"></span>高意向线索升级</b><small>李先生意向分96，超过24小时未跟进</small></div>
+        <div class="alert"><b><span class="dot orange"></span>线索滞留预警</b><small>7条线索超过14天未发生有效互动</small></div>
+        <div class="alert"><b><span class="dot"></span>话术建议已生成</b><small>已为12名客户生成个性化跟进话术</small></div>
+        <div class="alert"><b><span class="dot"></span>日报生成提醒</b><small>今日18:00自动生成销售日报</small></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="title">线索跟进SOP</div>
+      <div class="stage-flow">
+        <div class="stage">意向确认<small>已完成 86%</small></div>
+        <div class="stage">需求挖掘<small>已完成 72%</small></div>
+        <div class="stage">试驾邀约<small>已完成 64%</small></div>
+        <div class="stage">报价谈判<small>已完成 48%</small></div>
+        <div class="stage">订单跟进<small>已完成 32%</small></div>
+        <div class="stage">交付跟进<small>已完成 21%</small></div>
+      </div>
+      <button onclick="showToast('已打开销售跟进SOP配置')">配置SOP</button>
+      <button class="light" onclick="showToast('已生成今日销售日报')">生成日报</button>
+    </div>
+  </div>
+
+  <div id="sales-leads" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">线索列表与管理</div>
+
+      <div class="toolbar">
+        <input id="leadSearch" placeholder="搜索客户姓名或手机号">
+        <select id="leadStage">
+          <option value="">全部阶段</option>
+          <option>新线索</option>
+          <option>已联系</option>
+          <option>已试驾</option>
+          <option>已报价</option>
+          <option>已订单</option>
+        </select>
+        <select>
+          <option>全部渠道</option>
+          <option>官网</option>
+          <option>APP</option>
+          <option>抖音</option>
+          <option>企微</option>
+          <option>经销商</option>
+        </select>
+        <select>
+          <option>全部意向分</option>
+          <option>80分以上</option>
+          <option>60-80分</option>
+          <option>60分以下</option>
+        </select>
+        <button onclick="renderLeads()">筛选</button>
+      </div>
+
+      <div id="leadTable"></div>
+    </div>
+  </div>
+
+  <div id="sales-funnel" class="inner" style="display:none">
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">个人销售漏斗</div>
+        <div class="funnel-row"><span class="funnel-name">线索</span><div class="funnel-bar"><i style="width:100%"></i></div><span class="funnel-num">286</span></div>
+        <div class="funnel-row"><span class="funnel-name">到店</span><div class="funnel-bar"><i style="width:72%"></i></div><span class="funnel-num">206 / 72%</span></div>
+        <div class="funnel-row"><span class="funnel-name">试驾</span><div class="funnel-bar"><i style="width:48%"></i></div><span class="funnel-num">138 / 67%</span></div>
+        <div class="funnel-row"><span class="funnel-name">报价</span><div class="funnel-bar"><i style="width:32%"></i></div><span class="funnel-num">92 / 67%</span></div>
+        <div class="funnel-row"><span class="funnel-name">订单</span><div class="funnel-bar"><i style="width:16%"></i></div><span class="funnel-num">46 / 50%</span></div>
+        <div class="funnel-row"><span class="funnel-name">交付</span><div class="funnel-bar"><i style="width:10%"></i></div><span class="funnel-num">28 / 61%</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="title">丢单原因分析</div>
+        <table>
+          <tr><th>丢单原因</th><th>数量</th><th>占比</th><th>可召回</th></tr>
+          <tr><td>价格原因</td><td>26</td><td>31.7%</td><td><span class="badge green">18</span></td></tr>
+          <tr><td>竞品原因</td><td>21</td><td>25.6%</td><td><span class="badge green">13</span></td></tr>
+          <tr><td>等车周期</td><td>14</td><td>17.1%</td><td><span class="badge orange">9</span></td></tr>
+          <tr><td>未及时跟进</td><td>12</td><td>14.6%</td><td><span class="badge red">4</span></td></tr>
+          <tr><td>其他</td><td>9</td><td>11.0%</td><td><span class="badge orange">3</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="title">销售周期分析</div>
+      <table>
+        <tr><th>阶段</th><th>个人平均天数</th><th>门店平均天数</th><th>差异</th><th>状态</th></tr>
+        <tr><td>线索→到店</td><td>3.2天</td><td>4.1天</td><td>-0.9天</td><td><span class="badge green">优秀</span></td></tr>
+        <tr><td>到店→试驾</td><td>1.4天</td><td>1.8天</td><td>-0.4天</td><td><span class="badge green">优秀</span></td></tr>
+        <tr><td>试驾→订单</td><td>7.6天</td><td>6.2天</td><td>+1.4天</td><td><span class="badge orange">关注</span></td></tr>
+        <tr><td>订单→交付</td><td>18.6天</td><td>19.2天</td><td>-0.6天</td><td><span class="badge green">正常</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="sales-agent" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">销售运营Agent</div>
+      <div class="cards">
+        <div class="card"><div class="card-label">自动识别高意向</div><div class="card-value">12</div><div class="card-desc">已自动置顶</div></div>
+        <div class="card"><div class="card-label">自动分配线索</div><div class="card-value">86</div><div class="card-desc">今日已分配</div></div>
+        <div class="card"><div class="card-label">跟进提醒</div><div class="card-value">38</div><div class="card-desc danger">待处理提醒</div></div>
+        <div class="card"><div class="card-label">沉睡线索</div><div class="card-value">64</div><div class="card-desc warn">60天无互动</div></div>
+        <div class="card"><div class="card-label">日报生成</div><div class="card-value">18:00</div><div class="card-desc">自动推送企微</div></div>
+      </div>
+
+      <table>
+        <tr><th>Agent能力</th><th>执行规则</th><th>今日执行</th><th>执行结果</th><th>操作</th></tr>
+        <tr><td>高意向识别</td><td>意向分≥80自动置顶</td><td>12条</td><td>已完成</td><td><button class="light" onclick="showToast('规则配置已打开')">配置</button></td></tr>
+        <tr><td>自动分配线索</td><td>按忙闲度和历史转化率匹配</td><td>86条</td><td>已完成</td><td><button class="light" onclick="showToast('分配策略已打开')">配置</button></td></tr>
+        <tr><td>超时提醒</td><td>超过24小时未跟进</td><td>38条</td><td>已推送企微</td><td><button class="light" onclick="showToast('提醒规则已打开')">配置</button></td></tr>
+        <tr><td>话术推荐</td><td>根据客户顾虑点推荐</td><td>22条</td><td>已生成</td><td><button class="light" onclick="showToast('话术库已打开')">查看</button></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 二、市场投放 -->
+<section id="media" class="page">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'media-overview')">投放总览</button>
+    <button class="tab" onclick="switchTab(this,'media-channel')">渠道分析</button>
+    <button class="tab" onclick="switchTab(this,'media-material')">素材分析</button>
+    <button class="tab" onclick="switchTab(this,'media-attribution')">营销归因</button>
+  </div>
+
+  <div id="media-overview" class="inner">
+    <div class="cards">
+      <div class="card"><div class="card-label">今日消耗</div><div class="card-value">¥86.4万</div><div class="card-desc">预算执行 68.2%</div></div>
+      <div class="card"><div class="card-label">今日曝光</div><div class="card-value">2,864万</div><div class="card-desc">较昨日 ↑12.4%</div></div>
+      <div class="card"><div class="card-label">今日点击</div><div class="card-value">86.2万</div><div class="card-desc">CTR 3.01%</div></div>
+      <div class="card"><div class="card-label">今日CPL</div><div class="card-value">¥186</div><div class="card-desc">目标 ¥210</div></div>
+      <div class="card"><div class="card-label">月度ROI</div><div class="card-value">4.28</div><div class="card-desc">目标达成 107%</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">消耗与线索趋势</div>
+        <div class="chart">
+          <i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i>
+          <i style="height:68%"></i><i style="height:60%"></i><i style="height:78%"></i>
+          <i style="height:85%"></i>
+        </div>
+        <p style="color:var(--muted);font-size:12px">近7日广告消耗和有效线索保持同步增长。</p>
+      </div>
+
+      <div class="panel">
+        <div class="title">预算执行与目标</div>
+        <table>
+          <tr><td>预算执行进度</td><td>68.2%</td><td><div class="progress"><i style="width:68%"></i></div></td></tr>
+          <tr><td>ROI目标达成</td><td>107%</td><td><div class="progress green"><i style="width:100%"></i></div></td></tr>
+          <tr><td>线索成本达成</td><td>112%</td><td><div class="progress green"><i style="width:100%"></i></div></td></tr>
+          <tr><td>成交目标达成</td><td>86%</td><td><div class="progress orange"><i style="width:86%"></i></div></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="media-channel" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">
+        渠道级投放分析
+        <button onclick="showToast('预算优化建议已生成')">生成预算建议</button>
+      </div>
+
+      <table>
+        <tr><th>渠道</th><th>消耗</th><th>曝光</th><th>点击</th><th>CTR</th><th>CPL</th><th>有效率</th><th>试驾率</th><th>成交率</th><th>ROI</th><th>建议</th></tr>
+        <tr><td>企微</td><td>¥18.6万</td><td>86万</td><td>6.8万</td><td>7.9%</td><td>¥126</td><td>82.4%</td><td>32.6%</td><td>12.6%</td><td><b style="color:var(--green)">6.2</b></td><td><span class="badge green">增加预算</span></td></tr>
+        <tr><td>抖音</td><td>¥42.6万</td><td>1,286万</td><td>38.6万</td><td>3.0%</td><td>¥186</td><td>68.2%</td><td>24.6%</td><td>8.6%</td><td>4.2</td><td><span class="badge">保持</span></td></tr>
+        <tr><td>腾讯广告</td><td>¥26.8万</td><td>826万</td><td>18.2万</td><td>2.2%</td><td>¥226</td><td>62.4%</td><td>18.6%</td><td>6.8%</td><td>3.1</td><td><span class="badge orange">减少预算</span></td></tr>
+        <tr><td>百度</td><td>¥16.4万</td><td>326万</td><td>12.6万</td><td>3.9%</td><td>¥204</td><td>72.8%</td><td>22.4%</td><td>7.4%</td><td>3.8</td><td><span class="badge">保持</span></td></tr>
+        <tr><td>小红书</td><td>¥12.6万</td><td>286万</td><td>8.6万</td><td>3.0%</td><td>¥218</td><td>76.4%</td><td>28.6%</td><td>9.2%</td><td>4.6</td><td><span class="badge green">增加预算</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="media-material" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">素材效果分析</div>
+      <div class="toolbar">
+        <select><option>全部车型</option><option>凡尔赛C5 X</option><option>标致408</option><option>天逸</option></select>
+        <select><option>全部素材类型</option><option>视频</option><option>图文</option><option>落地页</option></select>
+        <button onclick="showToast('素材分析已刷新')">刷新分析</button>
+      </div>
+
+      <table>
+        <tr><th>素材名称</th><th>类型</th><th>主题标签</th><th>曝光量</th><th>点击率</th><th>留资率</th><th>互动率</th><th>评价</th></tr>
+        <tr><td>凡尔赛智能座舱体验</td><td>视频</td><td>智能/科技</td><td>286万</td><td>4.8%</td><td>2.6%</td><td>8.4%</td><td><span class="badge green">高转化</span></td></tr>
+        <tr><td>408家庭空间测评</td><td>图文</td><td>家庭/空间</td><td>186万</td><td>3.6%</td><td>2.1%</td><td>6.8%</td><td><span class="badge green">高转化</span></td></tr>
+        <tr><td>天逸价格促销海报</td><td>图文</td><td>价格/促销</td><td>126万</td><td>1.8%</td><td>0.8%</td><td>3.2%</td><td><span class="badge orange">一般</span></td></tr>
+        <tr><td>品牌故事长视频</td><td>视频</td><td>品牌/情感</td><td>86万</td><td>1.2%</td><td>0.4%</td><td>2.8%</td><td><span class="badge red">低效</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="media-attribution" class="inner" style="display:none">
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">归因模型</div>
+        <div class="tag-box">
+          <div class="tag">首触归因</div>
+          <div class="tag">末触归因</div>
+          <div class="tag">线性归因</div>
+          <div class="tag">时间衰减归因</div>
+          <div class="tag">算法归因</div>
+        </div>
+        <br>
+        <button onclick="showToast('已切换为算法归因模型')">应用算法归因</button>
+      </div>
+
+      <div class="panel">
+        <div class="title">渠道成交贡献</div>
+        <table>
+          <tr><th>渠道</th><th>首触</th><th>末触</th><th>线性</th><th>算法</th></tr>
+          <tr><td>企微</td><td>18%</td><td>32%</td><td>26%</td><td><b>28%</b></td></tr>
+          <tr><td>抖音</td><td>36%</td><td>24%</td><td>29%</td><td><b>31%</b></td></tr>
+          <tr><td>小红书</td><td>14%</td><td>18%</td><td>16%</td><td><b>17%</b></td></tr>
+          <tr><td>经销商</td><td>22%</td><td>16%</td><td>19%</td><td><b>18%</b></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="title">跨渠道转化路径</div>
+      <div class="lineage">
+        <div class="lineage-node">抖音曝光</div>
+        <div class="lineage-arrow">→</div>
+        <div class="lineage-node">官网浏览</div>
+        <div class="lineage-arrow">→</div>
+        <div class="lineage-node">企微沟通</div>
+        <div class="lineage-arrow">→</div>
+        <div class="lineage-node">到店试驾</div>
+        <div class="lineage-arrow">→</div>
+        <div class="lineage-node">订单</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 三、人群圈选 -->
+<section id="audience" class="page">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'audience-builder')">人群圈选</button>
+    <button class="tab" onclick="switchTab(this,'audience-template')">场景模板</button>
+    <button class="tab" onclick="switchTab(this,'audience-touch')">触达编排</button>
+    <button class="tab" onclick="switchTab(this,'audience-result')">触达回流</button>
+  </div>
+
+  <div id="audience-builder" class="inner">
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">标签目录</div>
+        <input style="width:100%" placeholder="搜索标签">
+
+        <h4>生命周期标签</h4>
+        <div class="tag-box">
+          <div class="tag" onclick="addCondition('潜客')">潜客</div>
+          <div class="tag" onclick="addCondition('已试驾')">已试驾</div>
+          <div class="tag" onclick="addCondition('新车主')">新车主</div>
+          <div class="tag" onclick="addCondition('流失风险')">流失风险</div>
+        </div>
+
+        <h4>偏好标签</h4>
+        <div class="tag-box">
+          <div class="tag" onclick="addCondition('SUV偏好')">SUV偏好</div>
+          <div class="tag" onclick="addCondition('新能源偏好')">新能源偏好</div>
+          <div class="tag" onclick="addCondition('智能驾驶偏好')">智能驾驶偏好</div>
+          <div class="tag" onclick="addCondition('价格敏感')">价格敏感</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="title">人群组合画布</div>
+        <div id="audienceConditions" class="tag-box">
+          <span style="color:var(--muted)">点击左侧标签添加圈选条件</span>
+        </div>
+
+        <div class="toolbar" style="margin-top:14px">
+          <select>
+            <option>交集 AND</option>
+            <option>并集 OR</option>
+            <option>排除 NOT</option>
+          </select>
+          <select>
+            <option>近7天</option>
+            <option>近30天</option>
+            <option>近90天</option>
+          </select>
+          <button onclick="estimateAudience()">实时估算人数</button>
+        </div>
+
+        <div class="card">
+          <div class="card-label">预估目标人数</div>
+          <div id="audienceCount" class="card-value">—</div>
+          <div class="card-desc">数据更新时间：今天09:30</div>
+        </div>
+
+        <br>
+        <button onclick="saveAudience()">保存人群包</button>
+        <button class="light" onclick="showToast('已启动Look-alike相似人群扩展')">扩展相似人群</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="audience-template" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">31个营销场景人群模板</div>
+      <div class="asset-grid">
+        <div class="card" onclick="useTemplate('高意向试驾邀约')"><b>高意向试驾邀约</b><p>意向分≥80且近7天浏览车型</p><button class="light">使用模板</button></div>
+        <div class="card" onclick="useTemplate('保养到期提醒')"><b>保养到期提醒</b><p>距离保养周期≤30天车主</p><button class="light">使用模板</button></div>
+        <div class="card" onclick="useTemplate('竞品对比应对')"><b>竞品对比应对</b><p>近7天浏览竞品内容用户</p><button class="light">使用模板</button></div>
+        <div class="card" onclick="useTemplate('车主流失召回')"><b>车主流失召回</b><p>活跃度下降且超过30天未进店</p><button class="light">使用模板</button></div>
+        <div class="card" onclick="useTemplate('老客置换')"><b>老客置换营销</b><p>车龄3年以上高价值车主</p><button class="light">使用模板</button></div>
+        <div class="card" onclick="useTemplate('新车主教育')"><b>新车主功能教育</b><p>交付30天内新车主</p><button class="light">使用模板</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="audience-touch" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">营销触达编排</div>
+
+      <div class="detail-grid">
+        <div class="detail"><label>目标人群</label><b>高意向新能源用户</b></div>
+        <div class="detail"><label>预计人数</label><b>286,420</b></div>
+        <div class="detail"><label>最佳触达时间</label><b>19:00-21:00</b></div>
+      </div>
+
+      <h3>触达渠道</h3>
+      <div class="tag-box">
+        <div class="tag">企微优先</div>
+        <div class="tag">Push补充</div>
+        <div class="tag">短信兜底</div>
+      </div>
+
+      <h3>排除规则</h3>
+      <p>☑ 14天内触达次数≥5次　☑ 营销黑名单　☑ 投诉处理中用户　☑ 已下单用户</p>
+
+      <h3>A/B测试</h3>
+      <table>
+        <tr><th>分组</th><th>触达内容</th><th>人数</th><th>预计转化率</th></tr>
+        <tr><td>A组</td><td>车型功能内容</td><td>143,210</td><td>8.6%</td></tr>
+        <tr><td>B组</td><td>限时试驾权益</td><td>143,210</td><td>10.2%</td></tr>
+      </table>
+
+      <br>
+      <button onclick="showToast('营销活动已提交，等待审批')">提交营销活动</button>
+      <button class="light" onclick="showToast('已生成营销策划方案')">营销策划Agent</button>
+    </div>
+  </div>
+
+  <div id="audience-result" class="inner" style="display:none">
+    <div class="cards">
+      <div class="card"><div class="card-label">触达人数</div><div class="card-value">286,420</div><div class="card-desc">成功率98.6%</div></div>
+      <div class="card"><div class="card-label">打开率</div><div class="card-value">36.8%</div><div class="card-desc">较均值 ↑8.2%</div></div>
+      <div class="card"><div class="card-label">点击率</div><div class="card-value">12.6%</div><div class="card-desc">内容表现良好</div></div>
+      <div class="card"><div class="card-label">试驾转化率</div><div class="card-value">8.6%</div><div class="card-desc">较对照组 ↑3.2%</div></div>
+      <div class="card"><div class="card-label">营销ROI</div><div class="card-value">4.82</div><div class="card-desc">活动效果优秀</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="title">触达转化漏斗</div>
+      <div class="funnel-row"><span class="funnel-name">触达</span><div class="funnel-bar"><i style="width:100%"></i></div><span class="funnel-num">286,420</span></div>
+      <div class="funnel-row"><span class="funnel-name">打开</span><div class="funnel-bar"><i style="width:62%"></i></div><span class="funnel-num">105,364</span></div>
+      <div class="funnel-row"><span class="funnel-name">点击</span><div class="funnel-bar"><i style="width:30%"></i></div><span class="funnel-num">36,074</span></div>
+      <div class="funnel-row"><span class="funnel-name">留资</span><div class="funnel-bar"><i style="width:14%"></i></div><span class="funnel-num">8,620</span></div>
+      <div class="funnel-row"><span class="funnel-name">试驾</span><div class="funnel-bar"><i style="width:8%"></i></div><span class="funnel-num">2,462</span></div>
+      <div class="funnel-row"><span class="funnel-name">成交</span><div class="funnel-bar"><i style="width:4%"></i></div><span class="funnel-num">862</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 四、生命周期运营 -->
+<section id="lifecycle" class="page">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'life-overview')">生命周期总览</button>
+    <button class="tab" onclick="switchTab(this,'life-stage')">阶段管理</button>
+    <button class="tab" onclick="switchTab(this,'life-scene')">31个运营场景</button>
+    <button class="tab" onclick="switchTab(this,'life-report')">分析报告</button>
+  </div>
+
+  <div id="life-overview" class="inner">
+    <div class="cards">
+      <div class="card"><div class="card-label">用户总量</div><div class="card-value">1,286万</div><div class="card-desc">One-ID用户</div></div>
+      <div class="card"><div class="card-label">潜客用户</div><div class="card-value">286万</div><div class="card-desc">占比22.2%</div></div>
+      <div class="card"><div class="card-label">车主用户</div><div class="card-value">486万</div><div class="card-desc">占比37.8%</div></div>
+      <div class="card"><div class="card-label">流失风险</div><div class="card-value">24万</div><div class="card-desc danger">需重点挽回</div></div>
+      <div class="card"><div class="card-label">平均LTV</div><div class="card-value">¥38,620</div><div class="card-desc">较上月 ↑4.6%</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="title">23级生命周期阶段分布</div>
+      <div class="lifecycle">
+        <div class="life active" onclick="showLife('匿名访客')">匿名访客<br><b>286万</b></div>
+        <div class="life" onclick="showLife('注册用户')">注册用户<br><b>186万</b></div>
+        <div class="life" onclick="showLife('内容浏览')">内容浏览<br><b>126万</b></div>
+        <div class="life" onclick="showLife('意向用户')">意向用户<br><b>86万</b></div>
+        <div class="life" onclick="showLife('留资用户')">留资用户<br><b>48万</b></div>
+        <div class="life" onclick="showLife('试驾用户')">试驾用户<br><b>28万</b></div>
+        <div class="life" onclick="showLife('订单用户')">订单用户<br><b>12万</b></div>
+        <div class="life" onclick="showLife('新车主')">新车主<br><b>8.6万</b></div>
+        <div class="life" onclick="showLife('活跃车主')">活跃车主<br><b>286万</b></div>
+        <div class="life" onclick="showLife('低活跃车主')">低活跃车主<br><b>62万</b></div>
+        <div class="life" onclick="showLife('流失风险')">流失风险<br><b>24万</b></div>
+        <div class="life" onclick="showLife('复购用户')">复购用户<br><b>16万</b></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">阶段转化率</div>
+        <table>
+          <tr><th>阶段</th><th>转化率</th><th>目标</th><th>状态</th></tr>
+          <tr><td>注册→内容浏览</td><td>68.4%</td><td>65%</td><td><span class="badge green">达成</span></td></tr>
+          <tr><td>意向→留资</td><td>36.8%</td><td>40%</td><td><span class="badge orange">关注</span></td></tr>
+          <tr><td>留资→试驾</td><td>24.6%</td><td>25%</td><td><span class="badge orange">接近</span></td></tr>
+          <tr><td>试驾→订单</td><td>8.2%</td><td>10%</td><td><span class="badge red">偏低</span></td></tr>
+          <tr><td>订单→交付</td><td>92.6%</td><td>90%</td><td><span class="badge green">达成</span></td></tr>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="title">生命周期流失原因</div>
+        <table>
+          <tr><th>原因</th><th>用户数</th><th>占比</th></tr>
+          <tr><td>价格敏感</td><td>62,420</td><td>28.6%</td></tr>
+          <tr><td>竞品转化</td><td>48,620</td><td>22.4%</td></tr>
+          <tr><td>长期未跟进</td><td>36,824</td><td>16.8%</td></tr>
+          <tr><td>服务体验不佳</td><td>26,420</td><td>12.1%</td></tr>
+          <tr><td>其他</td><td>43,260</td><td>20.1%</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="life-stage" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">阶段运营要素配置</div>
+      <div class="detail-grid">
+        <div class="detail"><label>当前阶段</label><b id="selectedLife">意向用户</b></div>
+        <div class="detail"><label>阶段用户数</label><b>86万</b></div>
+        <div class="detail"><label>平均停留时长</label><b>12.6天</b></div>
+        <div class="detail"><label>进入条件</label><b>浏览车型或配置页</b></div>
+        <div class="detail"><label>退出条件</label><b>留资、流失或转化</b></div>
+        <div class="detail"><label>转化目标</label><b>留资率≥40%</b></div>
+      </div>
+
+      <h3>运营策略</h3>
+      <table>
+        <tr><th>推荐动作</th><th>推荐内容</th><th>触达渠道</th><th>执行频率</th><th>衡量指标</th></tr>
+        <tr><td>车型内容教育</td><td>核心功能、用户案例</td><td>Push/企微</td><td>每周2次</td><td>内容点击率</td></tr>
+        <tr><td>试驾邀约</td><td>门店试驾权益</td><td>电话/企微</td><td>事件触发</td><td>试驾预约率</td></tr>
+        <tr><td>竞品应对</td><td>车型对比内容</td><td>短信/Push</td><td>行为触发</td><td>留资率</td></tr>
+      </table>
+
+      <br>
+      <button onclick="showToast('已圈选当前阶段全部用户')">一键圈选阶段用户</button>
+      <button class="light" onclick="showToast('已打开阶段SOP配置')">配置运营SOP</button>
+    </div>
+  </div>
+
+  <div id="life-scene" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">31个生命周期运营场景</div>
+      <div class="asset-grid">
+        <div class="card"><b>高意向试驾邀约</b><p>目标：意向用户</p><span class="badge green">运行中</span></div>
+        <div class="card"><b>留资未联系召回</b><p>目标：留资用户</p><span class="badge green">运行中</span></div>
+        <div class="card"><b>试驾未成交跟进</b><p>目标：试驾用户</p><span class="badge green">运行中</span></div>
+        <div class="card"><b>新车主功能教育</b><p>目标：新车主</p><span class="badge green">运行中</span></div>
+        <div class="card"><b>保养到期提醒</b><p>目标：服务车主</p><span class="badge green">运行中</span></div>
+        <div class="card"><b>流失车主挽回</b><p>目标：流失风险车主</p><span class="badge orange">优化中</span></div>
+        <div class="card"><b>车龄3年置换</b><p>目标：高价值车主</p><span class="badge green">运行中</span></div>
+        <div class="card"><b>老客推荐裂变</b><p>目标：推荐用户</p><span class="badge green">运行中</span></div>
+        <div class="card"><b>更多场景...</b><p>共31个营销场景</p><button class="light" onclick="showToast('已加载全部31个场景')">查看全部</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="life-report" class="inner" style="display:none">
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">生命周期转化漏斗</div>
+        <div class="funnel-row"><span class="funnel-name">访客</span><div class="funnel-bar"><i style="width:100%"></i></div><span class="funnel-num">1,286万</span></div>
+        <div class="funnel-row"><span class="funnel-name">注册</span><div class="funnel-bar"><i style="width:72%"></i></div><span class="funnel-num">926万</span></div>
+        <div class="funnel-row"><span class="funnel-name">留资</span><div class="funnel-bar"><i style="width:32%"></i></div><span class="funnel-num">412万</span></div>
+        <div class="funnel-row"><span class="funnel-name">试驾</span><div class="funnel-bar"><i style="width:18%"></i></div><span class="funnel-num">231万</span></div>
+        <div class="funnel-row"><span class="funnel-name">成交</span><div class="funnel-bar"><i style="width:9%"></i></div><span class="funnel-num">116万</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="title">用户价值分层对比</div>
+        <table>
+          <tr><th>用户层级</th><th>留资率</th><th>试驾率</th><th>成交率</th><th>LTV</th></tr>
+          <tr><td>高价值用户</td><td>48.6%</td><td>36.8%</td><td>18.2%</td><td>¥68,420</td></tr>
+          <tr><td>中价值用户</td><td>32.4%</td><td>24.6%</td><td>9.8%</td><td>¥38,620</td></tr>
+          <tr><td>普通用户</td><td>18.6%</td><td>12.4%</td><td>4.2%</td><td>¥18,260</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 五、管理层驾驶舱 -->
+<section id="cockpit" class="page">
+  <div class="panel">
+    <div class="title">
+      北极星指标
+      <span class="badge green">体验护栏正常</span>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div style="color:var(--muted)">单位营销成本成交台数</div>
+        <div class="kpi-big">0.86台</div>
+        <span class="badge green">环比↑8.6%</span>
+        <span class="badge green">同比↑12.4%</span>
+        <span class="badge orange">达成率86%</span>
+      </div>
+
+      <div>
+        <div class="title">近12个月趋势</div>
+        <div class="chart">
+          <i style="height:35%"></i><i style="height:42%"></i><i style="height:38%"></i>
+          <i style="height:48%"></i><i style="height:53%"></i><i style="height:57%"></i>
+          <i style="height:63%"></i><i style="height:68%"></i><i style="height:78%"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'cockpit-overview')">经营总览</button>
+    <button class="tab" onclick="switchTab(this,'cockpit-marketing')">营销效率</button>
+    <button class="tab" onclick="switchTab(this,'cockpit-user')">用户资产</button>
+    <button class="tab" onclick="switchTab(this,'cockpit-service')">售后服务</button>
+  </div>
+
+  <div id="cockpit-overview" class="inner">
+    <div class="cards">
+      <div class="card"><div class="card-label">本月销量</div><div class="card-value">28,620</div><div class="card-desc">达成率92.6%</div></div>
+      <div class="card"><div class="card-label">本月订单</div><div class="card-value">32,864</div><div class="card-desc">同比 ↑8.4%</div></div>
+      <div class="card"><div class="card-label">本月交付</div><div class="card-value">26,420</div><div class="card-desc">达成率88.6%</div></div>
+      <div class="card"><div class="card-label">本月毛利</div><div class="card-value">3.86亿</div><div class="card-desc">同比 ↑6.8%</div></div>
+      <div class="card"><div class="card-label">市场份额</div><div class="card-value">4.82%</div><div class="card-desc">较上月 ↑0.4%</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="title">经营目标达成</div>
+      <table>
+        <tr><th>经营指标</th><th>月度目标</th><th>当前实际</th><th>达成率</th><th>预测期末</th><th>状态</th></tr>
+        <tr><td>销量</td><td>30,900</td><td>28,620</td><td>92.6%</td><td>31,420</td><td><span class="badge green">可达成</span></td></tr>
+        <tr><td>订单</td><td>36,000</td><td>32,864</td><td>91.3%</td><td>35,820</td><td><span class="badge orange">关注</span></td></tr>
+        <tr><td>交付</td><td>29,800</td><td>26,420</td><td>88.6%</td><td>28,620</td><td><span class="badge orange">关注</span></td></tr>
+        <tr><td>毛利</td><td>4.12亿</td><td>3.86亿</td><td>93.7%</td><td>4.18亿</td><td><span class="badge green">可达成</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="cockpit-marketing" class="inner" style="display:none">
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">营销漏斗</div>
+        <div class="funnel-row"><span class="funnel-name">有效线索</span><div class="funnel-bar"><i style="width:100%"></i></div><span class="funnel-num">286,420</span></div>
+        <div class="funnel-row"><span class="funnel-name">试驾</span><div class="funnel-bar"><i style="width:52%"></i></div><span class="funnel-num">148,620</span></div>
+        <div class="funnel-row"><span class="funnel-name">大定</span><div class="funnel-bar"><i style="width:18%"></i></div><span class="funnel-num">52,460</span></div>
+        <div class="funnel-row"><span class="funnel-name">交付</span><div class="funnel-bar"><i style="width:10%"></i></div><span class="funnel-num">28,620</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="title">渠道ROI排名</div>
+        <table>
+          <tr><th>渠道</th><th>消耗</th><th>成交</th><th>ROI</th></tr>
+          <tr><td>企微</td><td>18.6万</td><td>286</td><td><b style="color:var(--green)">6.2</b></td></tr>
+          <tr><td>小红书</td><td>12.6万</td><td>186</td><td>4.6</td></tr>
+          <tr><td>抖音</td><td>42.6万</td><td>628</td><td>4.2</td></tr>
+          <tr><td>腾讯</td><td>26.8万</td><td>286</td><td>3.1</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="cockpit-user" class="inner" style="display:none">
+    <div class="cards">
+      <div class="card"><div class="card-label">用户总量</div><div class="card-value">1,286万</div><div class="card-desc">累计统一用户</div></div>
+      <div class="card"><div class="card-label">月新增用户</div><div class="card-value">28.6万</div><div class="card-desc">同比 ↑12.8%</div></div>
+      <div class="card"><div class="card-label">月活跃用户</div><div class="card-value">486万</div><div class="card-desc">活跃率37.8%</div></div>
+      <div class="card"><div class="card-label">用户LTV</div><div class="card-value">¥38,620</div><div class="card-desc">同比 ↑4.6%</div></div>
+      <div class="card"><div class="card-label">LTV/CAC</div><div class="card-value">3.8</div><div class="card-desc">健康水平</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="title">车主健康度</div>
+      <table>
+        <tr><th>车主状态</th><th>用户数</th><th>占比</th><th>趋势</th><th>建议</th></tr>
+        <tr><td>活跃车主</td><td>286万</td><td>58.8%</td><td>↑3.2%</td><td>持续内容运营</td></tr>
+        <tr><td>低活跃车主</td><td>62万</td><td>12.8%</td><td>↓1.2%</td><td>活动召回</td></tr>
+        <tr><td>流失风险车主</td><td>24万</td><td>4.9%</td><td>↑2.4%</td><td>重点挽回</td></tr>
+        <tr><td>沉睡车主</td><td>18万</td><td>3.7%</td><td>↓0.8%</td><td>权益唤醒</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="cockpit-service" class="inner" style="display:none">
+    <div class="cards">
+      <div class="card"><div class="card-label">服务收入</div><div class="card-value">1.86亿</div><div class="card-desc">同比 ↑8.6%</div></div>
+      <div class="card"><div class="card-label">保养回站率</div><div class="card-value">62.4%</div><div class="card-desc">目标60%</div></div>
+      <div class="card"><div class="card-label">NPS</div><div class="card-value">72.4</div><div class="card-desc danger">低于目标75</div></div>
+      <div class="card"><div class="card-label">CSI</div><div class="card-value">86.8</div><div class="card-desc">同比 ↑2.4%</div></div>
+      <div class="card"><div class="card-label">投诉率</div><div class="card-value">2.8%</div><div class="card-desc danger">高于目标2%</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="title">服务经营分析</div>
+      <table>
+        <tr><th>服务项目</th><th>收入</th><th>订单数</th><th>客单价</th><th>同比</th><th>状态</th></tr>
+        <tr><td>保养服务</td><td>8,620万</td><td>186,420</td><td>¥462</td><td>↑8.6%</td><td><span class="badge green">正常</span></td></tr>
+        <tr><td>维修服务</td><td>5,280万</td><td>62,420</td><td>¥846</td><td>↑4.2%</td><td><span class="badge green">正常</span></td></tr>
+        <tr><td>延保服务</td><td>2,860万</td><td>18,620</td><td>¥1,536</td><td>↑12.4%</td><td><span class="badge green">优秀</span></td></tr>
+        <tr><td>投诉处理</td><td>—</td><td>2,846</td><td>—</td><td>↑6.8%</td><td><span class="badge red">关注</span></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 六、售后服务 -->
+<section id="afterSales" class="page">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'after-overview')">售后总览</button>
+    <button class="tab" onclick="switchTab(this,'after-workorder')">工单管理</button>
+    <button class="tab" onclick="switchTab(this,'after-marketing')">服务营销</button>
+    <button class="tab" onclick="switchTab(this,'after-risk')">流失预警</button>
+  </div>
+
+  <div id="after-overview" class="inner">
+    <div class="cards">
+      <div class="card"><div class="card-label">NPS</div><div class="card-value">72.4</div><div class="card-desc danger">目标≥75</div></div>
+      <div class="card"><div class="card-label">CSI评分</div><div class="card-value">86.8</div><div class="card-desc">同比 ↑2.4%</div></div>
+      <div class="card"><div class="card-label">本月回站率</div><div class="card-value">62.4%</div><div class="card-desc">目标60%</div></div>
+      <div class="card"><div class="card-label">待处理工单</div><div class="card-value">286</div><div class="card-desc danger">高优先级24个</div></div>
+      <div class="card"><div class="card-label">流失预警车主</div><div class="card-value">24,620</div><div class="card-desc warn">需重点挽回</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="title">服务工单分布</div>
+        <table>
+          <tr><th>工单类型</th><th>待处理</th><th>处理中</th><th>已闭环</th><th>闭环率</th></tr>
+          <tr><td>保养</td><td>62</td><td>86</td><td>1,286</td><td>94.6%</td></tr>
+          <tr><td>维修</td><td>48</td><td>62</td><td>986</td><td>92.4%</td></tr>
+          <tr><td>投诉</td><td>24</td><td>38</td><td>286</td><td>86.8%</td></tr>
+          <tr><td>召回</td><td>12</td><td>28</td><td>862</td><td>96.2%</td></tr>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="title">服务营销提醒</div>
+        <div class="alert"><b><span class="dot orange"></span>保养到期</b><small>今日有1,286位车主进入保养提醒周期</small></div>
+        <div class="alert"><b><span class="dot"></span>续保到期</b><small>未来30天有826位车主保险即将到期</small></div>
+        <div class="alert"><b><span class="dot red"></span>车辆健康预警</b><small>48台车辆故障码异常，需要优先邀约检测</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="after-workorder" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">工单管理</div>
+      <div class="toolbar">
+        <input placeholder="搜索车主、VIN或工单编号">
+        <select><option>全部类型</option><option>保养</option><option>维修</option><option>投诉</option><option>召回</option></select>
+        <select><option>全部状态</option><option>待处理</option><option>处理中</option><option>已闭环</option></select>
+        <button onclick="showToast('工单列表已刷新')">查询</button>
+      </div>
+
+      <table>
+        <tr><th>工单编号</th><th>车主</th><th>VIN</th><th>类型</th><th>问题摘要</th><th>处理时长</th><th>状态</th><th>操作</th></tr>
+        <tr><td>WO-20250201</td><td>张先生</td><td>LSYDE4A2***</td><td>投诉</td><td>维修等待时间较长</td><td>18小时</td><td><span class="badge red">待升级</span></td><td><button class="light" onclick="showToast('已打开投诉详情')">处理</button></td></tr>
+        <tr><td>WO-20250202</td><td>李女士</td><td>LSYDE4B8***</td><td>保养</td><td>预约常规保养</td><td>2小时</td><td><span class="badge orange">处理中</span></td><td><button class="light" onclick="showToast('已打开工单')">处理</button></td></tr>
+        <tr><td>WO-20250203</td><td>王先生</td><td>LSYDE4C6***</td><td>召回</td><td>召回升级通知</td><td>1天</td><td><span class="badge green">已闭环</span></td><td><button class="light" onclick="showToast('已查看闭环记录')">查看</button></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="after-marketing" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">服务营销中心</div>
+      <table>
+        <tr><th>营销场景</th><th>目标用户</th><th>目标人数</th><th>触达时间</th><th>推荐动作</th><th>状态</th><th>操作</th></tr>
+        <tr><td>保养到期提醒</td><td>30天内保养到期车主</td><td>1,286</td><td>到期前30天</td><td>推荐门店和预约时段</td><td><span class="badge green">运行中</span></td><td><button class="light" onclick="showToast('已打开保养场景配置')">配置</button></td></tr>
+        <tr><td>续保提醒</td><td>保险60天内到期车主</td><td>826</td><td>60/30/15天</td><td>续保权益推荐</td><td><span class="badge green">运行中</span></td><td><button class="light" onclick="showToast('已打开续保场景配置')">配置</button></td></tr>
+        <tr><td>质保到期提醒</td><td>质保剩余少于90天</td><td>462</td><td>到期前90天</td><td>延保套餐推荐</td><td><span class="badge orange">待优化</span></td><td><button class="light" onclick="showToast('已打开延保场景配置')">配置</button></td></tr>
+        <tr><td>里程阈值服务</td><td>年均里程超过2万公里</td><td>2,846</td><td>实时</td><td>保养套餐和延保</td><td><span class="badge green">运行中</span></td><td><button class="light" onclick="showToast('已打开里程场景配置')">配置</button></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="after-risk" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">流失预警车主清单</div>
+      <table>
+        <tr><th>车主</th><th>VIN</th><th>车龄</th><th>最近进站</th><th>风险分</th><th>预测原因</th><th>推荐动作</th><th>操作</th></tr>
+        <tr><td>刘先生</td><td>LSYDE4A2***</td><td>3.2年</td><td>286天前</td><td><b style="color:var(--red)">92</b></td><td>长期未进站、APP活跃下降</td><td>免费检测+回站礼</td><td><button class="light" onclick="showToast('已创建挽回任务')">挽回</button></td></tr>
+        <tr><td>陈女士</td><td>LSYDE4B8***</td><td>2.8年</td><td>168天前</td><td><b style="color:var(--orange)">84</b></td><td>竞品浏览增加</td><td>专属置换权益</td><td><button class="light" onclick="showToast('已创建置换挽回任务')">挽回</button></td></tr>
+        <tr><td>王先生</td><td>LSYDE4C6***</td><td>4.1年</td><td>216天前</td><td><b style="color:var(--orange)">81</b></td><td>投诉未完全解决</td><td>专属客服关怀</td><td><button class="light" onclick="showToast('已升级客户关怀任务')">挽回</button></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 七、经销商门户 -->
+<section id="dealer" class="page">
+  <div class="panel">
+    <div class="title">
+      上海浦东经销商门户
+      <span class="badge">当前账号：经销商总经理</span>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="card-label">本月销量</div><div class="card-value">286</div><div class="card-desc">目标达成95.3%</div></div>
+      <div class="card"><div class="card-label">本月订单</div><div class="card-value">326</div><div class="card-desc">同比 ↑8.6%</div></div>
+      <div class="card"><div class="card-label">本月交付</div><div class="card-value">268</div><div class="card-desc">目标达成92.4%</div></div>
+      <div class="card"><div class="card-label">单车毛利</div><div class="card-value">¥28,620</div><div class="card-desc">区域排名第3</div></div>
+      <div class="card"><div class="card-label">区域排名</div><div class="card-value">第3名</div><div class="card-desc">共42家门店</div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="title">店端销售漏斗</div>
+      <div class="funnel-row"><span class="funnel-name">线索</span><div class="funnel-bar"><i style="width:100%"></i></div><span class="funnel-num">2,846</span></div>
+      <div class="funnel-row"><span class="funnel-name">到店</span><div class="funnel-bar"><i style="width:64%"></i></div><span class="funnel-num">1,824</span></div>
+      <div class="funnel-row"><span class="funnel-name">试驾</span><div class="funnel-bar"><i style="width:42%"></i></div><span class="funnel-num">1,196</span></div>
+      <div class="funnel-row"><span class="funnel-name">报价</span><div class="funnel-bar"><i style="width:28%"></i></div><span class="funnel-num">796</span></div>
+      <div class="funnel-row"><span class="funnel-name">订单</span><div class="funnel-bar"><i style="width:14%"></i></div><span class="funnel-num">398</span></div>
+      <div class="funnel-row"><span class="funnel-name">交付</span><div class="funnel-bar"><i style="width:10%"></i></div><span class="funnel-num">286</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="title">客户资产盘</div>
+      <table>
+        <tr><th>客户类型</th><th>人数</th><th>占比</th><th>趋势</th></tr>
+        <tr><td>潜客</td><td>1,286</td><td>45.2%</td><td>↑6.8%</td></tr>
+        <tr><td>高意向客户</td><td>286</td><td>10.1%</td><td>↑8.4%</td></tr>
+        <tr><td>沉睡客户</td><td>326</td><td>11.5%</td><td>↓2.6%</td></tr>
+        <tr><td>流失预警车主</td><td>86</td><td>3.0%</td><td>↑1.2%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="title">区域同行对比</div>
+    <table>
+      <tr><th>指标</th><th>本店</th><th>区域均值</th><th>区域第一</th><th>本店排名</th><th>评价</th></tr>
+      <tr><td>线索有效率</td><td>78.6%</td><td>72.4%</td><td>82.6%</td><td>第4名</td><td><span class="badge green">高于均值</span></td></tr>
+      <tr><td>试驾转化率</td><td>28.4%</td><td>24.6%</td><td>32.8%</td><td>第3名</td><td><span class="badge green">优势</span></td></tr>
+      <tr><td>订单转化率</td><td>13.2%</td><td>10.8%</td><td>16.4%</td><td>第3名</td><td><span class="badge green">优势</span></td></tr>
+      <tr><td>线索跟进及时率</td><td>82.4%</td><td>86.8%</td><td>94.2%</td><td>第16名</td><td><span class="badge red">短板</span></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 八、专题洞察 -->
+<section id="insight" class="page">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'insight-template')">分析模板</button>
+    <button class="tab" onclick="switchTab(this,'insight-cause')">异动归因</button>
+    <button class="tab" onclick="switchTab(this,'insight-user')">用户洞察</button>
+    <button class="tab" onclick="switchTab(this,'insight-report')">报告管理</button>
+  </div>
+
+  <div id="insight-template" class="inner">
+    <div class="panel">
+      <div class="title">专题分析模板库</div>
+      <div class="asset-grid">
+        <div class="card" onclick="useInsight('投放复盘模板')"><b>投放复盘模板</b><p>渠道ROI、素材效果、人群回流</p><button class="light">开始分析</button></div>
+        <div class="card" onclick="useInsight('活动效果模板')"><b>活动效果复盘</b><p>触达→点击→留资→成交全链路</p><button class="light">开始分析</button></div>
+        <div class="card" onclick="useInsight('用户分层模板')"><b>用户分层报告</b><p>生命周期、价值、意向分层</p><button class="light">开始分析</button></div>
+        <div class="card" onclick="useInsight('漏斗异动模板')"><b>漏斗异动分析</b><p>自动下钻定位转化波动</p><button class="light">开始分析</button></div>
+        <div class="card" onclick="useInsight('车主流失模板')"><b>车主流失分析</b><p>流失画像、原因和挽回建议</p><button class="light">开始分析</button></div>
+        <div class="card" onclick="showToast('自定义分析模板创建成功')"><b>自定义模板</b><p>保存自己的分析配置</p><button class="light">创建模板</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="insight-cause" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">指标异动归因</div>
+      <div class="toolbar">
+        <select><option>选择指标：试驾转化率</option><option>订单转化率</option><option>营销ROI</option><option>车主活跃率</option></select>
+        <select><option>近7天</option><option>近30天</option><option>本月</option></select>
+        <button onclick="showToast('Agent已完成多维归因分析')">自动归因</button>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="card-label">指标变化</div><div class="card-value">-8.6%</div><div class="card-desc danger">较上周期下降</div></div>
+        <div class="card"><div class="card-label">主要原因</div><div class="card-value">线索质量</div><div class="card-desc">贡献度42.8%</div></div>
+        <div class="card"><div class="card-label">次要原因</div><div class="card-value">华中区域</div><div class="card-desc">贡献度26.4%</div></div>
+        <div class="card"><div class="card-label">建议动作</div><div class="card-value">优化投放</div><div class="card-desc">减少低质渠道</div></div>
+        <div class="card"><div class="card-label">报告状态</div><div class="card-value">已生成</div><div class="card-desc">可发送负责人</div></div>
+      </div>
+
+      <table>
+        <tr><th>归因维度</th><th>异常对象</th><th>指标变化</th><th>贡献度</th><th>建议</th></tr>
+        <tr><td>区域</td><td>华中区域</td><td>-12.4%</td><td>26.4%</td><td>加强门店跟进培训</td></tr>
+        <tr><td>渠道</td><td>腾讯广告</td><td>-18.6%</td><td>24.2%</td><td>减少低质投放预算</td></tr>
+        <tr><td>车型</td><td>天逸</td><td>-8.2%</td><td>18.6%</td><td>优化车型内容素材</td></tr>
+        <tr><td>人群</td><td>价格敏感用户</td><td>-6.8%</td><td>12.4%</td><td>增加金融方案触达</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="insight-user" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">用户分层洞察</div>
+      <div class="toolbar">
+        <select><option>按生命周期分层</option><option>按用户价值分层</option><option>按意向度分层</option></select>
+        <select><option>全国</option><option>华东</option><option>华南</option><option>华中</option></select>
+        <button onclick="showToast('用户洞察结果已刷新')">开始分析</button>
+      </div>
+
+      <table>
+        <tr><th>用户层级</th><th>用户数</th><th>活跃率</th><th>留资率</th><th>试驾率</th><th>成交率</th><th>LTV</th></tr>
+        <tr><td>高价值高意向</td><td>86,420</td><td>82.6%</td><td>62.4%</td><td>48.6%</td><td>26.8%</td><td>¥68,420</td></tr>
+        <tr><td>中价值中意向</td><td>286,420</td><td>64.2%</td><td>36.8%</td><td>24.6%</td><td>12.4%</td><td>¥38,620</td></tr>
+        <tr><td>低价值低意向</td><td>826,420</td><td>28.6%</td><td>12.4%</td><td>8.6%</td><td>3.2%</td><td>¥12,860</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="insight-report" class="inner" style="display:none">
+    <div class="panel">
+      <div class="title">
+        报告管理
+        <button onclick="showToast('报告生成任务已创建')">一键生成报告</button>
+      </div>
+
+      <table>
+        <tr><th>报告名称</th><th>模板</th><th>时间范围</th><th>生成方式</th><th>更新时间</th><th>状态</th><th>操作</th></tr>
+        <tr><td>2025年2月投放复盘报告</td><td>投放复盘</td><td>2025-02-01至今</td><td>自动生成</td><td>今天09:00</td><td><span class="badge green">已完成</span></td><td><button class="light" onclick="showToast('正在下载PDF报告')">下载</button></td></tr>
+        <tr><td>华东区域销售漏斗报告</td><td>漏斗异动</td><td>近30天</td><td>手动生成</td><td>昨天17:20</td><td><span class="badge green">已完成</span></td><td><button class="light" onclick="showToast('在线报告已打开')">查看</button></td></tr>
+        <tr><td>车主流失分析周报</td><td>车主流失</td><td>每周</td><td>订阅推送</td><td>下周一09:00</td><td><span class="badge orange">待生成</span></td><td><button class="light" onclick="showToast('已打开报告订阅设置')">配置</button></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 九、产品配置洞察 -->
+<section id="product" class="page">
+  <div class="panel">
+    <div class="title">
+      产品配置洞察
+      <div class="toolbar" style="margin:0">
+        <select><option>凡尔赛C5 X</option><option>标致408</option><option>天逸C5 AIRCROSS</option><option>标致508L</option></select>
+        <select><option>全国</option><option>华东</option><option>华南</option><option>华中</option></select>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="card-label">配置器访问次数</div><div class="card-value">286,420</div><div class="card-desc">较上月 ↑16.8%</div></div>
+      <div class="card"><div class="card-label">平均配置完成率</div><div class="card-value">68.4%</div><div class="card-desc">较上月 ↑4.2%</div></div>
+      <div class="card"><div class="card-label">平均选装率</div><div class="card-value">32.6%</div><div class="card-desc">高于车型均值</div></div>
+      <div class="card"><div class="card-label">用户反馈数</div><div class="card-value">8,624</div><div class="card-desc">已完成主题聚类</div></div>
+      <div class="card"><div class="card-label">竞品配置优势</div><div class="card-value">12项</div><div class="card-desc">待产品评估</div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="title">配置选择热度</div>
+      <table>
+        <tr><th>配置项</th><th>选择次数</th><th>选择率</th><th>收入贡献</th><th>热度</th></tr>
+        <tr><td>智能驾驶包</td><td>86,420</td><td>42.6%</td><td>3,286万</td><td><span class="badge green">高</span></td></tr>
+        <tr><td>全景天窗</td><td>72,620</td><td>36.8%</td><td>1,862万</td><td><span class="badge green">高</span></td></tr>
+        <tr><td>高级音响</td><td>48,620</td><td>24.6%</td><td>1,286万</td><td><span class="badge">中</span></td></tr>
+        <tr><td>舒适座椅包</td><td>36,420</td><td>18.6%</td><td>862万</td><td><span class="badge orange">一般</span></td></tr>
+        <tr><td>运动外观包</td><td>18,620</td><td>9.8%</td><td>426万</td><td><span class="badge red">低</span></td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="title">用户声音主题聚类</div>
+      <div class="tag-box">
+        <div class="tag">智能驾驶好用</div>
+        <div class="tag">空间宽敞</div>
+        <div class="tag">内饰舒适</div>
+        <div class="tag">价格偏高</div>
+        <div class="tag">配置不透明</div>
+        <div class="tag">车机响应慢</div>
+        <div class="tag">音响效果好</div>
+        <div class="tag">续航关注</div>
+      </div>
+
+      <br>
+      <table>
+        <tr><th>主题</th><th>反馈数</th><th>情绪</th></tr>
+        <tr><td>智能驾驶</td><td>2,846</td><td><span class="badge green">正向</span></td></tr>
+        <tr><td>车机体验</td><td>1,862</td><td><span class="badge orange">中性</span></td></tr>
+        <tr><td>价格配置</td><td>1,426</td><td><span class="badge red">负向</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="title">竞品配置对比</div>
+    <table>
+      <tr><th>配置能力</th><th>神龙车型</th><th>竞品A</th><th>竞品B</th><th>竞争结论</th></tr>
+      <tr><td>智能驾驶</td><td>★★★★</td><td>★★★★</td><td>★★★</td><td><span class="badge green">具备优势</span></td></tr>
+      <tr><td>智能座舱</td><td>★★★</td><td>★★★★</td><td>★★★★</td><td><span class="badge red">需要提升</span></td></tr>
+      <tr><td>空间舒适</td><td>★★★★</td><td>★★★</td><td>★★★</td><td><span class="badge green">具备优势</span></td></tr>
+      <tr><td>价格竞争力</td><td>★★★</td><td>★★★★</td><td>★★★</td><td><span class="badge orange">重点关注</span></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 占位页面 -->
+<section id="placeholder" class="page">
+  <div class="panel" style="padding:70px;text-align:center">
+    <div style="font-size:46px">🚧</div>
+    <h2 id="placeholderTitle">模块建设中</h2>
+    <p style="color:var(--muted)">当前优先完善营销体系，其他一级模块将在后续迭代。</p>
+    <button onclick="openPage('sales')">返回营销体系</button>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+
+<!-- 弹窗 -->
+<div id="modalMask" class="modal-mask">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">详情</h2>
+      <span class="close" onclick="closeModal()">×</span>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const pageMeta={
+  sales:["销售线索工作台","让销售顾问和DCC每天知道先跟谁、怎么跟、漏到哪"],
+  media:["市场投放工作台","从渠道、素材、线索到成交的全链路ROI分析"],
+  audience:["人群圈选与触达平台","精准圈人、一键触达，让运营人员找到最合适的人"],
+  lifecycle:["用户生命周期运营","以23级生命周期阶段为骨架，持续经营用户"],
+  cockpit:["管理层驾驶舱","北极星指标驱动经营管理和异常归因"],
+  afterSales:["售后服务工作台","围绕满意度、回站和投诉做好车主服务"],
+  dealer:["经销商门户","看清门店客户资产、销售漏斗和同行对比"],
+  insight:["专题洞察工作台","分析模板、自动归因和一键生成报告"],
+  product:["产品配置洞察","配置热度、选装分析、用户声音和竞品对标"]
+};
+
+const leads=[
+  {name:"李先生",phone:"138****1001",score:96,stage:"已试驾",channel:"官网",behavior:"连续浏览凡尔赛配置页",last:"2天",trend:"↑",dealer:"上海浦东店"},
+  {name:"王女士",phone:"138****1002",score:91,stage:"已报价",channel:"企微",behavior:"查看金融方案3次",last:"1天",trend:"↑",dealer:"上海浦东店"},
+  {name:"陈先生",phone:"138****1003",score:86,stage:"已试驾",channel:"抖音",behavior:"完成试驾，未报价",last:"3天",trend:"→",dealer:"南京江宁店"},
+  {name:"赵女士",phone:"138****1004",score:82,stage:"已联系",channel:"小红书",behavior:"浏览竞品对比内容",last:"5天",trend:"↓",dealer:"杭州滨江店"},
+  {name:"周先生",phone:"138****1005",score:78,stage:"新线索",channel:"百度",behavior:"搜索车型价格",last:"1天",trend:"↑",dealer:"武汉汉阳店"},
+  {name:"吴女士",phone:"138****1006",score:68,stage:"已联系",channel:"APP",behavior:"浏览车型文章",last:"8天",trend:"→",dealer:"上海浦东店"},
+  {name:"刘先生",phone:"138****1007",score:54,stage:"新线索",channel:"广告",behavior:"完成留资",last:"12天",trend:"↓",dealer:"南京江宁店"}
+];
+
+function showToast(msg){
+  const el=document.getElementById("toast");
+  el.innerText=msg;
+  el.style.display="block";
+  setTimeout(()=>el.style.display="none",2200);
+}
+
+function openModal(title,html){
+  document.getElementById("modalTitle").innerText=title;
+  document.getElementById("modalContent").innerHTML=html;
+  document.getElementById("modalMask").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("modalMask").style.display="none";
+}
+
+function toggleGroup(el){
+  el.classList.toggle("open");
+  el.nextElementSibling.classList.toggle("show");
+}
+
+function updateHeader(page){
+  if(pageMeta[page]){
+    document.getElementById("pageTitle").innerText=pageMeta[page][0];
+    document.getElementById("pageDesc").innerText=pageMeta[page][1];
+  }
+}
+
+function openPage(id){
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  const page=document.getElementById(id);
+  if(page)page.classList.add("active");
+
+  document.querySelectorAll(".subitem").forEach(x=>{
+    x.classList.toggle("active",x.dataset.page===id);
+  });
+
+  updateHeader(id);
+
+  if(id==="sales")renderLeads();
+}
+
+document.querySelectorAll(".subitem[data-page]").forEach(item=>{
+  item.addEventListener("click",()=>openPage(item.dataset.page));
+});
+
+document.querySelectorAll(".top-item").forEach(item=>{
+  item.addEventListener("click",()=>{
+    const type=item.dataset.top;
+
+    document.querySelectorAll(".top-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+
+    if(type==="marketing"){
+      openPage("sales");
+      return;
+    }
+
+    const names={
+      data:"数据管理",
+      metric:"指标体系",
+      scene:"数据场景",
+      analysis:"自助分析"
+    };
+
+    document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+    document.getElementById("placeholder").classList.add("active");
+    document.getElementById("placeholderTitle").innerText=names[type]+"建设中";
+    document.getElementById("pageTitle").innerText=names[type];
+    document.getElementById("pageDesc").innerText="该一级模块将在后续版本完善";
+  });
+});
+
+function switchTab(btn,id){
+  const page=btn.closest(".page");
+  page.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  page.querySelectorAll(".inner").forEach(x=>x.style.display="none");
+  btn.classList.add("active");
+  document.getElementById(id).style.display="block";
+
+  if(id==="sales-leads")renderLeads();
+}
+
+function renderLeads(){
+  const keyword=(document.getElementById("leadSearch")?.value||"").trim();
+  const stage=document.getElementById("leadStage")?.value||"";
+
+  const result=leads.filter(x=>{
+    return (!keyword||x.name.includes(keyword)||x.phone.includes(keyword)) &&
+           (!stage||x.stage===stage);
+  });
+
+  const table=document.getElementById("leadTable");
+  if(!table)return;
+
+  table.innerHTML=result.length?`
+    <table>
+      <tr>
+        <th>客户</th>
+        <th>手机号</th>
+        <th>意向分</th>
+        <th>趋势</th>
+        <th>阶段</th>
+        <th>来源</th>
+        <th>最新行为</th>
+        <th>距上次跟进</th>
+        <th>经销商</th>
+        <th>操作</th>
+      </tr>
+      ${result.map(x=>`
+        <tr>
+          <td><b>${x.name}</b></td>
+          <td>${x.phone}</td>
+          <td><b style="color:${x.score>=80?'var(--red)':x.score>=60?'var(--orange)':'var(--muted)'}">${x.score}</b></td>
+          <td>${x.trend}</td>
+          <td><span class="badge">${x.stage}</span></td>
+          <td>${x.channel}</td>
+          <td>${x.behavior}</td>
+          <td>${x.last}</td>
+          <td>${x.dealer}</td>
+          <td><button class="light" onclick="showLead('${x.name}')">查看详情</button></td>
+        </tr>
+      `).join("")}
+    </table>
+  `:`<div class="empty">暂无符合条件的线索</div>`;
+}
+
+function showLead(name){
+  const lead=leads.find(x=>x.name===name)||leads[0];
+
+  openModal("线索详情 · "+lead.name,`
+    <div class="detail-grid">
+      <div class="detail"><label>客户姓名</label><b>${lead.name}</b></div>
+      <div class="detail"><label>手机号</label><b>${lead.phone}</b></div>
+      <div class="detail"><label>意向强度分</label><b style="color:var(--red)">${lead.score}</b></div>
+      <div class="detail"><label>当前阶段</label><b>${lead.stage}</b></div>
+      <div class="detail"><label>来源渠道</label><b>${lead.channel}</b></div>
+      <div class="detail"><label>归属门店</label><b>${lead.dealer}</b></div>
+    </div>
+
+    <h3>用户行为轨迹</h3>
+    <table>
+      <tr><th>时间</th><th>行为</th><th>触点</th><th>系统建议</th></tr>
+      <tr><td>今天09:20</td><td>${lead.behavior}</td><td>APP</td><td>建议立即跟进</td></tr>
+      <tr><td>昨天16:42</td><td>查看车型详情</td><td>官网</td><td>推荐配置说明</td></tr>
+      <tr><td>3天前</td><td>浏览金融方案</td><td>小程序</td><td>推荐金融政策</td></tr>
+    </table>
+
+    <h3>推荐销售话术</h3>
+    <div class="detail">
+      您最近关注了${lead.behavior}，目前门店有对应车型和试驾权益。
+      我可以根据您的预算、用车场景和配置偏好，帮您整理一套更合适的购车方案。
+    </div>
+
+    <h3>下一步跟进计划</h3>
+    <div class="toolbar">
+      <select><option>电话</option><option>企微</option><option>短信</option><option>到店</option></select>
+      <input type="datetime-local">
+      <button onclick="closeModal();showToast('跟进任务已创建')">创建跟进任务</button>
+    </div>
+
+    <button onclick="showToast('已生成销售跟进建议')">生成跟进建议</button>
+    <button class="light" onclick="showToast('已标记为已跟进')">标记已跟进</button>
+  `);
+}
+
+function showLife(name){
+  document.getElementById("selectedLife").innerText=name;
+  openPage("lifecycle");
+
+  setTimeout(()=>{
+    const tab=document.querySelector("#lifecycle .tab:nth-child(2)");
+    switchTab(tab,"life-stage");
+    showToast("已切换至"+name+"阶段详情");
+  },50);
+}
+
+function addCondition(name){
+  const box=document.getElementById("audienceConditions");
+
+  if(box.innerText.includes("点击左侧")){
+    box.innerHTML="";
+  }
+
+  const tag=document.createElement("div");
+  tag.className="tag";
+  tag.innerText=name+" ×";
+  tag.onclick=()=>tag.remove();
+  box.appendChild(tag);
+}
+
+function estimateAudience(){
+  const count=Math.floor(Math.random()*180000)+86000;
+  document.getElementById("audienceCount").innerText=count.toLocaleString();
+  showToast("已完成实时人群预估");
+}
+
+function saveAudience(){
+  showToast("人群包已保存，可进入触达编排");
+}
+
+function useTemplate(name){
+  showToast("已加载「"+name+"」人群模板");
+  const tab=document.querySelector("#audience .tab:first-child");
+  switchTab(tab,"audience-builder");
+}
+
+function useInsight(name){
+  showToast("已加载「"+name+"」分析模板");
+  const tab=document.querySelector("#insight .tab:nth-child(2)");
+  switchTab(tab,"insight-cause");
+}
+
+function updateClock(){
+  document.getElementById("clock").innerText=
+    new Date().toLocaleString("zh-CN");
+}
+
+function init(){
+  renderLeads();
+  updateClock();
+  setInterval(updateClock,1000);
+}
+
+init();
+</script>
+
+<script>
+/* ── 神龙数据中台集成壳 · 双向同步脚本（自动追加，不影响模块自身功能） ── */
+(function(){
+  if(window.__SL_EMBED__) return; window.__SL_EMBED__ = 1;
+  var MOD = "marketing";
+  var st = document.createElement("style");
+  st.textContent = ".sidebar{display:none!important}header.top{display:none!important}";
+  document.head.appendChild(st);
+  function post(m){ try{ m.__sl = 1; m.mod = MOD; parent.postMessage(m, "*"); }catch(e){} }
+  function currentPage(){
+    var el = document.querySelector(".subitem.active[data-page],.nav-item.active[data-page]");
+    return el ? el.getAttribute("data-page") : null;
+  }
+  var last = currentPage();
+  setInterval(function(){
+    var c = currentPage();
+    if(c && c !== last){ last = c; post({page:c}); }
+  }, 250);
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest(".topnav-item[data-top],.top-item[data-top]") : null;
+    if(t){
+      var top = t.getAttribute("data-top");
+      if(top && top !== MOD){ e.preventDefault(); e.stopPropagation(); post({module:top}); }
+    }
+  }, true);
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if(!d || d.__slCmd !== 1) return;
+    if(d.goto){
+      var el = document.querySelector('.subitem[data-page="'+d.goto+'"],.nav-item[data-page="'+d.goto+'"]');
+      if(el){ el.click(); return; }
+    }
+    if(d.fn){ try{ (new Function(d.fn))(); }catch(e){} }
+  });
+})();
+</script>
+</body>
+</html>

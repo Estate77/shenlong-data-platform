@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>神龙汽车数据中台 - 数据管理Demo</title>
+
+<style>
+:root {
+  --primary: #246bfe;
+  --primary-light: #edf4ff;
+  --navy: #111c36;
+  --bg: #f4f6fa;
+  --card: #ffffff;
+  --text: #18233a;
+  --muted: #76839a;
+  --border: #e7ebf2;
+  --success: #20a464;
+  --warning: #e99b2f;
+  --danger: #e45555;
+  --purple: #8066e8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 238px;
+  flex-shrink: 0;
+  min-height: 100vh;
+  padding: 18px 13px;
+  color: #fff;
+  background: var(--navy);
+}
+
+.logo {
+  padding: 10px 12px 19px;
+  border-bottom: 1px solid #34415d;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.logo small {
+  display: block;
+  margin-top: 8px;
+  color: #aeb9d0;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.nav-title {
+  margin: 20px 12px 8px;
+  color: #7f8ba6;
+  font-size: 11px;
+}
+
+.nav-item {
+  padding: 12px 13px;
+  margin: 4px 0;
+  border-radius: 7px;
+  color: #bdc7dc;
+  cursor: pointer;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: #fff;
+  background: var(--primary);
+}
+
+.nav-item span {
+  margin-right: 8px;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 25px;
+  overflow: auto;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.topbar p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.subnav {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 16px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.subnav button {
+  border: 0;
+  color: #66748d;
+  background: transparent;
+}
+
+.subnav button.active {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+button {
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: var(--primary);
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(.94);
+}
+
+button.light {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+button.gray {
+  color: #52617a;
+  background: #f0f2f6;
+}
+
+button.danger {
+  background: var(--danger);
+}
+
+input,
+select {
+  min-width: 150px;
+  padding: 9px 11px;
+  border: 1px solid #dce2eb;
+  border-radius: 6px;
+  outline: none;
+  background: #fff;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 15px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 17px;
+}
+
+.card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card);
+  box-shadow: 0 2px 10px rgba(30, 50, 90, .04);
+}
+
+.card-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.card-value {
+  margin: 10px 0 7px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.card-desc {
+  color: var(--success);
+  font-size: 12px;
+}
+
+.card-desc.warning {
+  color: var(--warning);
+}
+
+.card-desc.danger {
+  color: var(--danger);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.panel {
+  margin-bottom: 16px;
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(30, 50, 90, .04);
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.panel-title small {
+  color: var(--muted);
+  font-weight: normal;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  padding: 11px;
+  color: #65728a;
+  text-align: left;
+  white-space: nowrap;
+  background: #f7f9fc;
+}
+
+td {
+  padding: 11px;
+  border-bottom: 1px solid #edf0f4;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+tr:hover {
+  background: #fafcff;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 14px;
+  color: var(--primary);
+  background: var(--primary-light);
+  font-size: 12px;
+}
+
+.badge.success {
+  color: var(--success);
+  background: #eaf8f1;
+}
+
+.badge.warning {
+  color: #ad711e;
+  background: #fff5e3;
+}
+
+.badge.danger {
+  color: var(--danger);
+  background: #fff0f0;
+}
+
+.badge.purple {
+  color: var(--purple);
+  background: #f1edff;
+}
+
+.progress {
+  width: 110px;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #edf0f5;
+}
+
+.progress i {
+  display: block;
+  height: 100%;
+  border-radius: 10px;
+  background: var(--primary);
+}
+
+.progress.green i {
+  background: var(--success);
+}
+
+.progress.orange i {
+  background: var(--warning);
+}
+
+.alert-list {
+  max-height: 290px;
+  overflow: auto;
+}
+
+.alert-item {
+  padding: 11px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.alert-item:last-child {
+  border-bottom: 0;
+}
+
+.alert-item b {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.alert-item small {
+  color: var(--muted);
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.dot.warning {
+  background: var(--warning);
+}
+
+.dot.danger {
+  background: var(--danger);
+}
+
+.dot.gray {
+  background: #9ca6b8;
+}
+
+.chart {
+  display: flex;
+  align-items: end;
+  gap: 13px;
+  height: 165px;
+  padding: 12px 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.bar-col {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 6px;
+}
+
+.bar-col i {
+  display: block;
+  width: 26px;
+  min-height: 5px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(#5ca3ff, #246bfe);
+}
+
+.bar-col span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.score {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin: 13px auto 10px;
+  border-radius: 50%;
+  background: conic-gradient(var(--primary) 0 86%, #e9edf4 86% 100%);
+}
+
+.score::after {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff;
+  content: "86分";
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.center {
+  text-align: center;
+}
+
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.asset-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.asset-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 3px 12px rgba(36, 107, 254, .12);
+}
+
+.asset-card h3 {
+  margin: 0 0 9px;
+  font-size: 15px;
+}
+
+.asset-card p {
+  margin: 7px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.asset-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 13px;
+}
+
+.tree {
+  line-height: 2.2;
+}
+
+.tree-node {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.tree-node:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.lineage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 140px;
+  overflow-x: auto;
+}
+
+.lineage-node {
+  min-width: 105px;
+  padding: 12px 8px;
+  border: 1px solid #bcd0ff;
+  border-radius: 8px;
+  color: var(--primary);
+  text-align: center;
+  background: var(--primary-light);
+}
+
+.lineage-arrow {
+  color: #a1acc0;
+  font-size: 20px;
+}
+
+.modal-mask {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 20, 40, .5);
+}
+
+.modal {
+  width: 820px;
+  max-width: 94%;
+  max-height: 86vh;
+  overflow: auto;
+  padding: 22px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.close {
+  color: #8b96a8;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 17px;
+}
+
+.detail-box {
+  padding: 13px;
+  border-radius: 7px;
+  background: #f7f9fc;
+}
+
+.detail-box label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.detail-box b {
+  font-size: 15px;
+}
+
+.empty {
+  padding: 35px;
+  color: #8b96a8;
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  z-index: 100;
+  right: 26px;
+  bottom: 24px;
+  display: none;
+  padding: 12px 18px;
+  border-radius: 7px;
+  color: #fff;
+  background: #1c2c4d;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
+}
+
+@media (max-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .asset-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .sidebar {
+    width: 74px;
+  }
+
+  .logo {
+    font-size: 0;
+  }
+
+  .logo small {
+    display: none;
+  }
+
+  .nav-item {
+    font-size: 0;
+    text-align: center;
+  }
+
+  .nav-item span {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .asset-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo">
+      神龙汽车数据中台
+      <small>数据管理模块 Demo</small>
+    </div>
+
+    <div class="nav-title">数据管理</div>
+
+    <div class="nav-item active" data-page="ingestion">
+      <span>🔌</span>数据接入中心
+    </div>
+
+    <div class="nav-item" data-page="governance">
+      <span>🛡️</span>数据治理中心
+    </div>
+
+    <div class="nav-item" data-page="master">
+      <span>🧬</span>主数据与统一ID
+    </div>
+
+    <div class="nav-item" data-page="catalog">
+      <span>🗂️</span>数据资产目录
+    </div>
+
+    <div class="nav-title">系统说明</div>
+
+    <div class="nav-item" onclick="showToast('当前为前端可交互演示版本')">
+      <span>ℹ️</span>Demo说明
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">数据接入中心</h1>
+        <p id="pageSubtitle">统一管理神龙汽车多源数据接入任务、状态和质量</p>
+      </div>
+
+      <div class="topbar-right">
+        <span>● 数据服务正常</span>
+        <span id="clock"></span>
+      </div>
+    </div>
+
+    <!-- 数据接入中心 -->
+    <section id="page-ingestion" class="page active">
+      <div class="subnav">
+        <button class="active" onclick="switchSub(this, 'ingestion-overview')">接入总览</button>
+        <button onclick="switchSub(this, 'ingestion-tasks')">任务管理</button>
+        <button onclick="switchSub(this, 'ingestion-sources')">数据源管理</button>
+        <button onclick="switchSub(this, 'ingestion-quality')">质量监控</button>
+      </div>
+
+      <div id="ingestion-overview" class="subpage">
+        <div class="cards">
+          <div class="card">
+            <div class="card-label">接入系统总数</div>
+            <div class="card-value">42</div>
+            <div class="card-desc">较上月 +6</div>
+          </div>
+          <div class="card">
+            <div class="card-label">接入健康度</div>
+            <div class="card-value">96.8%</div>
+            <div class="card-desc">整体运行良好</div>
+          </div>
+          <div class="card">
+            <div class="card-label">今日接入数据量</div>
+            <div class="card-value">2.86TB</div>
+            <div class="card-desc">较昨日 +12.4%</div>
+          </div>
+          <div class="card">
+            <div class="card-label">运行中任务</div>
+            <div class="card-value">128</div>
+            <div class="card-desc">实时任务 36 个</div>
+          </div>
+          <div class="card">
+            <div class="card-label">异常告警数</div>
+            <div class="card-value">7</div>
+            <div class="card-desc danger">需关注 3 个高优先级</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">
+              接入数据量趋势
+              <small>近7日 / TB</small>
+            </div>
+
+            <div class="chart">
+              <div class="bar-col"><i style="height:48%"></i><span>周一</span></div>
+              <div class="bar-col"><i style="height:65%"></i><span>周二</span></div>
+              <div class="bar-col"><i style="height:53%"></i><span>周三</span></div>
+              <div class="bar-col"><i style="height:75%"></i><span>周四</span></div>
+              <div class="bar-col"><i style="height:62%"></i><span>周五</span></div>
+              <div class="bar-col"><i style="height:82%"></i><span>周六</span></div>
+              <div class="bar-col"><i style="height:91%"></i><span>今日</span></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              接入方式分布
+              <small>任务数</small>
+            </div>
+
+            <table>
+              <tr><td>实时接入</td><td>36</td><td><div class="progress"><i style="width:82%"></i></div></td></tr>
+              <tr><td>API拉取</td><td>28</td><td><div class="progress"><i style="width:65%"></i></div></td></tr>
+              <tr><td>批量接入</td><td>24</td><td><div class="progress"><i style="width:55%"></i></div></td></tr>
+              <tr><td>文件接入</td><td>21</td><td><div class="progress"><i style="width:48%"></i></div></td></tr>
+              <tr><td>消息队列</td><td>19</td><td><div class="progress"><i style="width:43%"></i></div></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">首批接入优先级</div>
+            <table>
+              <tr>
+                <th>批次</th>
+                <th>时间</th>
+                <th>重点系统</th>
+                <th>状态</th>
+              </tr>
+              <tr>
+                <td><span class="badge success">第一批</span></td>
+                <td>1-3月</td>
+                <td>CRM、DMS、APP埋点、四大投放平台</td>
+                <td>进行中</td>
+              </tr>
+              <tr>
+                <td><span class="badge warning">第二批</span></td>
+                <td>4-8月</td>
+                <td>TSP、售后SAP、客服、SCRM企微</td>
+                <td>待启动</td>
+              </tr>
+              <tr>
+                <td><span class="badge purple">第三批</span></td>
+                <td>9-12月</td>
+                <td>会员商城、SRM、外部数据</td>
+                <td>规划中</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">实时异常消息流</div>
+            <div class="alert-list" id="alertList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ingestion-tasks" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">
+            接入任务管理
+            <button onclick="showTaskModal('new')">+ 新建接入任务</button>
+          </div>
+
+          <div class="toolbar">
+            <input id="taskSearch" placeholder="搜索任务名称或源系统">
+            <select id="taskMethod">
+              <option value="">全部接入方式</option>
+              <option>实时接入</option>
+              <option>API拉取</option>
+              <option>批量接入</option>
+              <option>文件接入</option>
+              <option>消息队列</option>
+            </select>
+            <select id="taskStatus">
+              <option value="">全部状态</option>
+              <option>运行中</option>
+              <option>成功</option>
+              <option>失败</option>
+              <option>已暂停</option>
+            </select>
+            <button onclick="renderTasks()">查询</button>
+          </div>
+
+          <div class="table-wrap" id="taskTable"></div>
+        </div>
+      </div>
+
+      <div id="ingestion-sources" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">
+            数据源管理
+            <button onclick="showSourceModal()">+ 注册数据源</button>
+          </div>
+
+          <div class="toolbar">
+            <input id="sourceSearch" placeholder="搜索数据源名称">
+            <select id="sourceType">
+              <option value="">全部系统类型</option>
+              <option>营销平台</option>
+              <option>销售系统</option>
+              <option>用户平台</option>
+              <option>车联网平台</option>
+              <option>售后系统</option>
+            </select>
+            <button onclick="renderSources()">查询</button>
+          </div>
+
+          <div class="table-wrap" id="sourceTable"></div>
+        </div>
+      </div>
+
+      <div id="ingestion-quality" class="subpage" style="display:none">
+        <div class="cards">
+          <div class="card">
+            <div class="card-label">完整性</div>
+            <div class="card-value">98.6%</div>
+            <div class="card-desc">关键字段非空率</div>
+          </div>
+          <div class="card">
+            <div class="card-label">准确性</div>
+            <div class="card-value">97.2%</div>
+            <div class="card-desc">格式和值域校验</div>
+          </div>
+          <div class="card">
+            <div class="card-label">及时性</div>
+            <div class="card-value">96.4%</div>
+            <div class="card-desc warning">3个任务延迟</div>
+          </div>
+          <div class="card">
+            <div class="card-label">一致性</div>
+            <div class="card-value">99.1%</div>
+            <div class="card-desc">跨系统对账</div>
+          </div>
+          <div class="card">
+            <div class="card-label">质量问题</div>
+            <div class="card-value">19</div>
+            <div class="card-desc danger">7个待处理</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">接入质量监控</div>
+          <table>
+            <tr>
+              <th>数据源</th>
+              <th>数据域</th>
+              <th>完整性</th>
+              <th>准确性</th>
+              <th>及时性</th>
+              <th>综合评分</th>
+              <th>状态</th>
+            </tr>
+            <tr>
+              <td>CRM客户系统</td>
+              <td>用户域</td>
+              <td>99.2%</td>
+              <td>98.8%</td>
+              <td>99.5%</td>
+              <td>99.1</td>
+              <td><span class="badge success">健康</span></td>
+            </tr>
+            <tr>
+              <td>广告投放平台</td>
+              <td>营销域</td>
+              <td>97.4%</td>
+              <td>96.8%</td>
+              <td>94.2%</td>
+              <td>96.1</td>
+              <td><span class="badge warning">关注</span></td>
+            </tr>
+            <tr>
+              <td>DMS经销商系统</td>
+              <td>销售域</td>
+              <td>95.8%</td>
+              <td>97.6%</td>
+              <td>91.5%</td>
+              <td>94.9</td>
+              <td><span class="badge danger">异常</span></td>
+            </tr>
+            <tr>
+              <td>APP埋点平台</td>
+              <td>用户域</td>
+              <td>99.8%</td>
+              <td>98.1%</td>
+              <td>98.6%</td>
+              <td>98.8</td>
+              <td><span class="badge success">健康</span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 数据治理中心 -->
+    <section id="page-governance" class="page">
+      <div class="subnav">
+        <button class="active" onclick="switchSub(this, 'governance-overview')">治理总览</button>
+        <button onclick="switchSub(this, 'governance-standard')">数据标准</button>
+        <button onclick="switchSub(this, 'governance-quality')">质量管理</button>
+        <button onclick="switchSub(this, 'governance-lineage')">元数据与血缘</button>
+        <button onclick="switchSub(this, 'governance-security')">安全合规</button>
+        <button onclick="switchSub(this, 'governance-life')">生命周期</button>
+      </div>
+
+      <div id="governance-overview" class="subpage">
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">治理健康度</div>
+            <div class="score"></div>
+            <div class="center">综合治理评分</div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">治理维度评分</div>
+            <table>
+              <tr><td>数据标准</td><td>91分</td><td><div class="progress green"><i style="width:91%"></i></div></td></tr>
+              <tr><td>数据质量</td><td>86分</td><td><div class="progress green"><i style="width:86%"></i></div></td></tr>
+              <tr><td>元数据</td><td>82分</td><td><div class="progress orange"><i style="width:82%"></i></div></td></tr>
+              <tr><td>安全合规</td><td>94分</td><td><div class="progress green"><i style="width:94%"></i></div></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-label">待处理工单</div>
+            <div class="card-value">47</div>
+            <div class="card-desc danger">高优先级 8 个</div>
+          </div>
+          <div class="card">
+            <div class="card-label">工单闭环率</div>
+            <div class="card-value">91.6%</div>
+            <div class="card-desc">本月累计</div>
+          </div>
+          <div class="card">
+            <div class="card-label">数据表数量</div>
+            <div class="card-value">1,286</div>
+            <div class="card-desc">已登记资产</div>
+          </div>
+          <div class="card">
+            <div class="card-label">数据字段数量</div>
+            <div class="card-value">28,640</div>
+            <div class="card-desc">含敏感字段 436</div>
+          </div>
+          <div class="card">
+            <div class="card-label">安全风险告警</div>
+            <div class="card-value">12</div>
+            <div class="card-desc warning">待复核 5 个</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">源系统质量排名</div>
+          <table>
+            <tr><th>排名</th><th>源系统</th><th>数据域</th><th>质量评分</th><th>Owner</th><th>月度变化</th></tr>
+            <tr><td>1</td><td>APP埋点平台</td><td>用户域</td><td>98.8</td><td>数字体验部</td><td class="good">↑ 2.1</td></tr>
+            <tr><td>2</td><td>CRM客户系统</td><td>用户域</td><td>98.1</td><td>客户运营部</td><td class="good">↑ 1.4</td></tr>
+            <tr><td>3</td><td>营销投放平台</td><td>营销域</td><td>96.4</td><td>品牌市场部</td><td>↓ 0.6</td></tr>
+            <tr><td>4</td><td>DMS经销商系统</td><td>销售域</td><td>94.9</td><td>销售管理部</td><td class="danger">↓ 2.3</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="governance-standard" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">数据标准目录</div>
+          <div class="toolbar">
+            <input placeholder="搜索标准名称、字段或编码">
+            <select>
+              <option>全部标准类型</option>
+              <option>字段标准</option>
+              <option>表标准</option>
+              <option>枚举值标准</option>
+              <option>编码标准</option>
+            </select>
+            <button onclick="showToast('标准检索完成')">搜索</button>
+            <button onclick="showToast('已创建标准申请')">+ 新建标准</button>
+          </div>
+
+          <table>
+            <tr><th>标准名称</th><th>标准类型</th><th>适用范围</th><th>版本</th><th>负责人</th><th>状态</th><th>操作</th></tr>
+            <tr><td>VIN车辆识别码标准</td><td>字段标准</td><td>车辆域/销售域/服务域</td><td>V2.1</td><td>主数据组</td><td><span class="badge success">生效</span></td><td><button class="light" onclick="showStandard('VIN车辆识别码标准')">查看</button></td></tr>
+            <tr><td>渠道统一编码标准</td><td>编码标准</td><td>营销域/销售域</td><td>V1.4</td><td>营销数据组</td><td><span class="badge success">生效</span></td><td><button class="light" onclick="showStandard('渠道统一编码标准')">查看</button></td></tr>
+            <tr><td>线索状态枚举标准</td><td>枚举值标准</td><td>销售域</td><td>V1.2</td><td>销售数据组</td><td><span class="badge warning">待审核</span></td><td><button class="light" onclick="showStandard('线索状态枚举标准')">查看</button></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="governance-quality" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">
+            数据质量工单
+            <button onclick="showToast('已生成质量巡检任务')">+ 发起巡检</button>
+          </div>
+          <table>
+            <tr><th>工单编号</th><th>问题类型</th><th>数据表</th><th>问题描述</th><th>责任人</th><th>优先级</th><th>状态</th><th>操作</th></tr>
+            <tr><td>DQ-20250101</td><td>完整性</td><td>dwd_sales_lead</td><td>手机号非空率低于阈值</td><td>销售数据组</td><td><span class="badge danger">高</span></td><td><span class="badge warning">处理中</span></td><td><button class="light" onclick="showToast('工单详情已打开')">处理</button></td></tr>
+            <tr><td>DQ-20250102</td><td>及时性</td><td>ods_dms_order</td><td>DMS订单同步延迟超过1小时</td><td>经销商系统组</td><td><span class="badge warning">中</span></td><td><span class="badge">待分配</span></td><td><button class="light" onclick="showToast('已分配给数据责任人')">分配</button></td></tr>
+            <tr><td>DQ-20250103</td><td>唯一性</td><td>dim_user</td><td>One-ID存在疑似重复</td><td>主数据组</td><td><span class="badge danger">高</span></td><td><span class="badge success">已修复</span></td><td><button class="light" onclick="showToast('已查看复核记录')">复核</button></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="governance-lineage" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">元数据检索与数据血缘</div>
+          <div class="toolbar">
+            <input id="lineageSearch" placeholder="输入表名或字段名">
+            <button onclick="renderLineage()">查询血缘</button>
+          </div>
+          <div id="lineageResult">
+            <div class="lineage">
+              <div class="lineage-node">CRM客户系统</div>
+              <div class="lineage-arrow">→</div>
+              <div class="lineage-node">ODS客户表</div>
+              <div class="lineage-arrow">→</div>
+              <div class="lineage-node">DWD用户明细</div>
+              <div class="lineage-arrow">→</div>
+              <div class="lineage-node">DWS用户画像</div>
+              <div class="lineage-arrow">→</div>
+              <div class="lineage-node">用户360报表</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="governance-security" class="subpage" style="display:none">
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">数据分级分类</div>
+            <table>
+              <tr><td>公开数据</td><td>426张表</td><td><span class="badge success">低风险</span></td></tr>
+              <tr><td>内部数据</td><td>672张表</td><td><span class="badge">受控访问</span></td></tr>
+              <tr><td>敏感数据</td><td>163张表</td><td><span class="badge warning">需审批</span></td></tr>
+              <tr><td>高敏数据</td><td>25张表</td><td><span class="badge danger">严格管控</span></td></tr>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">安全审计日志</div>
+            <table>
+              <tr><th>操作人</th><th>操作内容</th><th>时间</th></tr>
+              <tr><td>张明</td><td>查询用户手机号字段</td><td>10:22</td></tr>
+              <tr><td>李娜</td><td>导出销售线索数据集</td><td>09:48</td></tr>
+              <tr><td>王强</td><td>申请VIN字段权限</td><td>昨天 17:36</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="governance-life" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">数据生命周期策略</div>
+          <table>
+            <tr><th>数据分类</th><th>热数据</th><th>温数据</th><th>冷数据</th><th>归档周期</th><th>销毁策略</th></tr>
+            <tr><td>用户行为数据</td><td>0-30天</td><td>31-180天</td><td>181-730天</td><td>2年</td><td>脱敏后销毁</td></tr>
+            <tr><td>营销触达数据</td><td>0-90天</td><td>91-365天</td><td>1-3年</td><td>3年</td><td>合规销毁</td></tr>
+            <tr><td>售后维修数据</td><td>0-180天</td><td>181-730天</td><td>2-10年</td><td>10年</td><td>长期保留</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主数据与统一ID -->
+    <section id="page-master" class="page">
+      <div class="subnav">
+        <button class="active" onclick="switchSub(this, 'master-overview')">主数据总览</button>
+        <button onclick="switchSub(this, 'master-entities')">实体管理</button>
+        <button onclick="switchSub(this, 'master-oneid')">One-ID管理</button>
+        <button onclick="switchSub(this, 'master-user')">用户360</button>
+        <button onclick="switchSub(this, 'master-vehicle')">车辆360</button>
+        <button onclick="switchSub(this, 'master-relation')">人车家庭关系</button>
+      </div>
+
+      <div id="master-overview" class="subpage">
+        <div class="cards">
+          <div class="card"><div class="card-label">主数据实体</div><div class="card-value">11</div><div class="card-desc">已纳入统一管理</div></div>
+          <div class="card"><div class="card-label">One-ID覆盖用户</div><div class="card-value">86.7%</div><div class="card-desc">跨端身份已打通</div></div>
+          <div class="card"><div class="card-label">用户主档</div><div class="card-value">1,286万</div><div class="card-desc">一人一档</div></div>
+          <div class="card"><div class="card-label">车辆主档</div><div class="card-value">276万</div><div class="card-desc">一车一档</div></div>
+          <div class="card"><div class="card-label">关系图谱</div><div class="card-value">68万</div><div class="card-desc">人车家庭关系</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">主数据实体目录</div>
+          <table>
+            <tr><th>实体名称</th><th>数据量</th><th>覆盖率</th><th>质量评分</th><th>负责人</th><th>状态</th></tr>
+            <tr><td>用户主数据</td><td>1,286万</td><td>96.4%</td><td>94.8</td><td>客户数据组</td><td><span class="badge success">正常</span></td></tr>
+            <tr><td>车辆主数据VIN</td><td>276万</td><td>99.2%</td><td>98.1</td><td>车辆数据组</td><td><span class="badge success">正常</span></td></tr>
+            <tr><td>车型主数据</td><td>386</td><td>100%</td><td>99.7</td><td>产品数据组</td><td><span class="badge success">正常</span></td></tr>
+            <tr><td>经销商主数据</td><td>1,486</td><td>98.6%</td><td>96.2</td><td>销售数据组</td><td><span class="badge warning">关注</span></td></tr>
+            <tr><td>渠道主数据</td><td>126</td><td>97.8%</td><td>95.4</td><td>营销数据组</td><td><span class="badge success">正常</span></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="master-entities" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">主数据实体管理</div>
+          <div class="toolbar">
+            <input placeholder="搜索实体名称">
+            <select><option>全部实体类型</option><option>用户</option><option>车辆</option><option>经销商</option><option>渠道</option></select>
+            <button onclick="showToast('实体搜索完成')">查询</button>
+            <button onclick="showToast('实体创建流程已启动')">+ 创建实体</button>
+          </div>
+          <table>
+            <tr><th>实体编码</th><th>实体名称</th><th>核心主键</th><th>匹配规则</th><th>版本</th><th>状态</th><th>操作</th></tr>
+            <tr><td>MST_USER</td><td>用户主数据</td><td>ONE_ID</td><td>手机号+UnionID</td><td>V3.2</td><td><span class="badge success">生效</span></td><td><button class="light" onclick="showToast('已打开用户主数据配置')">配置</button></td></tr>
+            <tr><td>MST_VEHICLE</td><td>车辆主数据</td><td>VIN</td><td>VIN精确匹配</td><td>V2.8</td><td><span class="badge success">生效</span></td><td><button class="light" onclick="showToast('已打开车辆主数据配置')">配置</button></td></tr>
+            <tr><td>MST_DEALER</td><td>经销商主数据</td><td>DEALER_ID</td><td>编码+名称匹配</td><td>V1.9</td><td><span class="badge warning">待发布</span></td><td><button class="light" onclick="showToast('已打开经销商配置')">配置</button></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="master-oneid" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">One-ID统一身份管理</div>
+          <div class="toolbar">
+            <input id="oneIdSearch" placeholder="输入手机号、VIN、UnionID或设备ID">
+            <button onclick="searchOneId()">查询身份</button>
+          </div>
+
+          <div id="oneIdResult" class="empty">
+            请输入身份标识进行查询
+          </div>
+
+          <div class="grid-2">
+            <div class="panel" style="margin:0">
+              <div class="panel-title">身份锚点强度</div>
+              <table>
+                <tr><td>手机号</td><td><span class="badge success">强</span></td><td>1,086万</td></tr>
+                <tr><td>UnionID/OpenID</td><td><span class="badge success">强</span></td><td>926万</td></tr>
+                <tr><td>VIN</td><td><span class="badge success">强</span></td><td>276万</td></tr>
+                <tr><td>设备ID</td><td><span class="badge warning">中</span></td><td>1,438万</td></tr>
+                <tr><td>IP+UA+时空</td><td><span class="badge purple">弱</span></td><td>2,846万</td></tr>
+              </table>
+            </div>
+
+            <div class="panel" style="margin:0">
+              <div class="panel-title">触点识别覆盖</div>
+              <table>
+                <tr><td>APP</td><td>92.4%</td><td><div class="progress green"><i style="width:92%"></i></div></td></tr>
+                <tr><td>小程序</td><td>88.6%</td><td><div class="progress green"><i style="width:88%"></i></div></td></tr>
+                <tr><td>官网</td><td>75.2%</td><td><div class="progress orange"><i style="width:75%"></i></div></td></tr>
+                <tr><td>门店</td><td>96.8%</td><td><div class="progress green"><i style="width:96%"></i></div></td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="master-user" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">用户360画像</div>
+          <div class="toolbar">
+            <input id="user360Search" placeholder="输入手机号、姓名或One-ID">
+            <button onclick="searchUser360()">查询</button>
+          </div>
+          <div id="user360Result"></div>
+        </div>
+      </div>
+
+      <div id="master-vehicle" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">车辆360画像</div>
+          <div class="toolbar">
+            <input id="vinSearch" placeholder="输入VIN">
+            <button onclick="searchVehicle()">查询</button>
+          </div>
+          <div id="vehicleResult"></div>
+        </div>
+      </div>
+
+      <div id="master-relation" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">人-车-家庭关系图谱</div>
+          <div class="lineage">
+            <div class="lineage-node">张明<br><small>车主</small></div>
+            <div class="lineage-arrow">—</div>
+            <div class="lineage-node">LSYDE4A2<br><small>凡尔赛C5 X</small></div>
+            <div class="lineage-arrow">—</div>
+            <div class="lineage-node">李娜<br><small>家庭成员</small></div>
+            <div class="lineage-arrow">—</div>
+            <div class="lineage-node">王小明<br><small>家庭成员</small></div>
+          </div>
+          <div class="center">
+            <button onclick="showToast('已展开家庭关系详情')">展开关系详情</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 数据资产目录 -->
+    <section id="page-catalog" class="page">
+      <div class="subnav">
+        <button class="active" onclick="switchSub(this, 'catalog-overview')">资产总览</button>
+        <button onclick="switchSub(this, 'catalog-assets')">资产检索</button>
+        <button onclick="switchSub(this, 'catalog-datasets')">数据集市场</button>
+        <button onclick="switchSub(this, 'catalog-favorite')">收藏与常用</button>
+      </div>
+
+      <div id="catalog-overview" class="subpage">
+        <div class="cards">
+          <div class="card"><div class="card-label">数据表</div><div class="card-value">1,286</div><div class="card-desc">已登记资产</div></div>
+          <div class="card"><div class="card-label">字段</div><div class="card-value">28,640</div><div class="card-desc">数据字典覆盖 94%</div></div>
+          <div class="card"><div class="card-label">指标</div><div class="card-value">486</div><div class="card-desc">统一业务口径</div></div>
+          <div class="card"><div class="card-label">标签</div><div class="card-value">1,286</div><div class="card-desc">可用于人群圈选</div></div>
+          <div class="card"><div class="card-label">API服务</div><div class="card-value">86</div><div class="card-desc">服务可用率 99.9%</div></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-title">热门数据资产</div>
+            <table>
+              <tr><th>资产名称</th><th>类型</th><th>使用次数</th></tr>
+              <tr><td>用户360画像数据集</td><td><span class="badge">数据集</span></td><td>1,286</td></tr>
+              <tr><td>销售线索漏斗指标集</td><td><span class="badge purple">指标</span></td><td>986</td></tr>
+              <tr><td>营销投放效果明细表</td><td><span class="badge">数据表</span></td><td>764</td></tr>
+              <tr><td>车主生命周期标签</td><td><span class="badge warning">标签</span></td><td>639</td></tr>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">最近更新资产</div>
+            <table>
+              <tr><th>资产</th><th>更新时间</th><th>Owner</th></tr>
+              <tr><td>dws_user_profile</td><td>今天 10:24</td><td>客户数据组</td></tr>
+              <tr><td>ads_sales_funnel</td><td>今天 09:50</td><td>销售数据组</td></tr>
+              <tr><td>tag_vehicle_age</td><td>昨天 17:30</td><td>标签数据组</td></tr>
+              <tr><td>api_user_360</td><td>昨天 15:12</td><td>数据服务组</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="catalog-assets" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">数据资产检索</div>
+
+          <div class="toolbar">
+            <input id="assetSearch" placeholder="搜索资产名称、字段名、指标名">
+            <select id="assetDomain">
+              <option value="">全部数据域</option>
+              <option>用户域</option>
+              <option>车辆域</option>
+              <option>营销域</option>
+              <option>销售域</option>
+              <option>服务域</option>
+              <option>经销商域</option>
+              <option>供应链域</option>
+              <option>经营域</option>
+            </select>
+            <select id="assetType">
+              <option value="">全部资产类型</option>
+              <option>数据表</option>
+              <option>字段</option>
+              <option>指标</option>
+              <option>标签</option>
+              <option>API</option>
+              <option>数据集</option>
+            </select>
+            <button onclick="renderAssets()">搜索</button>
+          </div>
+
+          <div id="assetGrid" class="asset-grid"></div>
+        </div>
+      </div>
+
+      <div id="catalog-datasets" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">数据集市场</div>
+          <div class="asset-grid">
+            <div class="asset-card" onclick="showDataset('销售漏斗数据集')">
+              <h3>📊 销售漏斗数据集</h3>
+              <p>覆盖线索、到店、试驾、报价、订单、交付全流程。</p>
+              <p>包含字段：用户ID、车型、渠道、线索状态、订单金额等。</p>
+              <div class="asset-foot"><span class="badge">销售域</span><button class="light">查看详情</button></div>
+            </div>
+            <div class="asset-card" onclick="showDataset('用户画像数据集')">
+              <h3>👤 用户画像数据集</h3>
+              <p>覆盖用户属性、生命周期、价值、偏好和行为标签。</p>
+              <p>适用于用户分群、营销触达和用户价值分析。</p>
+              <div class="asset-foot"><span class="badge purple">用户域</span><button class="light">查看详情</button></div>
+            </div>
+            <div class="asset-card" onclick="showDataset('投放效果数据集')">
+              <h3>📣 投放效果数据集</h3>
+              <p>覆盖媒体、广告计划、曝光、点击、线索、订单和ROI。</p>
+              <p>适用于渠道分析和营销归因。</p>
+              <div class="asset-foot"><span class="badge warning">营销域</span><button class="light">查看详情</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="catalog-favorite" class="subpage" style="display:none">
+        <div class="panel">
+          <div class="panel-title">我的收藏与最近使用</div>
+          <table>
+            <tr><th>资产名称</th><th>类型</th><th>最近使用时间</th><th>操作</th></tr>
+            <tr><td>用户360画像数据集</td><td>数据集</td><td>今天 10:12</td><td><button class="light" onclick="showAsset('用户360画像数据集')">打开</button></td></tr>
+            <tr><td>销售线索漏斗指标</td><td>指标</td><td>昨天 16:40</td><td><button class="light" onclick="showAsset('销售线索漏斗指标')">打开</button></td></tr>
+            <tr><td>车主生命周期标签</td><td>标签</td><td>昨天 14:20</td><td><button class="light" onclick="showAsset('车主生命周期标签')">打开</button></td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modalMask" class="modal-mask">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">详情</h2>
+      <span class="close" onclick="closeModal()">×</span>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const pageInfo = {
+  ingestion: ["数据接入中心", "统一管理神龙汽车多源数据接入任务、状态和质量"],
+  governance: ["数据治理中心", "贯穿数据标准、质量、元数据、安全合规和生命周期"],
+  master: ["主数据与统一ID中心", "管理用户、车辆、经销商等主数据，构建One-ID统一身份体系"],
+  catalog: ["数据资产目录", "让业务人员像逛数据超市一样发现、理解、申请和使用数据"]
+};
+
+const tasks = [
+  {
+    id: "TASK-CRM-001",
+    name: "CRM客户主数据同步",
+    source: "CRM客户系统",
+    method: "批量接入",
+    frequency: "每天 02:00",
+    owner: "客户数据组",
+    domain: "用户域",
+    layer: "ODS",
+    status: "成功",
+    volume: "1.28GB",
+    time: "今天 02:18"
+  },
+  {
+    id: "TASK-DMS-002",
+    name: "DMS销售订单CDC同步",
+    source: "DMS经销商系统",
+    method: "实时接入",
+    frequency: "实时",
+    owner: "销售数据组",
+    domain: "销售域",
+    layer: "DWD",
+    status: "运行中",
+    volume: "846MB",
+    time: "持续运行"
+  },
+  {
+    id: "TASK-APP-003",
+    name: "APP用户行为埋点",
+    source: "APP埋点平台",
+    method: "消息队列",
+    frequency: "实时",
+    owner: "数字体验部",
+    domain: "用户域",
+    layer: "ODS",
+    status: "运行中",
+    volume: "4.62GB",
+    time: "持续运行"
+  },
+  {
+    id: "TASK-ADS-004",
+    name: "广告投放效果回流",
+    source: "四大投放平台",
+    method: "API拉取",
+    frequency: "每小时",
+    owner: "品牌市场部",
+    domain: "营销域",
+    layer: "DWD",
+    status: "失败",
+    volume: "0B",
+    time: "今天 10:42"
+  },
+  {
+    id: "TASK-TSP-005",
+    name: "TSP车辆状态数据",
+    source: "车联网TSP",
+    method: "实时接入",
+    frequency: "实时",
+    owner: "车辆数据组",
+    domain: "车辆域",
+    layer: "ODS",
+    status: "已暂停",
+    volume: "0B",
+    time: "昨天 22:10"
+  },
+  {
+    id: "TASK-SAP-006",
+    name: "售后SAP工单同步",
+    source: "售后SAP系统",
+    method: "文件接入",
+    frequency: "每天 03:00",
+    owner: "服务数据组",
+    domain: "服务域",
+    layer: "DWD",
+    status: "成功",
+    volume: "628MB",
+    time: "今天 03:26"
+  }
+];
+
+const sources = [
+  {name:"CRM客户系统", type:"用户平台", method:"批量接入", owner:"客户数据组", status:"在线", tables:46},
+  {name:"DMS经销商系统", type:"销售系统", method:"实时接入", owner:"销售数据组", status:"在线", tables:72},
+  {name:"APP埋点平台", type:"用户平台", method:"消息队列", owner:"数字体验部", status:"在线", tables:28},
+  {name:"四大投放平台", type:"营销平台", method:"API拉取", owner:"品牌市场部", status:"异常", tables:18},
+  {name:"车联网TSP", type:"车联网平台", method:"实时接入", owner:"车辆数据组", status:"暂停", tables:35},
+  {name:"售后SAP系统", type:"售后系统", method:"文件接入", owner:"服务数据组", status:"在线", tables:64}
+];
+
+const assets = [
+  {name:"dws_user_profile", cn:"用户360画像汇总表", domain:"用户域", type:"数据表", layer:"DWS", level:"敏感", score:96, update:"今日 10:24", desc:"用户基础属性、生命周期、价值和偏好汇总。"},
+  {name:"dwd_sales_lead", cn:"销售线索明细表", domain:"销售域", type:"数据表", layer:"DWD", level:"内部", score:94, update:"今日 09:50", desc:"记录销售线索来源、车型、跟进和转化信息。"},
+  {name:"ads_marketing_roi", cn:"营销投放ROI指标集", domain:"营销域", type:"指标", layer:"ADS", level:"内部", score:98, update:"今日 09:20", desc:"用于分析媒体、渠道、活动和人群ROI。"},
+  {name:"tag_user_lifecycle", cn:"用户生命周期标签", domain:"用户域", type:"标签", layer:"标签层", level:"内部", score:97, update:"昨天 17:30", desc:"潜客、车主、沉睡和流失风险等生命周期标签。"},
+  {name:"api_user_360", cn:"用户360服务API", domain:"用户域", type:"API", layer:"服务层", level:"敏感", score:99, update:"昨天 15:12", desc:"向营销、销售和服务系统提供用户画像服务。"},
+  {name:"dwd_vehicle_service", cn:"车辆售后服务明细表", domain:"服务域", type:"数据表", layer:"DWD", level:"敏感", score:93, update:"昨天 11:08", desc:"车辆保养、维修、召回和服务工单明细。"},
+  {name:"sales_funnel_dataset", cn:"销售漏斗数据集", domain:"销售域", type:"数据集", layer:"数据集", level:"内部", score:95, update:"昨天 10:30", desc:"覆盖线索、到店、试驾、订单和交付。"},
+  {name:"metric_trial_rate", cn:"试驾转化率指标", domain:"销售域", type:"指标", layer:"指标层", level:"公开", score:99, update:"昨天 09:12", desc:"已试驾用户数/有效线索用户数。"}
+];
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 2200);
+}
+
+function openModal(title, content) {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalContent").innerHTML = content;
+  document.getElementById("modalMask").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modalMask").style.display = "none";
+}
+
+function switchSub(button, id) {
+  const parent = button.closest(".page");
+  parent.querySelectorAll(".subnav button").forEach(item => item.classList.remove("active"));
+  parent.querySelectorAll(".subpage").forEach(item => item.style.display = "none");
+  button.classList.add("active");
+  document.getElementById(id).style.display = "block";
+
+  if (id === "ingestion-tasks") renderTasks();
+  if (id === "ingestion-sources") renderSources();
+  if (id === "catalog-assets") renderAssets();
+}
+
+document.querySelectorAll(".nav-item[data-page]").forEach(item => {
+  item.addEventListener("click", () => {
+    const page = item.dataset.page;
+
+    document.querySelectorAll(".nav-item").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
+
+    item.classList.add("active");
+    document.getElementById("page-" + page).classList.add("active");
+
+    document.getElementById("pageTitle").innerText = pageInfo[page][0];
+    document.getElementById("pageSubtitle").innerText = pageInfo[page][1];
+
+    if (page === "ingestion") {
+      renderTasks();
+      renderSources();
+    }
+
+    if (page === "catalog") renderAssets();
+  });
+});
+
+function renderAlerts() {
+  const alerts = [
+    ["广告投放效果回流", "API访问令牌即将过期，请在24小时内更新", "10:42", "danger"],
+    ["DMS销售订单CDC同步", "最近5分钟数据量较均值下降18%", "10:38", "warning"],
+    ["售后SAP工单同步", "任务执行成功，新增数据 628MB", "10:26", ""],
+    ["APP用户行为埋点", "消息队列运行正常，当前TPS 2,684", "10:20", ""],
+    ["TSP车辆状态数据", "连接超时，任务已自动暂停", "昨天 22:10", "danger"]
+  ];
+
+  document.getElementById("alertList").innerHTML = alerts.map(item => `
+    <div class="alert-item">
+      <b><span class="dot ${item[3]}"></span>${item[0]}</b>
+      <small>${item[1]} · ${item[2]}</small>
+    </div>
+  `).join("");
+}
+
+function renderTasks() {
+  const keyword = (document.getElementById("taskSearch")?.value || "").trim();
+  const method = document.getElementById("taskMethod")?.value || "";
+  const status = document.getElementById("taskStatus")?.value || "";
+
+  const result = tasks.filter(item => {
+    return (!keyword || item.name.includes(keyword) || item.source.includes(keyword)) &&
+           (!method || item.method === method) &&
+           (!status || item.status === status);
+  });
+
+  document.getElementById("taskTable").innerHTML = result.length ? `
+    <table>
+      <tr>
+        <th>任务名称</th>
+        <th>源系统</th>
+        <th>接入方式</th>
+        <th>数据域/分层</th>
+        <th>调度频率</th>
+        <th>责任人</th>
+        <th>最近运行</th>
+        <th>数据量</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+      ${result.map(item => `
+        <tr>
+          <td><b>${item.name}</b><br><small style="color:#8994a8">${item.id}</small></td>
+          <td>${item.source}</td>
+          <td>${item.method}</td>
+          <td>${item.domain} / ${item.layer}</td>
+          <td>${item.frequency}</td>
+          <td>${item.owner}</td>
+          <td>${item.time}</td>
+          <td>${item.volume}</td>
+          <td>${getStatusBadge(item.status)}</td>
+          <td>
+            <button class="light" onclick="showTaskModal('${item.id}')">详情</button>
+            ${item.status === "失败" ? `<button class="danger" onclick="retryTask('${item.id}')">重试</button>` : ""}
+          </td>
+        </tr>
+      `).join("")}
+    </table>
+  ` : `<div class="empty">暂无符合条件的接入任务</div>`;
+}
+
+function getStatusBadge(status) {
+  const map = {
+    "运行中": "success",
+    "成功": "success",
+    "失败": "danger",
+    "已暂停": "warning",
+    "在线": "success",
+    "异常": "danger",
+    "暂停": "warning"
+  };
+  return `<span class="badge ${map[status] || ""}">${status}</span>`;
+}
+
+function showTaskModal(id) {
+  if (id === "new") {
+    openModal("新建接入任务", `
+      <div class="detail-grid">
+        <div class="detail-box"><label>任务名称</label><input placeholder="请输入任务名称"></div>
+        <div class="detail-box"><label>源系统</label><select><option>CRM客户系统</option><option>DMS经销商系统</option><option>APP埋点平台</option></select></div>
+        <div class="detail-box"><label>接入方式</label><select><option>批量接入</option><option>实时接入</option><option>API拉取</option><option>文件接入</option></select></div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-box"><label>所属数据域</label><select><option>用户域</option><option>车辆域</option><option>营销域</option><option>销售域</option><option>服务域</option></select></div>
+        <div class="detail-box"><label>目标分层</label><select><option>ODS</option><option>DWD</option><option>DWS</option></select></div>
+        <div class="detail-box"><label>责任人</label><input placeholder="请输入责任人"></div>
+      </div>
+      <button onclick="closeModal();showToast('接入任务已创建')">保存任务</button>
+      <button class="gray" onclick="closeModal()">取消</button>
+    `);
+    return;
+  }
+
+  const item = tasks.find(x => x.id === id);
+
+  openModal(item.name, `
+    <div class="detail-grid">
+      <div class="detail-box"><label>源系统</label><b>${item.source}</b></div>
+      <div class="detail-box"><label>接入方式</label><b>${item.method}</b></div>
+      <div class="detail-box"><label>当前状态</label><b>${item.status}</b></div>
+      <div class="detail-box"><label>所属数据域</label><b>${item.domain}</b></div>
+      <div class="detail-box"><label>目标分层</label><b>${item.layer}</b></div>
+      <div class="detail-box"><label>调度频率</label><b>${item.frequency}</b></div>
+    </div>
+
+    <h3>最近5次执行记录</h3>
+    <table>
+      <tr><th>执行时间</th><th>耗时</th><th>数据量</th><th>状态</th></tr>
+      <tr><td>今天 10:42</td><td>12秒</td><td>${item.volume}</td><td>${getStatusBadge(item.status)}</td></tr>
+      <tr><td>今天 09:42</td><td>10秒</td><td>1.12GB</td><td>${getStatusBadge("成功")}</td></tr>
+      <tr><td>今天 08:42</td><td>11秒</td><td>1.05GB</td><td>${getStatusBadge("成功")}</td></tr>
+      <tr><td>今天 07:42</td><td>13秒</td><td>1.18GB</td><td>${getStatusBadge("成功")}</td></tr>
+      <tr><td>今天 06:42</td><td>11秒</td><td>1.06GB</td><td>${getStatusBadge("成功")}</td></tr>
+    </table>
+
+    <h3>字段映射</h3>
+    <table>
+      <tr><th>源字段</th><th>目标字段</th><th>数据类型</th><th>转换逻辑</th></tr>
+      <tr><td>customer_id</td><td>user_id</td><td>STRING</td><td>统一ID映射</td></tr>
+      <tr><td>mobile_phone</td><td>mobile</td><td>STRING</td><td>脱敏存储</td></tr>
+      <tr><td>created_time</td><td>created_at</td><td>TIMESTAMP</td><td>时区转换</td></tr>
+    </table>
+
+    <h3>质量规则</h3>
+    <p>✓ 关键字段非空校验　✓ 手机号格式校验　✓ 主键唯一性校验　✓ 数据延迟1小时告警</p>
+
+    <button onclick="showToast('已手动触发任务');closeModal()">手动触发</button>
+    <button class="light" onclick="showToast('已打开调度配置')">调度配置</button>
+  `);
+}
+
+function retryTask(id) {
+  const item = tasks.find(x => x.id === id);
+  item.status = "运行中";
+  renderTasks();
+  showToast(item.name + " 已进入重试队列");
+}
+
+function renderSources() {
+  const keyword = (document.getElementById("sourceSearch")?.value || "").trim();
+  const type = document.getElementById("sourceType")?.value || "";
+
+  const result = sources.filter(item =>
+    (!keyword || item.name.includes(keyword)) &&
+    (!type || item.type === type)
+  );
+
+  document.getElementById("sourceTable").innerHTML = `
+    <table>
+      <tr><th>数据源名称</th><th>系统类型</th><th>接入方式</th><th>责任人</th><th>表数量</th><th>状态</th><th>操作</th></tr>
+      ${result.map(item => `
+        <tr>
+          <td><b>${item.name}</b></td>
+          <td>${item.type}</td>
+          <td>${item.method}</td>
+          <td>${item.owner}</td>
+          <td>${item.tables}</td>
+          <td>${getStatusBadge(item.status)}</td>
+          <td>
+            <button class="light" onclick="testSource('${item.name}')">测试连接</button>
+            <button class="gray" onclick="showToast('已打开数据源配置')">配置</button>
+          </td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+}
+
+function testSource(name) {
+  showToast(name + " 连接测试成功");
+}
+
+function showSourceModal() {
+  openModal("注册数据源", `
+    <div class="detail-grid">
+      <div class="detail-box"><label>数据源名称</label><input placeholder="例如：CRM客户系统"></div>
+      <div class="detail-box"><label>系统类型</label><select><option>用户平台</option><option>销售系统</option><option>营销平台</option><option>售后系统</option><option>车联网平台</option></select></div>
+      <div class="detail-box"><label>接入方式</label><select><option>API拉取</option><option>批量接入</option><option>实时接入</option><option>文件接入</option></select></div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-box"><label>连接地址</label><input placeholder="请输入连接地址"></div>
+      <div class="detail-box"><label>认证方式</label><select><option>账号密码</option><option>Token</option><option>OAuth2</option><option>密钥认证</option></select></div>
+      <div class="detail-box"><label>责任人</label><input placeholder="请输入责任人"></div>
+    </div>
+    <button onclick="closeModal();showToast('数据源注册成功')">保存并测试连接</button>
+  `);
+}
+
+function renderLineage() {
+  const keyword = document.getElementById("lineageSearch").value || "用户画像";
+  document.getElementById("lineageResult").innerHTML = `
+    <p>查询对象：<b>${keyword}</b></p>
+    <div class="lineage">
+      <div class="lineage-node">CRM客户表</div>
+      <div class="lineage-arrow">→</div>
+      <div class="lineage-node">ODS客户表</div>
+      <div class="lineage-arrow">→</div>
+      <div class="lineage-node">DWD用户明细</div>
+      <div class="lineage-arrow">→</div>
+      <div class="lineage-node">DWS用户画像</div>
+      <div class="lineage-arrow">→</div>
+      <div class="lineage-node">用户360/API</div>
+    </div>
+    <p style="color:#76839a">影响分析：下游关联 3 个指标、5 个标签、2 个报表和 1 个API。</p>
+  `;
+}
+
+function showStandard(name) {
+  openModal("标准详情 - " + name, `
+    <div class="detail-grid">
+      <div class="detail-box"><label>标准名称</label><b>${name}</b></div>
+      <div class="detail-box"><label>当前版本</label><b>V2.1</b></div>
+      <div class="detail-box"><label>标准状态</label><b>生效</b></div>
+      <div class="detail-box"><label>数据类型</label><b>STRING</b></div>
+      <div class="detail-box"><label>负责人</label><b>数据标准组</b></div>
+      <div class="detail-box"><label>生效日期</label><b>2025-01-01</b></div>
+    </div>
+    <h3>适用范围</h3>
+    <p>适用于用户域、车辆域、销售域、服务域所有相关数据表和数据服务。</p>
+    <h3>变更记录</h3>
+    <table>
+      <tr><th>版本</th><th>变更内容</th><th>变更人</th><th>时间</th></tr>
+      <tr><td>V2.1</td><td>新增长度和格式校验规则</td><td>张明</td><td>2025-01-01</td></tr>
+      <tr><td>V2.0</td><td>增加跨系统编码映射</td><td>李娜</td><td>2024-08-15</td></tr>
+    </table>
+  `);
+}
+
+function searchOneId() {
+  const value = document.getElementById("oneIdSearch").value.trim() || "138****1001";
+
+  document.getElementById("oneIdResult").className = "";
+  document.getElementById("oneIdResult").innerHTML = `
+    <div class="grid-2">
+      <div class="panel" style="margin:0">
+        <div class="panel-title">One-ID身份档案</div>
+        <div class="detail-grid">
+          <div class="detail-box"><label>One-ID</label><b>UID-00098231</b></div>
+          <div class="detail-box"><label>查询标识</label><b>${value}</b></div>
+          <div class="detail-box"><label>身份置信度</label><b>98.6%</b></div>
+        </div>
+        <p>姓名：张明　　城市：上海　　用户等级：金卡会员</p>
+        <p>生命周期：活跃车主　　用户价值：高价值</p>
+      </div>
+
+      <div class="panel" style="margin:0">
+        <div class="panel-title">关联身份节点</div>
+        <div class="lineage" style="min-height:170px;flex-wrap:wrap">
+          <div class="lineage-node">手机号<br><small>强锚点</small></div>
+          <div class="lineage-node">VIN<br><small>强锚点</small></div>
+          <div class="lineage-node">APP设备ID<br><small>中锚点</small></div>
+          <div class="lineage-node">UnionID<br><small>强锚点</small></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function searchUser360() {
+  const value = document.getElementById("user360Search").value.trim() || "张明";
+  document.getElementById("user360Result").innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-box"><label>用户姓名</label><b>${value}</b></div>
+      <div class="detail-box"><label>One-ID</label><b>UID-00098231</b></div>
+      <div class="detail-box"><label>会员等级</label><b>金卡会员</b></div>
+      <div class="detail-box"><label>生命周期</label><b>活跃车主</b></div>
+      <div class="detail-box"><label>用户价值</label><b>高价值</b></div>
+      <div class="detail-box"><label>用户偏好</label><b>SUV/智能驾驶</b></div>
+    </div>
+    <h3>行为轨迹</h3>
+    <table>
+      <tr><th>时间</th><th>行为</th><th>触点</th><th>结果</th></tr>
+      <tr><td>今天 09:12</td><td>浏览车型配置</td><td>APP</td><td>浏览凡尔赛C5 X</td></tr>
+      <tr><td>昨天 15:20</td><td>预约保养</td><td>小程序</td><td>预约成功</td></tr>
+      <tr><td>2024-12-20</td><td>完成试驾</td><td>经销商门店</td><td>满意度 5分</td></tr>
+    </table>
+    <br>
+    <button onclick="showToast('已打开用户触达历史')">查看触达历史</button>
+  `;
+}
+
+function searchVehicle() {
+  const vin = document.getElementById("vinSearch").value.trim() || "LSYDE4A20001001";
+
+  document.getElementById("vehicleResult").innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-box"><label>VIN</label><b>${vin}</b></div>
+      <div class="detail-box"><label>车型</label><b>凡尔赛C5 X</b></div>
+      <div class="detail-box"><label>动力类型</label><b>燃油</b></div>
+      <div class="detail-box"><label>累计里程</label><b>48,620 km</b></div>
+      <div class="detail-box"><label>OTA版本</label><b>V3.6.2</b></div>
+      <div class="detail-box"><label>车辆状态</label><b>使用中</b></div>
+    </div>
+
+    <h3>服务记录</h3>
+    <table>
+      <tr><th>日期</th><th>服务类型</th><th>服务门店</th><th>状态</th></tr>
+      <tr><td>2025-01-08</td><td>常规保养</td><td>上海浦东店</td><td><span class="badge success">已完成</span></td></tr>
+      <tr><td>2024-09-20</td><td>轮胎更换</td><td>上海浦东店</td><td><span class="badge success">已完成</span></td></tr>
+      <tr><td>2024-06-12</td><td>OTA升级</td><td>远程服务</td><td><span class="badge success">已完成</span></td></tr>
+    </table>
+  `;
+}
+
+function renderAssets() {
+  const keyword = (document.getElementById("assetSearch")?.value || "").trim();
+  const domain = document.getElementById("assetDomain")?.value || "";
+  const type = document.getElementById("assetType")?.value || "";
+
+  const result = assets.filter(item =>
+    (!keyword || item.name.includes(keyword) || item.cn.includes(keyword) || item.desc.includes(keyword)) &&
+    (!domain || item.domain === domain) &&
+    (!type || item.type === type)
+  );
+
+  document.getElementById("assetGrid").innerHTML = result.length ? result.map(item => `
+    <div class="asset-card" onclick="showAsset('${item.name}')">
+      <h3>${getAssetIcon(item.type)} ${item.cn}</h3>
+      <p><b>${item.name}</b></p>
+      <p>${item.desc}</p>
+      <p>${item.domain} · ${item.layer} · ${item.level}</p>
+      <div class="asset-foot">
+        <span class="badge ${item.score >= 97 ? "success" : ""}">质量 ${item.score}</span>
+        <small style="color:#8994a8">${item.update}</small>
+      </div>
+    </div>
+  `).join("") : `<div class="empty">暂无符合条件的数据资产</div>`;
+}
+
+function getAssetIcon(type) {
+  const icons = {
+    "数据表": "🗃️",
+    "指标": "📐",
+    "标签": "🏷️",
+    "API": "🔗",
+    "数据集": "📊"
+  };
+  return icons[type] || "📁";
+}
+
+function showAsset(name) {
+  const item = assets.find(x => x.name === name) || assets[0];
+
+  openModal("资产详情 - " + item.cn, `
+    <div class="detail-grid">
+      <div class="detail-box"><label>资产名称</label><b>${item.name}</b></div>
+      <div class="detail-box"><label>资产类型</label><b>${item.type}</b></div>
+      <div class="detail-box"><label>所属数据域</label><b>${item.domain}</b></div>
+      <div class="detail-box"><label>数据分层</label><b>${item.layer}</b></div>
+      <div class="detail-box"><label>安全等级</label><b>${item.level}</b></div>
+      <div class="detail-box"><label>质量评分</label><b>${item.score}分</b></div>
+    </div>
+
+    <h3>资产描述</h3>
+    <p>${item.desc}</p>
+
+    <h3>字段清单</h3>
+    <table>
+      <tr><th>字段名</th><th>中文名</th><th>数据类型</th><th>敏感字段</th><th>描述</th></tr>
+      <tr><td>user_id</td><td>统一用户ID</td><td>STRING</td><td>否</td><td>One-ID统一身份标识</td></tr>
+      <tr><td>mobile</td><td>手机号</td><td>STRING</td><td>是</td><td>已完成脱敏处理</td></tr>
+      <tr><td>lifecycle</td><td>生命周期</td><td>STRING</td><td>否</td><td>用户当前运营阶段</td></tr>
+      <tr><td>value_level</td><td>用户价值等级</td><td>STRING</td><td>否</td><td>基于价值模型计算</td></tr>
+    </table>
+
+    <h3>数据血缘</h3>
+    <div class="lineage">
+      <div class="lineage-node">CRM/DMS</div>
+      <div class="lineage-arrow">→</div>
+      <div class="lineage-node">ODS</div>
+      <div class="lineage-arrow">→</div>
+      <div class="lineage-node">${item.name}</div>
+      <div class="lineage-arrow">→</div>
+      <div class="lineage-node">指标/标签/报表</div>
+    </div>
+
+    <br>
+    <button onclick="applyAsset('${item.cn}')">申请数据权限</button>
+    <button class="light" onclick="showToast('已收藏该资产')">收藏资产</button>
+  `);
+}
+
+function applyAsset(name) {
+  openModal("申请数据权限 - " + name, `
+    <div class="detail-box">
+      <label>申请字段范围</label>
+      <p>☑ user_id　☑ lifecycle　☑ value_level　☐ mobile　☐ VIN</p>
+    </div>
+    <br>
+    <textarea placeholder="请输入申请理由" style="width:100%;height:90px;padding:10px;border:1px solid #dce2eb;border-radius:6px"></textarea>
+    <br><br>
+    <button onclick="closeModal();showToast('权限申请已提交，等待数据Owner审批')">提交申请</button>
+  `);
+}
+
+function showDataset(name) {
+  openModal("数据集详情 - " + name, `
+    <div class="detail-grid">
+      <div class="detail-box"><label>数据集名称</label><b>${name}</b></div>
+      <div class="detail-box"><label>数据行数</label><b>1,286万</b></div>
+      <div class="detail-box"><label>更新频率</label><b>每日更新</b></div>
+    </div>
+    <h3>包含字段</h3>
+    <p>用户ID、车型、渠道、生命周期、用户价值、意向评分、试驾状态、订单状态、门店、区域。</p>
+    <h3>使用场景</h3>
+    <p>适用于营销分析、用户分群、销售漏斗分析和管理层经营决策。</p>
+    <button onclick="closeModal();showToast('已订阅数据集，更新后将推送至企微')">一键订阅</button>
+  `);
+}
+
+function updateClock() {
+  document.getElementById("clock").innerText = new Date().toLocaleString("zh-CN");
+}
+
+function init() {
+  renderAlerts();
+  renderTasks();
+  renderSources();
+  renderAssets();
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+
+init();
+</script>
+
+<script>
+/* ── 神龙数据中台集成壳 · 双向同步脚本（自动追加，不影响模块自身功能） ── */
+(function(){
+  if(window.__SL_EMBED__) return; window.__SL_EMBED__ = 1;
+  var MOD = "data";
+  var st = document.createElement("style");
+  st.textContent = ".sidebar{display:none!important}";
+  document.head.appendChild(st);
+  function post(m){ try{ m.__sl = 1; m.mod = MOD; parent.postMessage(m, "*"); }catch(e){} }
+  function currentPage(){
+    var el = document.querySelector(".subitem.active[data-page],.nav-item.active[data-page]");
+    return el ? el.getAttribute("data-page") : null;
+  }
+  var last = currentPage();
+  setInterval(function(){
+    var c = currentPage();
+    if(c && c !== last){ last = c; post({page:c}); }
+  }, 250);
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest(".topnav-item[data-top],.top-item[data-top]") : null;
+    if(t){
+      var top = t.getAttribute("data-top");
+      if(top && top !== MOD){ e.preventDefault(); e.stopPropagation(); post({module:top}); }
+    }
+  }, true);
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if(!d || d.__slCmd !== 1) return;
+    if(d.goto){
+      var el = document.querySelector('.subitem[data-page="'+d.goto+'"],.nav-item[data-page="'+d.goto+'"]');
+      if(el){ el.click(); return; }
+    }
+    if(d.fn){ try{ (new Function(d.fn))(); }catch(e){} }
+  });
+})();
+</script>
+</body>
+</html>

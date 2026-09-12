@@ -1,0 +1,2870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>神龙汽车数据中台 - 指标体系</title>
+<style>
+:root{
+  --blue:#246bfe;
+  --blue2:#edf4ff;
+  --navy:#111c36;
+  --bg:#f4f6fa;
+  --text:#17233b;
+  --muted:#7b879b;
+  --border:#e5eaf2;
+  --green:#1fa463;
+  --orange:#e69a2c;
+  --red:#e45555;
+  --purple:#8066e8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  color:var(--text);
+  background:var(--bg);
+  font:14px Arial,"Microsoft YaHei",sans-serif;
+}
+button,input,select,textarea{font-family:inherit}
+button{
+  border:0;
+  border-radius:6px;
+  padding:9px 14px;
+  color:#fff;
+  background:var(--blue);
+  cursor:pointer;
+}
+button:hover{filter:brightness(.94)}
+button.light{color:var(--blue);background:var(--blue2)}
+button.gray{color:#58667d;background:#f0f2f6}
+button.red{background:var(--red)}
+input,select,textarea{
+  min-width:150px;
+  padding:9px 11px;
+  border:1px solid #dce2eb;
+  border-radius:6px;
+  outline:none;
+  background:#fff;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+
+.top{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  height:70px;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 26px;
+  color:white;
+  background:var(--navy);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:235px}
+.brand-logo{
+  display:flex;
+  width:38px;
+  height:38px;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  color:var(--blue);
+  background:#fff;
+  font-weight:bold;
+}
+.brand b{font-size:17px}
+.brand small{display:block;margin-top:4px;color:#aeb9d0;font-size:11px}
+.topnav{display:flex;align-items:center;gap:5px;height:100%}
+.topnav-item{
+  position:relative;
+  padding:12px 16px;
+  border-radius:7px;
+  color:#bdc7dc;
+  cursor:pointer;
+}
+.topnav-item:hover,.topnav-item.active{color:#fff;background:var(--blue)}
+.account{display:flex;align-items:center;gap:9px;min-width:190px;justify-content:flex-end}
+.avatar{
+  display:flex;
+  width:32px;
+  height:32px;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:var(--blue);
+}
+.account small{display:block;margin-top:3px;color:#aeb9d0;font-size:11px}
+
+.layout{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{
+  width:245px;
+  flex-shrink:0;
+  padding:20px 14px;
+  border-right:1px solid var(--border);
+  background:#fff;
+}
+.sidebar-title{margin:2px 10px 15px;color:var(--muted);font-size:12px}
+.group{margin-bottom:10px}
+.group-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 12px;
+  border-radius:7px;
+  color:#33415c;
+  font-weight:bold;
+  cursor:pointer;
+}
+.group-head:hover,.group-head.open{color:var(--blue);background:var(--blue2)}
+.group-head .arrow{transition:.2s}
+.group-head.open .arrow{transform:rotate(90deg)}
+.submenu{display:none;padding-left:13px}
+.submenu.show{display:block}
+.subitem{
+  padding:10px 12px;
+  margin:3px 0;
+  border-left:2px solid transparent;
+  border-radius:0 6px 6px 0;
+  color:#69768d;
+  cursor:pointer;
+}
+.subitem:hover,.subitem.active{
+  border-left-color:var(--blue);
+  color:var(--blue);
+  background:var(--blue2);
+}
+
+.content{flex:1;min-width:0;padding:23px 28px;overflow:auto}
+.header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+.header h1{margin:0;font-size:24px}
+.header p{margin:8px 0 0;color:var(--muted);font-size:13px}
+.header-right{color:var(--muted);font-size:12px}
+.page{display:none}
+.page.active{display:block}
+.tabs{
+  display:flex;
+  gap:4px;
+  margin-bottom:17px;
+  padding:5px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+}
+.tab{color:#68758b;background:transparent}
+.tab.active{color:var(--blue);background:var(--blue2)}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  margin-bottom:17px;
+}
+.card,.panel{
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 2px 10px rgba(30,50,90,.04);
+}
+.card{padding:16px}
+.card-label{color:var(--muted);font-size:12px}
+.card-value{margin:10px 0 7px;font-size:25px;font-weight:bold}
+.card-desc{color:var(--green);font-size:12px}
+.card-desc.warn{color:var(--orange)}
+.card-desc.danger{color:var(--red)}
+.panel{padding:17px;margin-bottom:16px}
+.title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  font-weight:bold;
+}
+.title small{color:var(--muted);font-weight:normal}
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:15px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{
+  padding:11px;
+  color:#65728a;
+  text-align:left;
+  white-space:nowrap;
+  background:#f7f9fc;
+}
+td{
+  padding:11px;
+  border-bottom:1px solid #edf0f4;
+  white-space:nowrap;
+}
+tr:hover{background:#fafcff}
+.badge{
+  display:inline-block;
+  padding:4px 9px;
+  border-radius:14px;
+  color:var(--blue);
+  background:var(--blue2);
+  font-size:12px;
+}
+.badge.green{color:var(--green);background:#eaf8f1}
+.badge.orange{color:#ad711e;background:#fff5e3}
+.badge.red{color:var(--red);background:#fff0f0}
+.badge.purple{color:var(--purple);background:#f1edff}
+.progress{width:110px;height:7px;border-radius:8px;background:#edf0f5;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--blue)}
+.alert{
+  padding:11px 0;
+  border-bottom:1px solid #edf0f4;
+}
+.alert:last-child{border-bottom:0}
+.alert small{display:block;margin-top:4px;color:var(--muted)}
+.dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  margin-right:6px;
+  border-radius:50%;
+  background:var(--green);
+}
+.dot.orange{background:var(--orange)}
+.dot.red{background:var(--red)}
+
+.tree{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+.root{
+  grid-column:1/6;
+  padding:18px;
+  border:2px solid var(--blue);
+  border-radius:10px;
+  color:var(--blue);
+  text-align:center;
+  background:var(--blue2);
+  cursor:pointer;
+}
+.node{
+  min-height:125px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  cursor:pointer;
+}
+.node:hover{border-color:var(--blue);box-shadow:0 3px 12px rgba(36,107,254,.12)}
+.node h3{margin:0 0 9px;font-size:15px}
+.node strong{font-size:20px}
+.node p{margin:7px 0;color:var(--muted);font-size:12px}
+
+.north{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.north-value{margin:12px 0;color:var(--blue);font-size:45px;font-weight:bold}
+.chart{
+  display:flex;
+  height:145px;
+  align-items:end;
+  gap:9px;
+  border-bottom:1px solid var(--border);
+}
+.chart i{
+  display:block;
+  flex:1;
+  border-radius:4px 4px 0 0;
+  background:linear-gradient(#7bbaff,var(--blue));
+}
+.lineage{
+  display:flex;
+  min-height:110px;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  overflow:auto;
+}
+.lineage-node{
+  min-width:105px;
+  padding:12px 8px;
+  border:1px solid #bdd1ff;
+  border-radius:8px;
+  color:var(--blue);
+  text-align:center;
+  background:var(--blue2);
+}
+.lineage-arrow{color:#a1acc0;font-size:20px}
+.lifecycle{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+.life{
+  padding:14px 7px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  text-align:center;
+  cursor:pointer;
+}
+.life:hover,.life.active{border-color:var(--blue);color:var(--blue);background:var(--blue2)}
+
+.modal-mask{
+  position:fixed;
+  z-index:30;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,20,40,.5);
+}
+.modal{
+  width:880px;
+  max-width:94%;
+  max-height:88vh;
+  overflow:auto;
+  padding:22px;
+  border-radius:10px;
+  background:#fff;
+}
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:17px;
+}
+.modal-head h2{margin:0;font-size:19px}
+.close{color:#8994a8;font-size:25px;cursor:pointer}
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:17px;
+}
+.detail{
+  padding:13px;
+  border-radius:7px;
+  background:#f7f9fc;
+}
+.detail label{display:block;margin-bottom:7px;color:var(--muted);font-size:12px}
+.empty{padding:35px;color:#8994a8;text-align:center}
+.toast{
+  position:fixed;
+  right:25px;
+  bottom:24px;
+  z-index:50;
+  display:none;
+  padding:12px 18px;
+  border-radius:7px;
+  color:#fff;
+  background:#1d2b4c;
+}
+
+@media(max-width:1200px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:900px){
+  .topnav-item{padding:10px 7px;font-size:12px}
+  .brand{min-width:auto}
+  .brand-text,.account-info{display:none}
+  .north,.grid2{grid-template-columns:1fr}
+  .tree{grid-template-columns:1fr}
+  .root{grid-column:1}
+}
+@media(max-width:650px){
+  .sidebar{width:70px}
+  .sidebar-title,.group-head b,.subitem{font-size:0}
+  .group-head{justify-content:center}
+  .submenu.show{display:none}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .topnav-item{font-size:0}
+  .topnav-item span{font-size:18px}
+  .detail-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="top">
+  <div class="brand">
+    <div class="brand-logo">神</div>
+    <div class="brand-text">
+      <b>神龙汽车数据中台</b>
+      <small>Data Intelligence Platform</small>
+    </div>
+  </div>
+
+  <nav class="topnav">
+    <div class="topnav-item" data-top="data">🗄️ 数据管理</div>
+    <div class="topnav-item active" data-top="metric">📊 指标体系</div>
+    <div class="topnav-item" data-top="marketing">🎯 营销体系</div>
+    <div class="topnav-item" data-top="scene">🧩 数据场景</div>
+    <div class="topnav-item" data-top="analysis">🔎 自助分析</div>
+  </nav>
+
+  <div class="account">
+    <div class="avatar">张</div>
+    <div class="account-info">
+      <b>张明</b>
+      <small>数据产品中心 · 管理员</small>
+    </div>
+    <span>⌄</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sidebar-title">指标体系导航</div>
+
+  <div class="group">
+    <div class="group-head open" onclick="toggleGroup(this)">
+      <b>指标管理</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu show">
+      <div class="subitem active" data-page="metric-home">指标管理平台</div>
+      <div class="subitem" data-page="metric-dictionary">指标字典</div>
+      <div class="subitem" data-page="metric-north">指标树与北极星</div>
+      <div class="subitem" data-page="metric-quality">指标质量监控</div>
+      <div class="subitem" data-page="metric-lineage">指标血缘与影响分析</div>
+      <div class="subitem" data-page="metric-permission">指标权限管理</div>
+	  <div class="subitem" data-page="chatbi"> ChatBI指标问答</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-head" onclick="toggleGroup(this)">
+      <b>标签体系</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu">
+      <div class="subitem" data-page="tag-home">标签管理平台</div>
+      <div class="subitem" data-page="tag-life">标签生命周期管理</div>
+      <div class="subitem" data-page="tag-monitor">标签质量监控</div>
+      <div class="subitem" data-page="tag-permission">标签权限管理</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-head" onclick="toggleGroup(this)">
+      <b>口径治理</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu">
+      <div class="subitem" data-page="arb-home">指标口径仲裁中心</div>
+      <div class="subitem" data-page="arb-detail">争议处理工作台</div>
+      <div class="subitem" data-page="version">口径版本管理</div>
+      <div class="subitem" data-page="notice">变更公示中心</div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-head" onclick="toggleGroup(this)">
+      <b>业务域</b><span class="arrow">›</span>
+    </div>
+    <div class="submenu">
+      <div class="subitem" onclick="filterDomain('营销域')">营销域</div>
+      <div class="subitem" onclick="filterDomain('销售域')">销售域</div>
+      <div class="subitem" onclick="filterDomain('服务域')">服务域</div>
+      <div class="subitem" onclick="filterDomain('用户域')">用户域</div>
+      <div class="subitem" onclick="filterDomain('经营域')">经营域</div>
+    </div>
+  </div>
+</aside>
+
+<main class="content">
+  <div class="header">
+    <div>
+      <h1 id="pageTitle">指标管理平台</h1>
+      <p id="pageDesc">统一指标定义、口径、血缘、质量和权限的全生命周期管理平台</p>
+    </div>
+    <div class="header-right">
+      <span>● 数据服务正常</span>
+      <span id="clock"></span>
+    </div>
+  </div>
+
+  <!-- 指标管理首页 -->
+  <section id="metric-home" class="page active">
+    <div class="tabs">
+      <button class="tab active" onclick="switchInner(this,'metric-overview')">指标总览</button>
+      <button class="tab" onclick="switchInner(this,'metric-hot')">使用热度</button>
+      <button class="tab" onclick="switchInner(this,'metric-change')">口径变更</button>
+      <button class="tab" onclick="switchInner(this,'metric-alert')">质量告警</button>
+    </div>
+
+    <div id="metric-overview" class="inner">
+      <div class="cards">
+        <div class="card"><div class="card-label">指标资产总量</div><div class="card-value">486</div><div class="card-desc">P0 86 · P1 214 · P2 186</div></div>
+        <div class="card"><div class="card-label">指标体系健康度</div><div class="card-value">94.6</div><div class="card-desc">较上月 ↑2.8</div></div>
+        <div class="card"><div class="card-label">口径一致率</div><div class="card-value">98.2%</div><div class="card-desc">覆盖8个业务域</div></div>
+        <div class="card"><div class="card-label">指标覆盖报表</div><div class="card-value">1,286</div><div class="card-desc">BI及ChatBI已接入</div></div>
+        <div class="card"><div class="card-label">待处理事项</div><div class="card-value">20</div><div class="card-desc danger">高优先级3个</div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <div class="title">指标体系健康度</div>
+          <table>
+            <tr><td>口径一致率</td><td>98.2%</td><td><div class="progress"><i style="width:98%"></i></div></td></tr>
+            <tr><td>质量规则覆盖率</td><td>92.4%</td><td><div class="progress"><i style="width:92%"></i></div></td></tr>
+            <tr><td>数据血缘完整率</td><td>89.6%</td><td><div class="progress"><i style="width:89%"></i></div></td></tr>
+            <tr><td>BI引用覆盖率</td><td>96.8%</td><td><div class="progress"><i style="width:96%"></i></div></td></tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="title">最近动态</div>
+          <div class="alert"><b><span class="dot"></span>试驾转化率发布V2.0</b><small>影响26个报表，已完成历史数据重跑</small></div>
+          <div class="alert"><b><span class="dot orange"></span>订单转化率存在口径争议</b><small>销售域与经营域统计结果不一致</small></div>
+          <div class="alert"><b><span class="dot red"></span>车主活跃率异常波动</b><small>近7日下降18.2%，已生成质量工单</small></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="title">
+          北极星指标健康概览
+          <button class="light" onclick="openPage('metric-north')">查看完整指标树</button>
+        </div>
+
+        <div class="tree">
+          <div class="root" onclick="showMetric('north')">
+            <b>单位营销成本带来的成交台数</b><br>
+            <small>当前值0.86台 · 目标值1.00台 · 环比↑8.6%</small>
+          </div>
+
+          <div class="node" onclick="showDimension('流量效率')">
+            <h3>📡 流量效率</h3><strong>82.6</strong>
+            <p>CPL ¥186 · 留资率12.8%</p>
+            <span class="badge green">正常</span>
+          </div>
+
+          <div class="node" onclick="showDimension('转化效率')">
+            <h3>🔄 转化效率</h3><strong>68.4</strong>
+            <p>试驾率24.6% · 大定率8.2%</p>
+            <span class="badge green">正常</span>
+          </div>
+
+          <div class="node" onclick="showDimension('客单贡献')">
+            <h3>💰 客单贡献</h3><strong>34,280</strong>
+            <p>单车毛利 · 金融渗透率48%</p>
+            <span class="badge green">正常</span>
+          </div>
+
+          <div class="node" onclick="showDimension('车主复利')">
+            <h3>♻️ 车主复利</h3><strong>3.8</strong>
+            <p>LTV/CAC · 回站率62.4%</p>
+            <span class="badge green">正常</span>
+          </div>
+
+          <div class="node" onclick="showDimension('体验底线')">
+            <h3>🛡️ 体验底线</h3><strong style="color:var(--red)">72.4</strong>
+            <p>NPS72.4 · 投诉率2.8%</p>
+            <span class="badge red">存在风险</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="metric-hot" class="inner" style="display:none">
+      <div class="panel">
+        <div class="title">指标使用热度排行</div>
+        <table>
+          <tr><th>排名</th><th>指标名称</th><th>BI引用次数</th><th>ChatBI调用次数</th><th>总热度</th><th>趋势</th></tr>
+          <tr><td>1</td><td>试驾转化率</td><td>1,842</td><td>1,444</td><td>3,286</td><td><span class="badge green">↑18.6%</span></td></tr>
+          <tr><td>2</td><td>有效线索数</td><td>1,806</td><td>1,162</td><td>2,968</td><td><span class="badge green">↑12.4%</span></td></tr>
+          <tr><td>3</td><td>营销ROI</td><td>1,486</td><td>1,198</td><td>2,684</td><td><span class="badge green">↑9.8%</span></td></tr>
+          <tr><td>4</td><td>订单转化率</td><td>1,392</td><td>1,029</td><td>2,421</td><td><span class="badge">↑6.2%</span></td></tr>
+          <tr><td>5</td><td>车主活跃率</td><td>1,124</td><td>862</td><td>1,986</td><td><span class="badge orange">↓2.4%</span></td></tr>
+          <tr><td>6</td><td>复购率</td><td>936</td><td>742</td><td>1,678</td><td><span class="badge green">↑4.6%</span></td></tr>
+          <tr><td>7</td><td>售后回站率</td><td>824</td><td>612</td><td>1,436</td><td><span class="badge green">↑5.8%</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="metric-change" class="inner" style="display:none">
+      <div class="panel">
+        <div class="title">指标口径变更记录</div>
+        <table>
+          <tr><th>指标</th><th>原版本</th><th>新版本</th><th>变更内容</th><th>影响范围</th><th>状态</th><th>操作</th></tr>
+          <tr><td>试驾转化率</td><td>V1.2</td><td>V2.0</td><td>同一线索多次试驾按人去重</td><td>26个报表</td><td><span class="badge green">已发布</span></td><td><button class="light" onclick="showChange('试驾转化率')">查看</button></td></tr>
+          <tr><td>有效线索数</td>
+		  <td>V1.5</td>
+<td>V1.6</td>
+<td>新增CRM评级A/B过滤条件</td>
+<td>18个报表</td>
+<td><span class="badge green">已发布</span></td>
+<td><button class="light" onclick="showChange('有效线索数')">查看</button></td>
+</tr>
+<tr>
+<td>订单转化率</td>
+<td>V1.3</td>
+<td>V1.4</td>
+<td>统一订单归属时间和退订过滤规则</td>
+<td>38个报表</td>
+<td><span class="badge orange">评审中</span></td>
+<td><button class="light" onclick="openPage('arb-home')">去仲裁</button></td>
+</tr>
+<tr>
+<td>营销ROI</td>
+<td>V1.2</td>
+<td>V1.3</td>
+<td>增加线下活动费用归集逻辑</td>
+<td>18个报表</td>
+<td><span class="badge green">已发布</span></td>
+<td><button class="light" onclick="showChange('营销ROI')">查看</button></td>
+</tr>
+</table>
+</div>
+</div>
+
+<div id="metric-alert" class="inner" style="display:none">
+<div class="panel">
+<div class="title">
+指标质量告警
+<button onclick="showToast('已生成质量巡检任务')">发起巡检</button>
+</div>
+
+<table>
+<tr>
+<th>指标名称</th>
+<th>告警类型</th>
+<th>异常描述</th>
+<th>责任人</th>
+<th>优先级</th>
+<th>状态</th>
+<th>操作</th>
+</tr>
+<tr>
+<td>车主活跃率</td>
+<td>波动异常</td>
+<td>较近7日均值下降18.2%</td>
+<td>车主运营组</td>
+<td><span class="badge red">高</span></td>
+<td><span class="badge red">待处理</span></td>
+<td><button class="light" onclick="showDimension('车主活跃率')">下钻分析</button></td>
+</tr>
+<tr>
+<td>营销ROI</td>
+<td>数据延迟</td>
+<td>投放平台数据延迟2小时</td>
+<td>市场数据组</td>
+<td><span class="badge orange">中</span></td>
+<td><span class="badge orange">处理中</span></td>
+<td><button class="light" onclick="showToast('质量工单已打开')">查看工单</button></td>
+</tr>
+<tr>
+<td>订单转化率</td>
+<td>口径冲突</td>
+<td>CRM与DMS统计结果不一致</td>
+<td>销售数据组</td>
+<td><span class="badge red">高</span></td>
+<td><span class="badge red">待仲裁</span></td>
+<td><button class="light" onclick="openPage('arb-home')">去仲裁</button></td>
+</tr>
+<tr>
+<td>用户数</td>
+<td>空值率异常</td>
+<td>One-ID映射字段空值率超过阈值</td>
+<td>主数据组</td>
+<td><span class="badge orange">中</span></td>
+<td><span class="badge orange">待处理</span></td>
+<td><button class="light" onclick="showToast('已打开异常数据样本')">查看样本</button></td>
+</tr>
+</table>
+</div>
+</div>
+</section>
+
+<!-- 指标字典 -->
+<section id="metric-dictionary" class="page">
+<div class="tabs">
+<button class="tab active">指标字典</button>
+<button class="tab" onclick="openPage('metric-home')">指标总览</button>
+<button class="tab" onclick="openPage('metric-lineage')">指标血缘</button>
+<button class="tab" onclick="openPage('metric-permission')">权限管理</button>
+</div>
+
+<div class="panel">
+<div class="title">
+指标目录
+<button onclick="showMetric('new')">+ 新建指标</button>
+</div>
+
+<div class="toolbar">
+<input id="metricSearch" placeholder="搜索指标名称、编码、描述">
+<select id="metricDomain">
+<option value="">全部业务域</option>
+<option>营销域</option>
+<option>销售域</option>
+<option>服务域</option>
+<option>用户域</option>
+<option>经营域</option>
+</select>
+<select id="metricLevel">
+<option value="">全部分级</option>
+<option>P0</option>
+<option>P1</option>
+<option>P2</option>
+</select>
+<select id="metricType">
+<option value="">全部类型</option>
+<option>原子指标</option>
+<option>派生指标</option>
+<option>复合指标</option>
+</select>
+<button onclick="renderMetrics()">搜索</button>
+<button class="gray" onclick="resetMetricSearch()">重置</button>
+</div>
+
+<div id="metricTable"></div>
+</div>
+</section>
+
+<!-- 指标树与北极星 -->
+<section id="metric-north" class="page">
+<div class="panel">
+<div class="title">
+北极星指标
+<span class="badge green">当前整体正常</span>
+</div>
+
+<div class="north">
+<div>
+<div style="color:var(--muted)">单位营销成本带来的成交台数</div>
+<div class="north-value">0.86台</div>
+<span class="badge green">环比 ↑8.6%</span>
+<span class="badge green">同比 ↑12.4%</span>
+<span class="badge orange">目标达成率86%</span>
+
+<p style="line-height:1.8;color:var(--muted)">
+公式：成交台数 ÷ 营销投入成本 × 100,000<br>
+目标：每投入10万元营销成本，带来1台成交车辆。<br>
+数据更新时间：今天09:30。
+</p>
+
+<button onclick="showMetric('north')">查看口径卡</button>
+<button class="light" onclick="showToast('已订阅北极星指标预警')">订阅预警</button>
+</div>
+
+<div>
+<div class="title">
+近12个月趋势
+<small>单位：台/10万元</small>
+</div>
+
+<div class="chart">
+<i style="height:35%"></i>
+<i style="height:42%"></i>
+<i style="height:38%"></i>
+<i style="height:48%"></i>
+<i style="height:53%"></i>
+<i style="height:57%"></i>
+<i style="height:51%"></i>
+<i style="height:63%"></i>
+<i style="height:69%"></i>
+<i style="height:66%"></i>
+<i style="height:77%"></i>
+<i style="height:86%"></i>
+</div>
+
+<p style="font-size:12px;color:var(--muted)">
+关键事件：新车上市、春季试驾活动、区域促销政策。
+</p>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="title">
+指标驱动树
+<button class="light" onclick="showToast('已展开全部指标节点')">一键展开全部</button>
+</div>
+
+<div class="tree">
+<div class="root" onclick="showMetric('north')">
+<b>单位营销成本带来的成交台数</b><br>
+<small>当前值0.86台 · 目标值1.00台 · 环比↑8.6%</small>
+</div>
+
+<div class="node" onclick="showDimension('流量效率')">
+<h3>📡 流量效率</h3>
+<strong>82.6</strong>
+<p>CPL ¥186 · 留资率12.8%</p>
+<span class="badge green">正常 ↑6.4%</span>
+</div>
+
+<div class="node" onclick="showDimension('转化效率')">
+<h3>🔄 转化效率</h3>
+<strong>68.4</strong>
+<p>试驾率24.6% · 大定率8.2%</p>
+<span class="badge green">正常 ↑9.8%</span>
+</div>
+
+<div class="node" onclick="showDimension('客单贡献')">
+<h3>💰 客单贡献</h3>
+<strong>34,280</strong>
+<p>单车毛利 · 金融渗透率48%</p>
+<span class="badge green">正常 ↑4.2%</span>
+</div>
+
+<div class="node" onclick="showDimension('车主复利')">
+<h3>♻️ 车主复利</h3>
+<strong>3.8</strong>
+<p>LTV/CAC · 回站率62.4%</p>
+<span class="badge green">正常 ↑3.7%</span>
+</div>
+
+<div class="node" onclick="showDimension('体验底线')">
+<h3>🛡️ 体验底线</h3>
+<strong style="color:var(--red)">72.4</strong>
+<p>NPS72.4 · 投诉率2.8%</p>
+<span class="badge red">存在风险 ↓5.2%</span>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="title">北极星指标护栏</div>
+
+<table>
+<tr>
+<th>护栏指标</th>
+<th>当前值</th>
+<th>目标值</th>
+<th>趋势</th>
+<th>状态</th>
+<th>操作</th>
+</tr>
+<tr>
+<td>NPS</td>
+<td>72.4</td>
+<td>≥75</td>
+<td>↓5.2%</td>
+<td><span class="badge red">异常</span></td>
+<td><button class="light" onclick="showDimension('NPS')">归因分析</button></td>
+</tr>
+<tr>
+<td>投诉率</td>
+<td>2.8%</td>
+<td>≤2%</td>
+<td>↑0.6%</td>
+<td><span class="badge orange">关注</span></td>
+<td><button class="light" onclick="showDimension('投诉率')">归因分析</button></td>
+</tr>
+<tr>
+<td>退订率</td>
+<td>1.2%</td>
+<td>≤1.5%</td>
+<td>↓0.2%</td>
+<td><span class="badge green">正常</span></td>
+<td><button class="light" onclick="showDimension('退订率')">查看</button></td>
+</tr>
+</table>
+</div>
+</section>
+
+<!-- 指标质量 -->
+<section id="metric-quality" class="page">
+<div class="cards">
+<div class="card"><div class="card-label">质量规则数</div><div class="card-value">1,268</div><div class="card-desc">覆盖92%指标</div></div>
+<div class="card"><div class="card-label">今日巡检指标</div><div class="card-value">386</div><div class="card-desc">完成率100%</div></div>
+<div class="card"><div class="card-label">质量通过率</div><div class="card-value">97.8%</div><div class="card-desc">较上周 ↑1.2%</div></div>
+<div class="card"><div class="card-label">异常指标</div><div class="card-value">19</div><div class="card-desc danger">待处理12个</div></div>
+<div class="card"><div class="card-label">平均闭环时长</div><div class="card-value">16.4h</div><div class="card-desc">目标≤48h</div></div>
+</div>
+
+<div class="panel">
+<div class="title">
+指标质量巡检结果
+<button onclick="showToast('已发起全量质量巡检')">发起巡检</button>
+</div>
+
+<table>
+<tr>
+<th>指标名称</th>
+<th>空值率</th>
+<th>波动检查</th>
+<th>延迟</th>
+<th>质量评分</th>
+<th>状态</th>
+<th>操作</th>
+</tr>
+<tr><td>有效线索数</td><td>0.2%</td><td>正常</td><td>8分钟</td><td>99.2</td><td><span class="badge green">通过</span></td><td><button class="light" onclick="showToast('已查看巡检明细')">明细</button></td></tr>
+<tr><td>试驾转化率</td><td>0.6%</td><td>正常</td><td>12分钟</td><td>98.6</td><td><span class="badge green">通过</span></td><td><button class="light" onclick="showToast('已查看巡检明细')">明细</button></td></tr>
+<tr><td>车主活跃率</td><td>2.8%</td><td>异常下降</td><td>1小时</td><td>86.4</td><td><span class="badge red">异常</span></td><td><button class="light" onclick="showDimension('车主活跃率')">下钻</button></td></tr>
+<tr><td>营销ROI</td><td>1.2%</td><td>正常</td><td>2小时</td><td>91.8</td><td><span class="badge orange">关注</span></td><td><button class="light" onclick="showToast('已打开延迟分析')">分析</button></td></tr>
+<tr><td>NPS</td><td>0.4%</td><td>异常下降</td><td>1天</td><td>88.2</td><td><span class="badge red">异常</span></td><td><button class="light" onclick="showDimension('NPS')">下钻</button></td></tr>
+</table>
+</div>
+
+<div class="panel">
+<div class="title">质量规则配置</div>
+
+<table>
+<tr><th>规则类型</th><th>规则示例</th><th>阈值</th><th>告警级别</th><th>启用指标数</th><th>操作</th></tr>
+<tr><td>完整性</td><td>关键字段非空率</td><td>≥98%</td><td><span class="badge red">硬规则</span></td><td>386</td><td><button class="light" onclick="showToast('已打开完整性规则')">配置</button></td></tr>
+<tr><td>及时性</td><td>数据更新时间延迟</td><td>≤1小时</td><td><span class="badge orange">软规则</span></td><td>248</td><td><button class="light" onclick="showToast('已打开及时性规则')">配置</button></td></tr>
+<tr><td>波动性</td><td>环比波动阈值</td><td>±20%</td><td><span class="badge red">硬规则</span></td><td>196</td><td><button class="light" onclick="showToast('已打开波动规则')">配置</button></td></tr>
+</table>
+</div>
+</section>
+
+<!-- 指标血缘 -->
+<section id="metric-lineage" class="page">
+<div class="panel">
+<div class="title">指标血缘与影响分析</div>
+
+<div class="toolbar">
+<input id="lineageSearch" value="试驾转化率" placeholder="输入指标名称">
+<button onclick="renderLineage()">查询</button>
+<button class="light" onclick="showToast('已下载血缘关系图')">下载血缘图</button>
+</div>
+
+<div id="lineageResult">
+<div class="lineage">
+<div class="lineage-node">CRM客户系统</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">DMS试驾表</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">DWD销售明细</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">试驾转化率</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">BI/ChatBI</div>
+</div>
+</div>
+</div>
+
+<div class="grid2">
+<div class="panel">
+<div class="title">上游依赖</div>
+<table>
+<tr><th>对象</th><th>类型</th><th>影响字段</th><th>状态</th></tr>
+<tr><td>dwd_sales_lead</td><td>数据表</td><td>lead_id、user_id</td><td><span class="badge green">正常</span></td></tr>
+<tr><td>dwd_test_drive</td><td>数据表</td><td>test_drive_id、finish_time</td><td><span class="badge green">正常</span></td></tr>
+<tr><td>CRM评级规则</td><td>业务规则</td><td>lead_level</td><td><span class="badge green">生效</span></td></tr>
+</table>
+</div>
+
+<div class="panel">
+<div class="title">下游影响</div>
+<table>
+<tr><th>下游对象</th><th>类型</th><th>责任人</th><th>影响级别</th></tr>
+<tr><td>销售经营驾驶舱</td><td>看板</td><td>销售管理部</td><td><span class="badge red">高</span></td></tr>
+<tr><td>营销转化周报</td><td>报表</td><td>市场数据组</td><td><span class="badge orange">中</span></td></tr>
+<tr><td>ChatBI问数服务</td><td>应用</td><td>数据产品组</td><td><span class="badge red">高</span></td></tr>
+</table>
+</div>
+</div>
+
+<div class="panel">
+<div class="title">影响分析操作</div>
+<p style="color:var(--muted)">
+如果修改该指标口径，预计影响26个BI报表、8个经营看板、3个API、5个营销场景。
+</p>
+<button onclick="showToast('已通知全部下游责任人')">一键通知下游</button>
+<button class="light" onclick="showToast('已生成影响分析报告')">生成影响报告</button>
+</div>
+</section>
+
+<!-- 指标权限 -->
+<section id="metric-permission" class="page">
+<div class="panel">
+<div class="title">
+指标权限管理
+<button onclick="showToast('已打开权限申请')">申请权限</button>
+</div>
+
+<table>
+<tr>
+<th>角色</th>
+<th>指标范围</th>
+<th>数据粒度</th>
+<th>敏感数据</th>
+<th>行级隔离</th>
+<th>状态</th>
+<th>操作</th>
+</tr>
+<tr><td>集团管理层</td><td>全部经营指标</td><td>集团/区域/城市</td><td>可见</td><td>否</td><td><span class="badge green">已生效</span></td><td><button class="light" onclick="showToast('已打开管理层权限配置')">配置</button></td></tr>
+<tr><td>市场人员</td><td>营销、投放、用户指标</td><td>区域/渠道/车型</td><td>脱敏</td><td>否</td><td><span class="badge green">已生效</span></td><td><button class="light" onclick="showToast('已打开市场权限配置')">配置</button></td></tr>
+<tr><td>销售人员</td><td>线索、试驾、订单指标</td><td>区域/门店</td><td>脱敏</td><td>是</td><td><span class="badge green">已生效</span></td><td><button class="light" onclick="showToast('已打开销售权限配置')">配置</button></td></tr>
+<tr><td>经销商</td><td>本店销售和服务指标</td><td>本店</td><td>不可见</td><td>是</td><td><span class="badge green">已生效</span></td><td><button class="light" onclick="showToast('已打开经销商行级权限')">配置</button></td></tr>
+<tr><td>销售顾问</td><td>本人线索和订单指标</td><td>本人</td><td>不可见</td><td>是</td><td><span class="badge orange">待审核</span></td><td><button class="light" onclick="showToast('已打开权限审批')">审核</button></td></tr>
+</table>
+</div>
+
+<div class="panel">
+<div class="title">近期权限申请</div>
+<table>
+<tr><th>申请人</th><th>申请指标</th><th>申请范围</th><th>申请原因</th><th>状态</th><th>操作</th></tr>
+<tr><td>李娜</td><td>营销ROI</td><td>华东区域</td><td>区域投放复盘</td><td><span class="badge orange">审批中</span></td><td><button class="light" onclick="showToast('已打开审批详情')">审批</button></td></tr>
+<tr><td>王强</td><td>NPS</td><td>全国</td><td>客户体验分析</td><td><span class="badge green">已通过</span></td><td><button class="light" onclick="showToast('已查看授权记录')">查看</button></td></tr>
+</table>
+</div>
+</section>
+
+<!-- 标签管理 -->
+<section id="tag-home" class="page">
+<div class="tabs">
+<button class="tab active" onclick="switchTag(this,'tag-overview')">标签总览</button>
+<button class="tab" onclick="switchTag(this,'tag-list')">标签目录</button>
+<button class="tab" onclick="switchTag(this,'tag-life-inner')">生命周期管理</button>
+<button class="tab" onclick="switchTag(this,'tag-monitor-inner')">标签监控</button>
+</div>
+
+<div id="tag-overview" class="inner">
+<div class="cards">
+<div class="card"><div class="card-label">标签总数</div><div class="card-value">1,286</div><div class="card-desc">覆盖18类标签</div></div>
+<div class="card"><div class="card-label">已发布标签</div><div class="card-value">986</div><div class="card-desc">活跃标签824个</div></div>
+<div class="card"><div class="card-label">平均质量评分</div><div class="card-value">94.2</div><div class="card-desc">较上月 ↑1.8</div></div>
+<div class="card"><div class="card-label">标签覆盖率</div><div class="card-value">86.4%</div><div class="card-desc">One-ID用户覆盖</div></div>
+<div class="card"><div class="card-label">待下线标签</div><div class="card-value">43</div><div class="card-desc warn">连续3个月零调用</div></div>
+</div>
+
+<div class="panel">
+<div class="title">标签生命周期分布</div>
+<div class="lifecycle">
+<div class="life active" onclick="filterTagStatus('需求中')">需求中<br><b>86</b></div>
+<div class="life" onclick="filterTagStatus('开发中')">开发中<br><b>48</b></div>
+<div class="life" onclick="filterTagStatus('测试中')">测试中<br><b>72</b></div>
+<div class="life" onclick="filterTagStatus('已发布')">已发布<br><b>986</b></div>
+<div class="life" onclick="filterTagStatus('待下线')">待下线<br><b>43</b></div>
+</div>
+</div>
+
+<div class="grid2">
+<div class="panel">
+<div class="title">18类标签分布</div>
+<table>
+<tr><td>行为标签</td><td>286</td><td><div class="progress"><i style="width:82%"></i></div></td></tr>
+<tr><td>车型偏好标签</td><td>164</td><td><div class="progress"><i style="width:62%"></i></div></td></tr>
+<tr><td>生命周期标签</td><td>86</td><td><div class="progress"><i style="width:45%"></i></div></td></tr>
+<tr><td>用户价值标签</td><td>92</td><td><div class="progress"><i style="width:49%"></i></div></td></tr>
+<tr><td>预测模型标签</td><td>68</td><td><div class="progress"><i style="width:35%"></i></div></td></tr>
+</table>
+</div>
+
+<div class="panel">
+<div class="title">标签使用热度TOP5</div>
+<table>
+<tr><th>标签</th><th>圈选次数</th><th>业务价值</th></tr>
+<tr><td>高意向新能源用户</td><td>2,846</td><td><span class="badge green">高</span></td></tr>
+<tr><td>车龄3年以上车主</td><td>2,418</td><td><span class="badge green">高</span></td></tr>
+<tr><td>SUV偏好用户</td><td>1,986</td><td><span class="badge">中高</span></td></tr>
+<tr><td>流失风险车主</td><td>1,632</td><td><span class="badge orange">关注</span></td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<div id="tag-list" class="inner" style="display:none">
+<div class="panel">
+<div class="title">
+标签目录
+<button onclick="showTag('new')">+ 申请新标签</button>
+</div>
+
+<div class="toolbar">
+<input id="tagSearch" placeholder="搜索标签名称、编码、定义">
+<select id="tagType">
+<option value="">全部标签类型</option>
+<option>行为标签</option>
+<option>车型偏好标签</option>
+<option>生命周期标签</option>
+<option>用户价值标签</option>
+<option>预测模型标签</option>
+<option>风险标签</option>
+</select>
+<select id="tagStatus">
+<option value="">全部状态</option>
+<option>已发布</option>
+<option>开发中</option>
+<option>测试中</option>
+<option>待下线</option>
+</select>
+<button onclick="renderTags()">搜索</button>
+<button class="gray" onclick="resetTagSearch()">重置</button>
+</div>
+
+<div id="tagTable"></div>
+</div>
+</div>
+
+<div id="tag-life-inner" class="inner" style="display:none">
+<div class="panel">
+<div class="title">标签全生命周期管理</div>
+<table>
+<tr><th>阶段</th><th>核心动作</th><th>当前数量</th><th>责任角色</th><th>操作</th></tr>
+<tr><td>①需求申请</td><td>提交业务场景、预期收益、优先级</td><td>86</td><td>业务Owner</td><td><button class="light" onclick="showTag('new')">提报需求</button></td></tr>
+<tr><td>②标签定义</td><td>定义标签口径、数据来源、计算逻辑</td><td>48</td><td>数据产品经理</td><td><button class="light" onclick="showToast('已打开标签定义工作台')">处理</button></td></tr>
+<tr><td>③标签开发</td><td>开发任务分配、交付时间跟踪</td><td>36</td><td>数据开发组</td><td><button class="light" onclick="showToast('已打开开发任务列表')">查看</button></td></tr>
+<tr><td>④标签测试</td><td>口径、质量、性能和抽样验证</td><td>72</td><td>测试组</td><td><button class="light" onclick="showToast('已打开标签测试报告')">查看</button></td></tr>
+<tr><td>⑤标签审核</td><td>数据委员会评审，禁止同名异义</td><td>24</td><td>数据委员会</td><td><button class="light" onclick="showToast('已打开审核任务')">审核</button></td></tr>
+<tr><td>⑥标签发布</td><td>灰度、生效、公告、版本生成</td><td>986</td><td>标签运营组</td><td><button class="light" onclick="showToast('已打开发布配置')">发布</button></td></tr>
+<tr><td>⑦标签评估</td><td>回收转化效果，识别零调用标签</td><td>43</td><td>标签运营组</td><td><button class="light" onclick="showToast('已打开标签价值评估')">评估</button></td></tr>
+<tr><td>⑧标签下线</td><td>影响分析、通知使用者、归档</td><td>43</td><td>数据治理组</td><td><button class="light" onclick="showToast('已打开下线评估')">处理</button></td></tr>
+</table>
+</div>
+</div>
+
+<div id="tag-monitor-inner" class="inner" style="display:none">
+<div class="panel">
+<div class="title">标签质量监控</div>
+<table>
+<tr><th>标签名称</th><th>覆盖用户数</th><th>覆盖率</th><th>准确率</th><th>更新延迟</th><th>使用次数</th><th>状态</th><th>操作</th></tr>
+<tr><td>高意向新能源用户</td><td>286万</td><td>22.4%</td><td>96.8%</td><td>8分钟</td><td>2,846</td><td><span class="badge green">正常</span></td><td><button class="light" onclick="showToast('已打开监控明细')">明细</button></td></tr>
+<tr><td>车龄3年以上车主</td><td>86万</td><td>31.2%</td><td>98.2%</td><td>12分钟</td><td>2,418</td><td><span class="badge green">正常</span></td><td><button class="light" onclick="showToast('已打开监控明细')">明细</button></td></tr>
+<tr><td>流失风险车主</td><td>24万</td><td>8.6%</td><td>82.4%</td><td>2小时</td><td>1,632</td><td><span class="badge orange">关注</span></td><td><button class="light" onclick="showDimension('流失风险车主')">分析</button></td></tr>
+<tr><td>家庭增购潜力用户</td><td>0</td><td>0%</td><td>—</td><td>—</td><td>0</td><td><span class="badge red">待下线</span></td><td><button class="light" onclick="showToast('已打开标签下线评估')">处理</button></td></tr>
+</table>
+</div>
+</div>
+</section>
+
+<!-- 标签生命周期独立页面 -->
+<section id="tag-life" class="page">
+<div class="panel">
+<div class="title">
+标签生命周期工作台
+<button onclick="showTag('new')">+ 新建标签需求</button>
+</div>
+
+<div class="cards">
+<div class="card"><div class="card-label">需求中</div><div class="card-value">86</div><div class="card-desc">待评审需求</div></div>
+<div class="card"><div class="card-label">开发中</div><div class="card-value">48</div><div class="card-desc">开发任务</div></div>
+<div class="card"><div class="card-label">测试中</div><div class="card-value">72</div><div class="card-desc">待验证标签</div></div>
+<div class="card"><div class="card-label">已发布</div><div class="card-value">986</div><div class="card-desc">可供圈选使用</div></div>
+<div class="card"><div class="card-label">待下线</div><div class="card-value">43</div><div class="card-desc warn">零调用标签</div></div>
+</div>
+
+<table>
+<tr><th>标签名称</th><th>阶段</th><th>负责人</th><th>预计完成时间</th><th>当前进度</th><th>操作</th></tr>
+<tr><td>高意向新能源用户</td><td><span class="badge green">已发布</span></td><td>标签数据组</td><td>已完成</td><td>100%</td><td><button class="light" onclick="showTag('TAG_INTENT_NE')">查看</button></td></tr>
+<tr><td>家庭增购潜力用户</td><td><span class="badge orange">测试中</span></td><td>模型数据组</td><td>2025-02-18</td><td>72%</td><td><button class="light" onclick="showToast('已打开开发测试进度')">跟进</button></td></tr>
+<tr><td>新能源充电偏好用户</td><td><span class="badge">开发中</span></td><td>用户数据组</td><td>2025-02-25</td><td>45%</td><td><button class="light" onclick="showToast('已打开开发任务')">跟进</button></td></tr>
+<tr><td>历史活动沉睡用户</td><td><span class="badge red">待下线</span></td><td>标签运营组</td><td>2025-02-12</td><td>影响评估</td><td><button class="light" onclick="showToast('已打开下线流程')">处理</button></td></tr>
+</table>
+</div>
+</section>
+
+<!-- 标签监控独立页面 -->
+<section id="tag-monitor" class="page">
+<div class="cards">
+<div class="card"><div class="card-label">平均覆盖率</div><div class="card-value">86.4%</div><div class="card-desc">较上月 ↑3.2%</div></div>
+<div class="card"><div class="card-label">平均准确率</div><div class="card-value">94.8%</div><div class="card-desc">已覆盖1,124个标签</div></div>
+<div class="card"><div class="card-label">异常标签</div><div class="card-value">26</div><div class="card-desc danger">待处理12个</div></div>
+<div class="card"><div class="card-label">实时延迟告警</div><div class="card-value">8</div><div class="card-desc warn">超过15分钟</div></div>
+<div class="card"><div class="card-label">零调用标签</div><div class="card-value">43</div><div class="card-desc warn">建议评估下线</div></div>
+</div>
+
+<div class="panel">
+<div class="title">标签监控明细</div>
+<table>
+<tr><th>标签</th><th>类型</th><th>覆盖率</th><th>准确率</th><th>时效性</th><th>业务价值</th><th>状态</th><th>操作</th></tr>
+<tr><td>高意向新能源用户</td><td>预测模型标签</td><td>22.4%</td><td>96.8%</td><td>8分钟</td><td>高</td><td><span class="badge green">正常</span></td><td><button class="light" onclick="showTag('TAG_INTENT_NE')">查看</button></td></tr>
+<tr><td>车龄3年以上车主</td><td>车辆标签</td><td>31.2%</td><td>98.2%</td><td>12分钟</td><td>高</td><td><span class="badge green">正常</span></td><td><button class="light" onclick="showTag('TAG_VEHICLE_3Y')">查看</button></td></tr>
+<tr><td>流失风险车主</td><td>风险标签</td><td>8.6%</td><td>82.4%</td><td>2小时</td><td>高</td><td><span class="badge orange">关注</span></td><td><button class="light" onclick="showTag('TAG_CHURN_OWNER')">分析</button></td></tr>
+</table>
+</div>
+</section>
+
+<!-- 标签权限 -->
+<section id="tag-permission" class="page">
+<div class="panel">
+<div class="title">
+标签权限管理
+<button onclick="showToast('已打开标签权限申请')">申请权限</button>
+</div>
+
+<table>
+<tr><th>角色</th><th>可见标签类型</th><th>使用范围</th><th>敏感标签</th><th>组织隔离</th><th>状态</th><th>操作</th></tr>
+<tr><td>市场人员</td><td>偏好、行为、营销响应</td><td>全国/区域</td><td>脱敏</td><td>否</td><td><span class="badge green">已生效</span></td><td><button class="light" onclick="showToast('已打开市场标签权限')">配置</button></td></tr>
+<tr><td>销售人员</td><td>意向、生命周期、渠道</td><td>所属区域</td><td>不可见</td><td>是</td><td><span class="badge green">已生效</span></td><td><button class="light" onclick="showToast('已打开销售标签权限')">配置</button></td></tr>
+<tr><td>经销商</td><td>销售转化、服务、生命周期</td><td>所属门店</td><td>不可见</td><td>是</td><td><span class="badge green">已生效</span></td><td><button class="light" onclick="showToast('已打开经销商标签权限')">配置</button></td></tr>
+<tr><td>数据开发人员</td><td>全部标签</td><td>按工单授权</td><td>可见</td><td>否</td><td><span class="badge orange">审批中</span></td><td><button class="light" onclick="showToast('已打开审批详情')">审批</button></td></tr>
+</table>
+</div>
+</section>
+
+<!-- 口径仲裁首页 -->
+<section id="arb-home" class="page">
+<div class="cards">
+<div class="card"><div class="card-label">待处理争议</div><div class="card-value">8</div><div class="card-desc danger">需48小时内处理</div></div>
+<div class="card"><div class="card-label">处理中</div><div class="card-value">13</div><div class="card-desc warn">委员会评审中</div></div>
+<div class="card"><div class="card-label">本月已关闭</div><div class="card-value">36</div><div class="card-desc">闭环率92.4%</div></div>
+<div class="card"><div class="card-label">平均处理时长</div><div class="card-value">26.8h</div><div class="card-desc">目标≤48h</div></div>
+<div class="card"><div class="card-label">口径一致率</div><div class="card-value">98.2%</div><div class="card-desc">较上月 ↑1.6%</div></div>
+</div>
+
+<div class="panel">
+<div class="title">
+口径争议工单
+<button onclick="showArbitration()">+ 提交口径争议</button>
+</div>
+
+<table>
+<tr><th>编号</th><th>争议指标</th><th>争议焦点</th><th>提交方</th><th>提交时间</th><th>状态</th><th>操作</th></tr>
+<tr><td>ARB-202501</td><td>订单转化率</td><td>统计粒度</td><td>销售管理部</td><td>今天09:20</td><td><span class="badge red">待处理</span></td><td><button class="light" onclick="openPage('arb-detail')">处理</button></td></tr>
+<tr><td>ARB-202502</td><td>有效线索数</td><td>有效定义</td><td>市场部</td><td>昨天16:42</td><td><span class="badge orange">评审中</span></td><td><button class="light" onclick="openPage('arb-detail')">查看</button></td></tr>
+<tr><td>ARB-202503</td><td>复购率</td><td>时间窗口</td><td>客户运营部</td><td>2025-02-08</td><td><span class="badge green">已关闭</span></td><td><button class="light" onclick="openPage('arb-detail')">归档</button></td></tr>
+<tr><td>ARB-202504</td><td>营销ROI</td><td>成本归集</td><td>品牌市场部</td><td>2025-02-06</td><td><span class="badge green">已关闭</span></td><td><button class="light" onclick="openPage('arb-detail')">归档</button></td></tr>
+</table>
+</div>
+
+<div class="grid2">
+<div class="panel">
+<div class="title">高频争议指标TOP5</div>
+<table>
+<tr><th>指标</th><th>争议次数</th><th>主要争议点</th></tr>
+<tr><td>订单转化率</td><td>12</td><td>统计粒度、订单状态</td></tr>
+<tr><td>有效线索数</td><td>9</td><td>有效定义、去重规则</td></tr>
+<tr><td>复购率</td><td>7</td><td>时间窗口</td></tr>
+<tr><td>活跃用户数</td><td>6</td><td>行为定义</td></tr>
+<tr><td>营销ROI</td><td>5</td><td>成本归集</td></tr>
+</table>
+</div>
+
+<div class="panel">
+<div class="title">仲裁闭环流程</div>
+<div class="lineage">
+<div class="lineage-node">提交争议</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">双方陈述</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">委员会裁决</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">字典更新</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 仲裁处理工作台 -->
+<section id="arb-detail" class="page">
+<div class="panel">
+<div class="title">
+争议处理工作台
+<span class="badge red">待委员会裁决</span>
+</div>
+
+<div class="detail-grid">
+<div class="detail"><label>工单编号</label><b>ARB-202501</b></div>
+<div class="detail"><label>争议指标</label><b>订单转化率</b></div>
+<div class="detail"><label>争议焦点</label><b>统计粒度</b></div>
+<div class="detail"><label>提交方</label><b>销售管理部</b></div>
+<div class="detail"><label>处理时限</label><b>48小时</b></div>
+<div class="detail"><label>当前剩余</label><b style="color:var(--red)">21小时</b></div>
+</div>
+
+<h3>现有指标口径</h3>
+<div class="detail">
+订单数 ÷ 有效线索数 ×100%，当前按订单创建日期归属统计。
+</div>
+
+<h3>争议双方观点</h3>
+<table>
+<tr><th>争议方</th><th>建议方案</th><th>主要理由</th></tr>
+<tr><td>销售管理部</td><td>按订单创建日期统计</td><td>便于评价销售团队当期转化效率</td></tr>
+<tr><td>经营分析组</td><td>按线索创建日期统计</td><td>便于评价营销投入带来的真实转化</td></tr>
+</table>
+
+<h3>影响分析</h3>
+<table>
+<tr><th>下游对象</th><th>对象类型</th><th>数量</th><th>是否需要重跑</th></tr>
+<tr><td>经营驾驶舱</td><td>看板</td><td>8</td><td>是</td></tr>
+<tr><td>销售经营周报</td><td>报表</td><td>26</td><td>是</td></tr>
+<tr><td>ChatBI语义服务</td><td>应用</td><td>1</td><td>刷新语义缓存</td></tr>
+<tr><td>营销转化场景</td><td>营销场景</td><td>5</td><td>是</td></tr>
+</table>
+
+<h3>裁决操作</h3>
+<div class="toolbar">
+<select>
+<option>选择最终口径方案</option>
+<option>方案A：按订单创建日期</option>
+<option>方案B：按线索创建日期</option>
+<option>方案C：双口径并行保留</option>
+</select>
+<textarea placeholder="请输入裁决理由" style="flex:1;height:80px"></textarea>
+</div>
+
+<button onclick="showToast('已提交数据委员会投票')">提交投票</button>
+<button class="light" onclick="showToast('已通知争议双方补充材料')">补充材料</button>
+<button class="red" onclick="showToast('裁决结果已确认，已进入公示与重跑流程')">确认裁决并公示</button>
+</div>
+</section>
+
+<!-- 版本管理 -->
+<section id="version" class="page">
+<div class="panel">
+<div class="title">口径版本管理</div>
+
+<div class="toolbar">
+<input placeholder="搜索指标名称或版本号">
+<select>
+<option>全部状态</option>
+<option>已生效</option>
+<option>评审中</option>
+<option>已废弃</option>
+</select>
+<button onclick="showToast('版本检索完成')">查询</button>
+</div>
+
+<table>
+<tr><th>指标名称</th><th>版本</th><th>版本状态</th><th>变更内容</th><th>变更人</th><th>变更时间</th><th>历史数据重跑</th><th>操作</th></tr>
+<tr><td>试驾转化率</td><td>V2.0</td><td><span class="badge green">当前生效</span></td><td>试驾用户去重</td><td>张明</td><td>今天10:20</td><td><span class="badge green">已完成</span></td><td><button class="light" onclick="showChange('试驾转化率')">查看</button></td></tr>
+<tr><td>试驾转化率</td><td>V1.2</td><td><span class="badge orange">历史版本</span></td><td>初始版本</td><td>李娜</td><td>2024-08-01</td><td>—</td><td><button class="light" onclick="showToast('已查看历史版本')">查看</button></td></tr>
+<tr><td>订单转化率</td><td>V1.4</td><td><span class="badge orange">评审中</span></td><td>订单归属时间调整</td><td>王强</td><td>昨天16:42</td><td>待执行</td><td><button class="light" onclick="openPage('arb-detail')">处理</button></td></tr>
+</table>
+</div>
+</section>
+
+<!-- 变更公示 -->
+<section id="notice" class="page">
+<div class="panel">
+<div class="title">指标口径变更公示中心</div>
+
+<div class="toolbar">
+<input placeholder="搜索公示标题或指标名称">
+<select>
+<option>全部公示状态</option>
+<option>待确认</option>
+<option>已发布</option>
+<option>已读</option>
+</select>
+<button onclick="showToast('公示检索完成')">搜索</button>
+</div>
+
+<table>
+<tr><th>公示标题</th><th>涉及指标</th><th>影响范围</th><th>发布时间</th><th>需重跑报表</th><th>阅读状态</th><th>操作</th></tr>
+<tr><td>关于试驾转化率口径调整的通知</td><td>试驾转化率</td><td>销售、营销、ChatBI</td><td>今天10:30</td><td>26个</td><td><span class="badge orange">待阅读</span></td><td><button class="light" onclick="showNoticeDetail()">查看公示</button></td></tr>
+<tr><td>关于有效线索数标准调整的通知</td><td>有效线索数</td><td>营销、销售</td><td>昨天17:00</td><td>18个</td><td><span class="badge green">已阅读</span></td><td><button class="light" onclick="showNoticeDetail()">查看公示</button></td></tr>
+<tr><td>关于营销ROI成本口径调整的通知</td><td>营销ROI</td><td>市场、经营</td><td>2025-02-08</td><td>18个</td><td><span class="badge green">已阅读</span></td><td><button class="light" onclick="showNoticeDetail()">查看公示</button></td></tr>
+</table>
+</div>
+</section>
+
+<!-- ChatBI指标问答页面 -->
+<section id="chatbi" class="page">
+
+  <div class="panel">
+    <div class="title">
+      <div>
+        ChatBI指标问答
+        <small style="display:block;margin-top:6px">
+          基于指标语义层、指标口径和数据权限的自然语言问数助手
+        </small>
+      </div>
+
+      <span class="badge green">语义层服务正常</span>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail">
+        <label>标准指标数</label>
+        <b>486</b>
+      </div>
+
+      <div class="detail">
+        <label>今日问数次数</label>
+        <b>2,846</b>
+      </div>
+
+      <div class="detail">
+        <label>标准口径命中率</label>
+        <b>96.8%</b>
+      </div>
+
+      <div class="detail">
+        <label>回答可信度</label>
+        <b>94.2%</b>
+      </div>
+
+      <div class="detail">
+        <label>待确认问题</label>
+        <b style="color:var(--orange)">18</b>
+      </div>
+
+      <div class="detail">
+        <label>当前数据更新时间</label>
+        <b>今天09:30</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <!-- 问数区域 -->
+    <div class="panel">
+      <div class="title">
+        自然语言问数
+        <small>支持指标、时间、区域、渠道、车型和门店</small>
+      </div>
+
+      <div style="
+        min-height:260px;
+        padding:18px;
+        border-radius:8px;
+        background:#f7f9fc;
+      " id="chatConversation">
+
+        <div style="
+          max-width:86%;
+          margin-bottom:16px;
+          padding:12px 14px;
+          border-radius:8px;
+          color:#3d4d67;
+          background:#fff;
+        ">
+          你好，我是神龙数据中台ChatBI助手。<br>
+          你可以直接问我：
+          <br>• 上个月华东区试驾转化率是多少？
+          <br>• 哪个渠道带来的订单转化率最高？
+          <br>• 最近30天高意向新能源用户有多少？
+        </div>
+
+        <div id="chatAnswer" style="
+          display:none;
+          max-width:90%;
+          margin-left:auto;
+          padding:12px 14px;
+          border-radius:8px;
+          color:#fff;
+          background:var(--blue);
+          line-height:1.7;
+        ">
+        </div>
+      </div>
+
+      <div style="
+        display:flex;
+        gap:8px;
+        margin-top:14px;
+      ">
+        <input
+          id="chatQuestion"
+          style="flex:1"
+          placeholder="请输入问题，例如：上个月华东区试驾转化率是多少？"
+          onkeydown="if(event.key==='Enter')askChatBI()"
+        >
+
+        <button onclick="askChatBI()">发送</button>
+      </div>
+
+      <div style="
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        margin-top:12px;
+      ">
+        <button class="light" onclick="useChatQuestion('上个月华东区试驾转化率是多少？')">
+          华东试驾转化率
+        </button>
+
+        <button class="light" onclick="useChatQuestion('哪个渠道的订单转化率最高？')">
+          渠道订单转化率
+        </button>
+
+        <button class="light" onclick="useChatQuestion('最近30天高意向新能源用户有多少？')">
+          高意向用户数
+        </button>
+
+        <button class="light" onclick="useChatQuestion('本月营销ROI是多少？')">
+          本月营销ROI
+        </button>
+      </div>
+    </div>
+
+    <!-- 可信机制 -->
+    <div class="panel">
+      <div class="title">
+        答案可信机制
+        <small>为什么这个答案可信</small>
+      </div>
+
+      <div class="alert">
+        <b><span class="dot"></span>指标口径匹配</b>
+        <small>已匹配指标平台标准指标，不使用自定义SQL口径。</small>
+      </div>
+
+      <div class="alert">
+        <b><span class="dot"></span>数据权限校验</b>
+        <small>当前用户具备全国及区域级销售指标查询权限。</small>
+      </div>
+
+      <div class="alert">
+        <b><span class="dot"></span>数据来源可追溯</b>
+        <small>答案来源于认证数据集和指标语义层。</small>
+      </div>
+
+      <div class="alert">
+        <b><span class="dot orange"></span>低置信度拦截</b>
+        <small>当指标口径不明确时，系统会主动追问，不直接生成答案。</small>
+      </div>
+
+      <div class="alert">
+        <b><span class="dot"></span>结果可下钻</b>
+        <small>支持按照区域、城市、渠道、车型和门店继续分析。</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最近问数 -->
+  <div class="panel">
+    <div class="title">
+      最近问数记录
+      <button class="light" onclick="clearChatHistory()">清空记录</button>
+    </div>
+
+    <table id="chatHistoryTable">
+      <tr>
+        <th>问题</th>
+        <th>匹配指标</th>
+        <th>回答结果</th>
+        <th>可信度</th>
+        <th>时间</th>
+        <th>操作</th>
+      </tr>
+
+      <tr>
+        <td>上个月华东区试驾转化率是多少？</td>
+        <td>试驾转化率</td>
+        <td>24.6%</td>
+        <td><span class="badge green">98%</span></td>
+        <td>今天09:24</td>
+        <td>
+          <button class="light" onclick="reuseChatQuestion('上个月华东区试驾转化率是多少？')">
+            再次分析
+          </button>
+        </td>
+      </tr>
+
+      <tr>
+        <td>哪个渠道带来的订单转化率最高？</td>
+        <td>订单转化率</td>
+        <td>企微渠道，转化率12.6%</td>
+        <td><span class="badge green">96%</span></td>
+        <td>今天09:10</td>
+        <td>
+          <button class="light" onclick="reuseChatQuestion('哪个渠道带来的订单转化率最高？')">
+            再次分析
+          </button>
+        </td>
+      </tr>
+
+      <tr>
+        <td>本月营销ROI是多少？</td>
+        <td>营销ROI</td>
+        <td>4.28</td>
+        <td><span class="badge green">94%</span></td>
+        <td>昨天17:42</td>
+        <td>
+          <button class="light" onclick="reuseChatQuestion('本月营销ROI是多少？')">
+            再次分析
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 指标语义层 -->
+  <div class="panel">
+    <div class="title">
+      当前使用的指标语义层
+      <button class="light" onclick="openPage('metric-dictionary')">
+        查看指标字典
+      </button>
+    </div>
+
+    <table>
+      <tr>
+        <th>语义对象</th>
+        <th>示例</th>
+        <th>来源</th>
+        <th>状态</th>
+      </tr>
+
+      <tr>
+        <td>标准指标</td>
+        <td>试驾转化率、营销ROI、订单转化率</td>
+        <td>指标管理平台</td>
+        <td><span class="badge green">已认证</span></td>
+      </tr>
+
+      <tr>
+        <td>业务维度</td>
+        <td>区域、城市、渠道、车型、门店</td>
+        <td>主数据平台</td>
+        <td><span class="badge green">已认证</span></td>
+      </tr>
+
+      <tr>
+        <td>统计粒度</td>
+        <td>日、周、月、季度</td>
+        <td>指标口径卡</td>
+        <td><span class="badge green">已认证</span></td>
+      </tr>
+
+      <tr>
+        <td>数据来源</td>
+        <td>CRM、DMS、营销平台、售后系统</td>
+        <td>数据血缘平台</td>
+        <td><span class="badge green">可追溯</span></td>
+      </tr>
+    </table>
+  </div>
+
+</section>
+
+
+<!-- 页面占位 -->
+<section id="placeholder" class="page">
+<div class="panel" style="padding:70px;text-align:center">
+<div style="font-size:45px">🚧</div>
+<h2 id="placeholderTitle">模块建设中</h2>
+<p style="color:var(--muted)">当前正在优先完善指标体系模块。</p>
+<button onclick="openPage('metric-home')">返回指标体系</button>
+</div>
+</section>
+
+</main>
+</div>
+</div>
+
+<div id="modalMask" class="modal-mask">
+<div class="modal">
+<div class="modal-head">
+<h2 id="modalTitle">详情</h2>
+<span class="close" onclick="closeModal()">×</span>
+</div>
+<div id="modalContent"></div>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const metrics=[
+{
+name:"试驾转化率",
+code:"MKT_TRIAL_RATE",
+domain:"销售域",
+level:"P0",
+type:"派生指标",
+formula:"完成试驾人数 ÷ 有效线索人数 × 100%",
+update:"T+1",
+owner:"销售数据组",
+score:98,
+value:"24.6%",
+desc:"衡量有效线索转化为实际试驾的效率。"
+},
+{
+name:"有效线索数",
+code:"SALES_VALID_LEAD_CNT",
+domain:"销售域",
+level:"P0",
+type:"原子指标",
+formula:"CRM评级A/B且核心字段完整的线索数",
+update:"小时",
+owner:"销售数据组",
+score:99,
+value:"28,640",
+desc:"去除重复、无效和字段缺失后的有效线索数量。"
+},
+{
+name:"营销ROI",
+code:"MKT_ROI",
+domain:"营销域",
+level:"P0",
+type:"复合指标",
+formula:"营销活动贡献毛利 ÷ 营销投入成本",
+update:"T+1",
+owner:"市场数据组",
+score:92,
+value:"4.28",
+desc:"衡量营销投入带来的经营回报。"
+},
+{
+name:"订单转化率",
+code:"SALES_ORDER_RATE",
+domain:"销售域",
+level:"P0",
+type:"派生指标",
+formula:"订单数 ÷ 有效线索数 × 100%",
+update:"小时",
+owner:"销售数据组",
+score:94,
+value:"8.2%",
+desc:"衡量从有效线索到订单的转化效率。"
+},
+{
+name:"车主活跃率",
+code:"OWNER_ACTIVE_RATE",
+domain:"用户域",
+level:"P1",
+type:"派生指标",
+formula:"周期内活跃车主数 ÷ 车主总数 × 100%",
+update:"日",
+owner:"车主运营组",
+score:86,
+value:"68.4%",
+desc:"衡量车主在APP、车机、活动和服务触点的活跃程度。"
+},
+{
+name:"NPS",
+code:"OWNER_NPS",
+domain:"服务域",
+level:"P0",
+type:"复合指标",
+formula:"推荐者比例 - 贬损者比例",
+update:"周",
+owner:"客户体验组",
+score:90,
+value:"72.4",
+desc:"衡量用户对品牌和服务的推荐意愿。"
+},
+{
+name:"售后回站率",
+code:"SERVICE_RETURN_RATE",
+domain:"服务域",
+level:"P1",
+type:"派生指标",
+formula:"周期内回站车主数 ÷ 到期保养车主数",
+update:"日",
+owner:"售后数据组",
+score:96,
+value:"62.4%",
+desc:"衡量车主在官方服务网络中的持续回站情况。"
+},
+{
+name:"LTV/CAC",
+code:"USER_LTV_CAC",
+domain:"经营域",
+level:"P0",
+type:"复合指标",
+formula:"用户生命周期价值 ÷ 用户获客成本",
+update:"月",
+owner:"经营分析组",
+score:91,
+value:"3.8",
+desc:"衡量用户长期价值与获客成本之间的关系。"
+},
+{
+name:"注册用户数",
+code:"USER_REGISTER_CNT",
+domain:"用户域",
+level:"P1",
+type:"原子指标",
+formula:"完成注册且通过基础校验的用户数",
+update:"小时",
+owner:"用户数据组",
+score:98,
+value:"1,286万",
+desc:"统一用户平台注册用户规模。"
+},
+{
+name:"活跃用户数",
+code:"USER_ACTIVE_CNT",
+domain:"用户域",
+level:"P0",
+type:"派生指标",
+formula:"周期内至少发生一次有效行为的用户数",
+update:"日",
+owner:"用户数据组",
+score:96,
+value:"486万",
+desc:"用于衡量用户活跃规模。"
+},
+{
+name:"线索成本",
+code:"MKT_CPL",
+domain:"营销域",
+level:"P0",
+type:"派生指标",
+formula:"营销投入成本 ÷ 有效线索数",
+update:"T+1",
+owner:"市场数据组",
+score:94,
+value:"¥186",
+desc:"单个有效线索的平均获取成本。"
+},
+{
+name:"试驾成本",
+code:"MKT_CPTD",
+domain:"营销域",
+level:"P1",
+type:"派生指标",
+formula:"营销投入成本 ÷ 完成试驾人数",
+update:"T+1",
+owner:"市场数据组",
+score:93,
+value:"¥826",
+desc:"单个完成试驾用户的获取成本。"
+},
+{
+name:"复购率",
+code:"USER_REPURCHASE_RATE",
+domain:"经营域",
+level:"P0",
+type:"派生指标",
+formula:"周期内复购用户数 ÷ 到期可复购用户数",
+update:"月",
+owner:"经营分析组",
+score:90,
+value:"14.8%",
+desc:"衡量老用户增购、换购或复购表现。"
+},
+{
+name:"投诉率",
+code:"SERVICE_COMPLAINT_RATE",
+domain:"服务域",
+level:"P0",
+type:"派生指标",
+formula:"有效投诉工单数 ÷ 服务用户数",
+update:"日",
+owner:"客户体验组",
+score:91,
+value:"2.8%",
+desc:"衡量用户投诉风险。"
+}
+];
+
+const tags=[
+{
+name:"高意向新能源用户",
+code:"TAG_INTENT_NE",
+type:"预测模型标签",
+status:"已发布",
+score:97,
+usage:2846,
+update:"10分钟前",
+desc:"近30天浏览新能源车型3次以上且意向评分≥80。"
+},
+{
+name:"车龄3年以上车主",
+code:"TAG_VEHICLE_3Y",
+type:"车辆标签",
+status:"已发布",
+score:99,
+usage:2418,
+update:"1小时前",
+desc:"当前车辆购买时间距今超过3年的车主。"
+},
+{
+name:"SUV偏好用户",
+code:"TAG_PREF_SUV",
+type:"车型偏好标签",
+status:"已发布",
+score:95,
+usage:1986,
+update:"2小时前",
+desc:"基于车型浏览、配置器、内容互动等行为识别。"
+},
+{
+name:"流失风险车主",
+code:"TAG_CHURN_OWNER",
+type:"风险标签",
+status:"测试中",
+score:82,
+usage:1632,
+update:"昨天",
+desc:"基于活跃度下降、服务中断和负面反馈综合识别。"
+},
+{
+name:"高价值用户",
+code:"TAG_VALUE_HIGH",
+type:"用户价值标签",
+status:"已发布",
+score:96,
+usage:1456,
+update:"今天",
+desc:"综合消费能力、历史贡献和复购潜力识别。"
+},
+{
+name:"智能驾驶内容偏好用户",
+code:"TAG_CONTENT_ADAS",
+type:"内容偏好标签",
+status:"开发中",
+score:88,
+usage:620,
+update:"昨天",
+desc:"对智能驾驶内容有高频浏览和互动行为。"
+},
+{
+name:"家庭增购潜力用户",
+code:"TAG_FAMILY_REBUY",
+type:"预测模型标签",
+status:"待下线",
+score:66,
+usage:0,
+update:"3个月前",
+desc:"基于家庭结构和车辆数量识别增购潜力。"
+}
+];
+
+function showToast(msg){
+const el=document.getElementById("toast");
+el.innerText=msg;
+el.style.display="block";
+setTimeout(()=>el.style.display="none",2300);
+}
+
+function openModal(title,html){
+document.getElementById("modalTitle").innerText=title;
+document.getElementById("modalContent").innerHTML=html;
+document.getElementById("modalMask").style.display="flex";
+}
+
+function closeModal(){
+document.getElementById("modalMask").style.display="none";
+}
+
+function toggleGroup(el){
+el.classList.toggle("open");
+const menu=el.nextElementSibling;
+menu.classList.toggle("show");
+}
+
+function updateHeader(title,desc){
+document.getElementById("pageTitle").innerText=title;
+document.getElementById("pageDesc").innerText=desc;
+}
+
+const pageMeta={
+"metric-home":["指标管理平台","统一指标定义、口径、血缘、质量和权限的全生命周期管理平台"],
+"metric-dictionary":["指标字典","集中管理指标名称、编码、公式、维度、粒度和口径"],
+"metric-north":["指标树与北极星","面向管理层展示北极星指标及其驱动关系"],
+"metric-quality":["指标质量监控","监控指标完整性、准确性、一致性和及时性"],
+"metric-lineage":["指标血缘与影响分析","展示指标从源系统到BI、ChatBI和营销场景的全链路关系"],
+"metric-permission":["指标权限管理","按角色、组织、指标、维度和粒度控制数据权限"],
+"tag-home":["标签管理平台","管理标签资产、标签目录、使用热度和标签全生命周期"],
+"tag-life":["标签生命周期管理","覆盖标签申请、定义、开发、测试、审核、发布和下线"],
+"tag-monitor":["标签质量监控","监控标签覆盖率、准确率、时效性和业务价值"],
+"tag-permission":["标签权限管理","按组织和角色控制标签查看及使用范围"],
+"arb-home":["指标口径仲裁中心","解决业务方之间的指标口径争议"],
+"arb-detail":["争议处理工作台","完成争议陈述、委员会裁决、影响分析和公示"],
+"version":["口径版本管理","管理指标口径版本、历史记录和数据重跑"],
+"notice":["变更公示中心","向指标依赖方发布口径变更和影响范围"],
+"chatbi":[
+  "ChatBI指标问答",
+  "基于指标语义层和统一口径的自然语言问数助手"
+]
+
+};
+
+function openPage(id){
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+const page=document.getElementById(id);
+if(page)page.classList.add("active");
+
+document.querySelectorAll(".subitem").forEach(x=>{
+x.classList.toggle("active",x.dataset.page===id);
+});
+
+if(pageMeta[id]){
+updateHeader(pageMeta[id][0],pageMeta[id][1]);
+}
+
+if(id==="metric-dictionary")renderMetrics();
+if(id==="tag-home")renderTags();
+}
+
+document.querySelectorAll(".subitem[data-page]").forEach(item=>{
+item.addEventListener("click",()=>openPage(item.dataset.page));
+});
+
+document.querySelectorAll(".topnav-item").forEach(item=>{
+item.addEventListener("click",()=>{
+const type=item.dataset.top;
+
+document.querySelectorAll(".topnav-item").forEach(x=>x.classList.remove("active"));
+item.classList.add("active");
+
+if(type==="metric"){
+openPage("metric-home");
+return;
+}
+
+const names={
+data:"数据管理",
+marketing:"营销体系",
+scene:"数据场景",
+analysis:"自助分析"
+};
+
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+document.getElementById("placeholder").classList.add("active");
+document.getElementById("placeholderTitle").innerText=names[type]+"建设中";
+updateHeader(names[type],"该一级模块将在后续版本继续完善");
+});
+});
+
+function switchInner(btn,id){
+const page=btn.closest(".page");
+page.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+page.querySelectorAll(".inner").forEach(x=>x.style.display="none");
+btn.classList.add("active");
+document.getElementById(id).style.display="block";
+
+if(id==="metric-dictionary")renderMetrics();
+}
+
+function switchTag(btn,id){
+const page=btn.closest(".page");
+page.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+page.querySelectorAll(".inner").forEach(x=>x.style.display="none");
+btn.classList.add("active");
+document.getElementById(id).style.display="block";
+
+if(id==="tag-list")renderTags();
+}
+
+function renderMetrics(){
+const keyword=(document.getElementById("metricSearch")?.value||"").trim();
+const domain=document.getElementById("metricDomain")?.value||"";
+const level=document.getElementById("metricLevel")?.value||"";
+const type=document.getElementById("metricType")?.value||"";
+
+const result=metrics.filter(item=>{
+return (!keyword||
+item.name.includes(keyword)||
+item.code.includes(keyword)||
+item.desc.includes(keyword))&&
+(!domain||item.domain===domain)&&
+(!level||item.level===level)&&
+(!type||item.type===type);
+});
+
+const table=document.getElementById("metricTable");
+if(!table)return;
+
+table.innerHTML=result.length?`
+<table>
+<tr>
+<th>指标名称</th>
+<th>指标编码</th>
+<th>业务域</th>
+<th>分级</th>
+<th>指标类型</th>
+<th>当前值</th>
+<th>更新频率</th>
+<th>负责人</th>
+<th>质量评分</th>
+<th>操作</th>
+</tr>
+${result.map(item=>`
+<tr>
+<td>
+<b>${item.name}</b><br>
+<small style="color:var(--muted)">${item.desc}</small>
+</td>
+<td>${item.code}</td>
+<td>${item.domain}</td>
+<td><span class="badge ${item.level==="P0"?"red":"purple"}">${item.level}</span></td>
+<td>${item.type}</td>
+<td><b>${item.value}</b></td>
+<td>${item.update}</td>
+<td>${item.owner}</td>
+<td>${item.score}</td>
+<td>
+<button class="light" onclick="showMetric('${item.code}')">查看口径</button>
+</td>
+</tr>
+`).join("")}
+</table>`:`<div class="empty">暂无符合条件的指标</div>`;
+}
+
+function resetMetricSearch(){
+["metricSearch","metricDomain","metricLevel","metricType"].forEach(id=>{
+const el=document.getElementById(id);
+if(el)el.value="";
+});
+renderMetrics();
+}
+
+function showMetric(code){
+if(code==="new"){
+openModal("新建指标",`
+<div class="detail-grid">
+<div class="detail"><label>指标名称</label><input placeholder="请输入指标名称"></div>
+<div class="detail"><label>指标编码</label><input placeholder="例如 SALES_ORDER_RATE"></div>
+<div class="detail"><label>业务域</label><select><option>营销域</option><option>销售域</option><option>服务域</option><option>经营域</option></select></div>
+</div>
+<div class="detail">
+<label>计算公式</label>
+<textarea style="width:100%;height:80px" placeholder="请输入计算公式"></textarea>
+</div>
+<br>
+<button onclick="closeModal();showToast('指标已提交，等待口径审核')">提交审核</button>
+`);
+return;
+}
+
+let item=metrics.find(x=>x.code===code);
+
+if(code==="north"){
+item={
+name:"单位营销成本带来的成交台数",
+code:"NORTH_STAR_MARKETING_ORDER",
+domain:"经营域",
+level:"P0",
+type:"复合指标",
+formula:"成交台数 ÷ 营销投入成本 × 100,000",
+update:"T+1",
+owner:"经营分析组",
+score:96,
+value:"0.86台",
+desc:"营销赋能型数据中台的北极星指标。"
+};
+}
+
+if(!item)return;
+
+openModal("指标口径卡 · "+item.name,`
+<div class="detail-grid">
+<div class="detail"><label>指标名称</label><b>${item.name}</b></div>
+<div class="detail"><label>指标编码</label><b>${item.code}</b></div>
+<div class="detail"><label>业务域</label><b>${item.domain}</b></div>
+<div class="detail"><label>指标分级</label><b>${item.level}</b></div>
+<div class="detail"><label>指标类型</label><b>${item.type}</b></div>
+<div class="detail"><label>质量评分</label><b>${item.score}</b></div>
+</div>
+
+<h3>计算公式</h3>
+<div class="detail">${item.formula}</div>
+
+<h3>口径细则</h3>
+<p>
+①以认证业务系统的标准数据为准；<br>
+②同一用户、线索或订单按照统一ID规则去重；<br>
+③统计时间按照指标归属周期计算；<br>
+④跨系统数据以指标平台认证数据集为唯一来源；<br>
+⑤发生口径变更时生成新版本，并对受影响历史数据进行重跑。
+</p>
+
+<h3>统计维度与粒度</h3>
+<p>
+维度：时间、大区、城市、渠道、车型、经销商、销售顾问。<br>
+粒度：日、周、月、季度。
+</p>
+
+<h3>数据来源与指标血缘</h3>
+<div class="lineage">
+<div class="lineage-node">CRM/DMS</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">ODS/DWD</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">${item.name}</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">BI/ChatBI</div>
+</div>
+
+<h3>版本记录</h3>
+<table>
+<tr><th>版本</th><th>变更内容</th><th>变更人</th><th>时间</th></tr>
+<tr><td>V2.0</td><td>统一去重和跨期归因逻辑</td><td>张明</td><td>2025-01-15</td></tr>
+<tr><td>V1.0</td><td>指标首次发布</td><td>数据委员会</td><td>2024-08-01</td></tr>
+</table>
+
+<br>
+<button onclick="showToast('已订阅指标异常预警')">订阅预警</button>
+<button class="light" onclick="closeModal();openPage('arb-home')">发起口径争议</button>
+`);
+}
+
+function showDimension(name){
+let data={
+"流量效率":["82.6","↑6.4%","正常","CPL ¥186、留资率12.8%、渠道点击率4.6%"],
+"转化效率":["68.4","↑9.8%","正常","有效率72.6%、试驾率24.6%、大定率8.2%、交付率6.4%"],
+"客单贡献":["34,280","↑4.2%","正常","单车毛利34,280元、金融渗透率48%、加装率18.6%"],
+"车主复利":["3.8","↑3.7%","正常","LTV/CAC 3.8、回站率62.4%、增换购率14.8%"],
+"体验底线":["72.4","↓5.2%","异常","NPS72.4、投诉率2.8%、退订率1.2%"],
+"NPS":["72.4","↓5.2%","异常","推荐者比例下降，华东区域和新车主群体波动较明显"],
+"投诉率":["2.8%","↑0.6%","关注","售后等待时长和交付质量相关投诉增加"],
+"车主活跃率":["68.4%","↓18.2%","异常","APP登录频次、车机在线率和车主活动参与度下降"],
+"流失风险车主":["8.6%","↑2.4%","关注","连续30天未活跃且服务到期未进店"]
+};
+
+const x=data[name]||["82.6","↑4.8%","正常","当前维度指标运行稳定"];
+
+openModal(name+" · 维度详情",`
+<div class="detail-grid">
+<div class="detail"><label>当前值</label><b>${x[0]}</b></div>
+<div class="detail"><label>同比趋势</label><b>${x[1]}</b></div>
+<div class="detail"><label>当前状态</label><b style="color:${x[2]==="异常"?"var(--red)":"var(--green)"}">${x[2]}</b></div>
+</div>
+
+<h3>指标拆解</h3>
+<p>${x[3]}</p>
+
+<h3>多维下钻</h3>
+<table>
+<tr><th>维度</th><th>表现最好</th><th>表现最差</th><th>异常说明</th></tr>
+<tr><td>大区</td><td>华南</td><td>华东</td><td>华东较全国均值低8.4%</td></tr>
+<tr><td>车型</td><td>凡尔赛C5 X</td><td>天逸</td><td>车型内容触达不足</td></tr>
+<tr><td>渠道</td><td>企微</td><td>信息流广告</td><td>广告线索质量下降</td></tr>
+<tr><td>门店</td><td>上海浦东店</td><td>武汉汉阳店</td><td>跟进及时率不足</td></tr>
+</table>
+
+<h3>关联指标</h3>
+<p>
+上游指标：用户活跃数、有效线索数、渠道点击率。<br>
+下游指标：订单转化率、营销ROI、用户终身价值。
+</p>
+
+<button onclick="showToast('已启动多维下钻分析')">多维下钻</button>
+<button class="light" onclick="showToast('已推送异常信息至责任人')">推送预警</button>
+`);
+}
+
+function showChange(name){
+openModal("口径变更详情 · "+name,`
+<div class="detail-grid">
+<div class="detail"><label>指标名称</label><b>${name}</b></div>
+<div class="detail"><label>当前版本</label><b>V2.0</b></div>
+<div class="detail"><label>变更状态</label><b>已发布</b></div>
+<div class="detail"><label>变更人</label><b>张明</b></div>
+<div class="detail"><label>变更时间</label><b>今天10:20</b></div>
+<div class="detail"><label>影响报表</label><b>26个</b></div>
+</div>
+
+<h3>变更内容</h3>
+<p>
+本次变更新增统一用户去重规则，并明确跨期归因逻辑。
+历史版本继续保留，可在版本管理中查询。
+</p>
+
+<h3>影响处理</h3>
+<table>
+<tr><th>影响对象</th><th>数量</th><th>处理状态</th></tr>
+<tr><td>BI报表</td><td>26</td><td><span class="badge green">已重跑</span></td></tr>
+<tr><td>经营看板</td><td>8</td><td><span class="badge green">已刷新</span></td></tr>
+<tr><td>ChatBI语义缓存</td><td>1</td><td><span class="badge green">已更新</span></td></tr>
+<tr><td>营销场景</td><td>5</td><td><span class="badge orange">待确认</span></td></tr>
+</table>
+
+<br>
+<button onclick="showToast('已通知全部下游责任人')">再次通知</button>
+<button class="light" onclick="showToast('历史数据重跑记录已打开')">查看重跑记录</button>
+`);
+}
+
+function renderLineage(){
+const name=document.getElementById("lineageSearch").value||"试驾转化率";
+
+document.getElementById("lineageResult").innerHTML=`
+<p>当前查询指标：<b>${name}</b></p>
+<div class="lineage">
+<div class="lineage-node">CRM/DMS源系统</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">ODS贴源层</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">DWD明细层</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">${name}</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">BI/ChatBI/Agent</div>
+</div>
+<p style="color:var(--muted)">
+影响分析：该指标被26个报表、8个看板、3个API和5个营销场景引用。
+</p>
+`;
+}
+
+function renderTags(){
+const keyword=(document.getElementById("tagSearch")?.value||"").trim();
+const type=document.getElementById("tagType")?.value||"";
+const status=document.getElementById("tagStatus")?.value||"";
+
+const result=tags.filter(item=>{
+return (!keyword||
+item.name.includes(keyword)||
+item.code.includes(keyword)||
+item.desc.includes(keyword))&&
+(!type||item.type===type)&&
+(!status||item.status===status);
+});
+
+const table=document.getElementById("tagTable");
+if(!table)return;
+
+table.innerHTML=result.length?`
+<table>
+<tr>
+<th>标签名称</th>
+<th>标签编码</th>
+<th>标签类型</th>
+<th>生命周期</th>
+<th>质量评分</th>
+<th>使用次数</th>
+<th>更新时间</th>
+<th>操作</th>
+</tr>
+${result.map(item=>`
+<tr>
+<td><b>${item.name}</b><br><small style="color:var(--muted)">${item.desc}</small></td>
+<td>${item.code}</td>
+<td><span class="badge purple">${item.type}</span></td>
+<td>${tagStatus(item.status)}</td>
+<td>${item.score}</td>
+<td>${item.usage.toLocaleString()}</td>
+<td>${item.update}</td>
+<td><button class="light" onclick="showTag('${item.code}')">查看详情</button></td>
+</tr>
+`).join("")}
+</table>`:`<div class="empty">暂无符合条件的标签</div>`;
+}
+
+function tagStatus(status){
+const map={
+"已发布":"green",
+"开发中":"orange",
+"测试中":"purple",
+"待下线":"red"
+};
+return `<span class="badge ${map[status]||""}">${status}</span>`;
+}
+
+function resetTagSearch(){
+["tagSearch","tagType","tagStatus"].forEach(id=>{
+const el=document.getElementById(id);
+if(el)el.value="";
+});
+renderTags();
+}
+
+function filterTagStatus(status){
+openPage("tag-home");
+
+setTimeout(()=>{
+const tagTab=document.querySelector("#tag-home .tab:nth-child(2)");
+switchTag(tagTab,"tag-list");
+
+const select=document.getElementById("tagStatus");
+if(select){
+select.value=status==="需求中"?"":status;
+renderTags();
+}
+},30);
+}
+
+function showTag(code){
+if(code==="new"){
+openModal("申请新标签",`
+<div class="detail-grid">
+<div class="detail"><label>标签名称</label><input placeholder="请输入标签名称"></div>
+<div class="detail"><label>标签类型</label><select><option>行为标签</option><option>车型偏好标签</option><option>生命周期标签</option><option>预测模型标签</option><option>风险标签</option></select></div>
+<div class="detail"><label>优先级</label><select><option>P0</option><option>P1</option><option>P2</option></select></div>
+</div>
+
+<div class="detail">
+<label>业务场景和预期收益</label>
+<textarea style="width:100%;height:90px" placeholder="请描述标签的使用场景、预期收益和期望口径"></textarea>
+</div>
+
+<br>
+<button onclick="closeModal();showToast('标签需求已提交，进入评审池')">提交需求</button>
+`);
+return;
+}
+
+const item=tags.find(x=>x.code===code);
+if(!item)return;
+
+openModal("标签详情 · "+item.name,`
+<div class="detail-grid">
+<div class="detail"><label>标签名称</label><b>${item.name}</b></div>
+<div class="detail"><label>标签编码</label><b>${item.code}</b></div>
+<div class="detail"><label>标签类型</label><b>${item.type}</b></div>
+<div class="detail"><label>生命周期状态</label><b>${item.status}</b></div>
+<div class="detail"><label>质量评分</label><b>${item.score}</b></div>
+<div class="detail"><label>使用次数</label><b>${item.usage.toLocaleString()}</b></div>
+</div>
+
+<h3>标签口径卡</h3>
+<p>${item.desc}</p>
+<p>
+数据来源：用户行为明细、CRM客户表、DMS销售表、车辆主数据。<br>
+更新频率：实时或T+1。<br>
+数据等级：内部。<br>
+标签负责人：标签数据组。
+</p>
+
+<h3>标签血缘</h3>
+<div class="lineage">
+<div class="lineage-node">源系统字段</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">计算逻辑</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">${item.name}</div>
+<div class="lineage-arrow">→</div>
+<div class="lineage-node">圈选/营销场景</div>
+</div>
+
+<h3>使用效果</h3>
+<table>
+<tr><th>使用场景</th><th>圈选次数</th><th>贡献线索</th><th>贡献订单</th><th>业务价值</th></tr>
+<tr><td>新车上市活动</td><td>486</td><td>12,862</td><td>386</td><td>高</td></tr>
+<tr><td>试驾召回</td><td>328</td><td>8,624</td><td>214</td><td>高</td></tr>
+<tr><td>老客置换</td><td>186</td><td>4,286</td><td>126</td><td>中高</td></tr>
+</table>
+
+<br>
+<button onclick="showToast('已打开标签使用分析')">使用分析</button>
+<button class="light" onclick="showToast('已订阅标签质量告警')">订阅监控</button>
+`);
+}
+
+function showArbitration(){
+openModal("提交指标口径争议",`
+<div class="detail-grid">
+<div class="detail"><label>争议指标</label><select><option>订单转化率</option><option>有效线索数</option><option>复购率</option><option>营销ROI</option></select></div>
+<div class="detail"><label>争议焦点</label><select><option>口径定义</option><option>计算逻辑</option><option>数据来源</option><option>统计粒度</option></select></div>
+<div class="detail"><label>优先级</label><select><option>高</option><option>中</option><option>低</option></select></div>
+</div>
+
+<div class="detail">
+<label>争议说明</label>
+<textarea style="width:100%;height:90px" placeholder="请输入当前争议内容、双方观点和问题背景"></textarea>
+</div>
+
+<br>
+
+<div class="detail">
+<label>建议口径</label>
+<textarea style="width:100%;height:90px" placeholder="请输入建议采用的口径"></textarea>
+</div>
+
+<br>
+<button onclick="closeModal();showToast('争议工单已提交，数据委员会将在48小时内处理')">提交仲裁</button>
+`);
+}
+
+function showNoticeDetail(){
+openModal("关于试驾转化率口径调整的通知",`
+<div class="detail-grid">
+<div class="detail"><label>公示编号</label><b>NOTICE-202502-001</b></div>
+<div class="detail"><label>涉及指标</label><b>试驾转化率</b></div>
+<div class="detail"><label>发布时间</label><b>今天10:30</b></div>
+<div class="detail"><label>影响报表</label><b>26个</b></div>
+<div class="detail"><label>影响场景</label><b>5个</b></div>
+<div class="detail"><label>历史数据</label><b>已重跑</b></div>
+</div>
+
+<h3>变更内容</h3>
+<p>
+自2025年2月起，试驾转化率统一采用以下口径：
+完成试驾人数 ÷ 有效线索人数 ×100%。
+同一用户在同一统计周期内多次试驾，按照用户去重。
+</p>
+
+<h3>影响范围</h3>
+<p>
+销售经营看板、营销转化周报、区域销售分析、ChatBI问数服务和试驾召回场景。
+</p>
+
+<button onclick="closeModal();showToast('已确认阅读公示')">确认阅读</button>
+`);
+}
+
+function filterDomain(domain){
+openPage("metric-dictionary");
+setTimeout(()=>{
+document.getElementById("metricDomain").value=domain;
+renderMetrics();
+},30);
+}
+
+function updateClock(){
+document.getElementById("clock").innerText=new Date().toLocaleString("zh-CN");
+}
+
+function init(){
+renderMetrics();
+renderTags();
+updateClock();
+setInterval(updateClock,1000);
+}
+
+if (!pageMeta.chatbi) {
+  pageMeta.chatbi = [
+    "ChatBI指标问答",
+    "基于指标语义层和统一口径的自然语言问数助手"
+  ];
+}
+
+
+init();
+
+/* =========================
+   ChatBI指标问答功能
+========================= */
+
+const chatAnswers = {
+  "华东区试驾转化率": {
+    metric: "试驾转化率",
+    result: "24.6%",
+    confidence: "98%",
+    logic: "完成试驾人数 ÷ 有效线索人数 × 100%",
+    source: "DMS试驾明细表、CRM有效线索表",
+    explanation: "上个月华东区共完成试驾6,842人，有效线索27,812人，试驾转化率为24.6%。"
+  },
+
+  "渠道订单转化率": {
+    metric: "订单转化率",
+    result: "企微渠道最高，12.6%",
+    confidence: "96%",
+    logic: "订单数 ÷ 有效线索数 × 100%",
+    source: "CRM销售线索表、DMS订单表",
+    explanation: "当前企微渠道订单转化率最高，其次为经销商渠道和APP渠道。"
+  },
+
+  "高意向新能源用户": {
+    metric: "高意向新能源用户数",
+    result: "286,420人",
+    confidence: "95%",
+    logic: "新能源偏好标签 = 是，且意向评分 ≥ 80",
+    source: "用户行为表、车型偏好标签、线索评分模型",
+    explanation: "最近30天符合高意向新能源用户条件的用户共有286,420人。"
+  },
+
+  "本月营销ROI": {
+    metric: "营销ROI",
+    result: "4.28",
+    confidence: "94%",
+    logic: "营销活动贡献毛利 ÷ 营销投入成本",
+    source: "营销活动表、财务成本表、订单毛利表",
+    explanation: "本月营销投入成本为1,286万元，产生贡献毛利5,504万元，营销ROI为4.28。"
+  }
+};
+
+function useChatQuestion(question) {
+  const input = document.getElementById("chatQuestion");
+
+  if (input) {
+    input.value = question;
+    input.focus();
+  }
+}
+
+function reuseChatQuestion(question) {
+  openPage("chatbi");
+  setTimeout(() => {
+    useChatQuestion(question);
+    askChatBI();
+  }, 50);
+}
+
+function findChatAnswer(question) {
+  if (question.includes("华东") && question.includes("试驾")) {
+    return chatAnswers["华东区试驾转化率"];
+  }
+
+  if (
+    question.includes("渠道") &&
+    (
+      question.includes("订单") ||
+      question.includes("转化")
+    )
+  ) {
+    return chatAnswers["渠道订单转化率"];
+  }
+
+  if (
+    question.includes("新能源") &&
+    (
+      question.includes("高意向") ||
+      question.includes("用户")
+    )
+  ) {
+    return chatAnswers["高意向新能源用户"];
+  }
+
+  if (
+    question.includes("营销ROI") ||
+    question.includes("营销回报") ||
+    question.includes("投资回报")
+  ) {
+    return chatAnswers["本月营销ROI"];
+  }
+
+  if (question.includes("试驾转化率")) {
+    return {
+      metric: "试驾转化率",
+      result: "24.6%",
+      confidence: "91%",
+      logic: "完成试驾人数 ÷ 有效线索人数 × 100%",
+      source: "指标语义层",
+      explanation: "当前试驾转化率为24.6%。如果需要更精确结果，请补充时间、区域或渠道。"
+    };
+  }
+
+  if (question.includes("订单转化率")) {
+    return {
+      metric: "订单转化率",
+      result: "8.2%",
+      confidence: "91%",
+      logic: "订单数 ÷ 有效线索数 × 100%",
+      source: "指标语义层",
+      explanation: "当前整体订单转化率为8.2%。"
+    };
+  }
+
+  return null;
+}
+
+function askChatBI() {
+  const input = document.getElementById("chatQuestion");
+  const answerBox = document.getElementById("chatAnswer");
+
+  if (!input || !answerBox) {
+    return;
+  }
+
+  const question = input.value.trim();
+
+  if (!question) {
+    showToast("请输入需要查询的问题");
+    return;
+  }
+
+  const answer = findChatAnswer(question);
+
+  answerBox.style.display = "block";
+
+  if (!answer) {
+    answerBox.innerHTML = `
+      <b>我暂时无法准确识别这个问题。</b>
+      <br>
+      为避免产生错误结论，请补充以下信息之一：
+      <br>
+      1. 指标名称，例如：试驾转化率、营销ROI；
+      <br>
+      2. 时间范围，例如：本月、上个月、最近30天；
+      <br>
+      3. 分析维度，例如：区域、渠道、车型、门店。
+      <br><br>
+      <span style="opacity:.8">
+        当前支持：试驾转化率、订单转化率、营销ROI、高意向新能源用户。
+      </span>
+    `;
+    return;
+  }
+
+  answerBox.innerHTML = `
+    <b>${answer.explanation}</b>
+    <br><br>
+
+    <div style="
+      padding:10px;
+      border-radius:6px;
+      background:rgba(255,255,255,.14);
+    ">
+      <b>核心结果：${answer.result}</b>
+      <br>
+      匹配指标：${answer.metric}
+      <br>
+      计算逻辑：${answer.logic}
+      <br>
+      数据来源：${answer.source}
+      <br>
+      可信度：${answer.confidence}
+    </div>
+
+    <br>
+    <button
+      class="light"
+      onclick="showChatDrill('${answer.metric}')"
+    >
+      下钻分析
+    </button>
+
+    <button
+      class="light"
+      onclick="subscribeChatMetric('${answer.metric}')"
+    >
+      订阅预警
+    </button>
+  `;
+
+  addChatHistory(question, answer);
+}
+
+function addChatHistory(question, answer) {
+  const table = document.getElementById("chatHistoryTable");
+
+  if (!table) {
+    return;
+  }
+
+  const row = table.insertRow(1);
+
+  row.innerHTML = `
+    <td>${question}</td>
+    <td>${answer.metric}</td>
+    <td>${answer.result}</td>
+    <td><span class="badge green">${answer.confidence}</span></td>
+    <td>刚刚</td>
+    <td>
+      <button
+        class="light"
+        onclick="reuseChatQuestion('${question.replace(/'/g, "\\'")}')"
+      >
+        再次分析
+      </button>
+    </td>
+  `;
+}
+
+function clearChatHistory() {
+  const table = document.getElementById("chatHistoryTable");
+
+  if (!table) {
+    return;
+  }
+
+  while (table.rows.length > 1) {
+    table.deleteRow(1);
+  }
+
+  showToast("问数记录已清空");
+}
+
+function showChatDrill(metric) {
+  closeModal();
+
+  openModal(
+    metric + " · 多维下钻分析",
+    `
+      <div class="detail-grid">
+        <div class="detail">
+          <label>当前指标</label>
+          <b>${metric}</b>
+        </div>
+
+        <div class="detail">
+          <label>默认时间范围</label>
+          <b>最近30天</b>
+        </div>
+
+        <div class="detail">
+          <label>当前分析粒度</label>
+          <b>全国</b>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <select>
+          <option>按区域下钻</option>
+          <option>按城市下钻</option>
+          <option>按渠道下钻</option>
+          <option>按车型下钻</option>
+          <option>按门店下钻</option>
+        </select>
+
+        <select>
+          <option>最近30天</option>
+          <option>本月</option>
+          <option>上月</option>
+          <option>最近90天</option>
+        </select>
+
+        <button onclick="showToast('已完成下钻分析')">
+          开始分析
+        </button>
+      </div>
+
+      <table>
+        <tr>
+          <th>排名</th>
+          <th>分析维度</th>
+          <th>指标值</th>
+          <th>同比</th>
+          <th>状态</th>
+        </tr>
+
+        <tr>
+          <td>1</td>
+          <td>华南</td>
+          <td>28.6%</td>
+          <td>↑12.4%</td>
+          <td><span class="badge green">优秀</span></td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+          <td>华东</td>
+          <td>24.6%</td>
+          <td>↑8.6%</td>
+          <td><span class="badge green">正常</span></td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+          <td>华中</td>
+          <td>19.8%</td>
+          <td>↓3.2%</td>
+          <td><span class="badge orange">关注</span></td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+          <td>西南</td>
+          <td>17.4%</td>
+          <td>↓6.8%</td>
+          <td><span class="badge red">异常</span></td>
+        </tr>
+      </table>
+    `
+  );
+}
+
+function subscribeChatMetric(metric) {
+  showToast("已订阅 " + metric + " 异常预警");
+}
+
+</script>
+
+<script>
+/* ── 神龙数据中台集成壳 · 双向同步脚本（自动追加，不影响模块自身功能） ── */
+(function(){
+  if(window.__SL_EMBED__) return; window.__SL_EMBED__ = 1;
+  var MOD = "metric";
+  var st = document.createElement("style");
+  st.textContent = ".sidebar{display:none!important}header.top{display:none!important}";
+  document.head.appendChild(st);
+  function post(m){ try{ m.__sl = 1; m.mod = MOD; parent.postMessage(m, "*"); }catch(e){} }
+  function currentPage(){
+    var el = document.querySelector(".subitem.active[data-page],.nav-item.active[data-page]");
+    return el ? el.getAttribute("data-page") : null;
+  }
+  var last = currentPage();
+  setInterval(function(){
+    var c = currentPage();
+    if(c && c !== last){ last = c; post({page:c}); }
+  }, 250);
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest(".topnav-item[data-top],.top-item[data-top]") : null;
+    if(t){
+      var top = t.getAttribute("data-top");
+      if(top && top !== MOD){ e.preventDefault(); e.stopPropagation(); post({module:top}); }
+    }
+  }, true);
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if(!d || d.__slCmd !== 1) return;
+    if(d.goto){
+      var el = document.querySelector('.subitem[data-page="'+d.goto+'"],.nav-item[data-page="'+d.goto+'"]');
+      if(el){ el.click(); return; }
+    }
+    if(d.fn){ try{ (new Function(d.fn))(); }catch(e){} }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>神龙数据中台 · 自助分析</title>
+
+<style>
+:root{
+  --blue:#246bfe;
+  --blue-light:#edf4ff;
+  --navy:#111c36;
+  --bg:#f4f6fa;
+  --text:#17233b;
+  --muted:#7b879b;
+  --border:#e5eaf2;
+  --green:#1fa463;
+  --orange:#e69a2c;
+  --red:#e45555;
+  --purple:#8066e8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  color:var(--text);
+  background:var(--bg);
+  font:14px Arial,"Microsoft YaHei",sans-serif;
+}
+button,input,select,textarea{font-family:inherit}
+button{
+  border:0;
+  border-radius:6px;
+  padding:9px 14px;
+  color:#fff;
+  background:var(--blue);
+  cursor:pointer;
+}
+button:hover{filter:brightness(.94)}
+button.light{color:var(--blue);background:var(--blue-light)}
+button.gray{color:#58667d;background:#f0f2f6}
+button.red{background:var(--red)}
+input,select,textarea{
+  min-width:145px;
+  padding:9px 11px;
+  border:1px solid #dce2eb;
+  border-radius:6px;
+  outline:none;
+  background:#fff;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  height:70px;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 26px;
+  color:#fff;
+  background:var(--navy);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:235px;
+}
+.brand-logo{
+  display:flex;
+  width:38px;
+  height:38px;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  color:var(--blue);
+  background:#fff;
+  font-weight:bold;
+}
+.brand b{font-size:17px}
+.brand small{
+  display:block;
+  margin-top:4px;
+  color:#aeb9d0;
+  font-size:11px;
+}
+.topnav{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.topnav-item{
+  padding:12px 15px;
+  border-radius:7px;
+  color:#bdc7dc;
+  cursor:pointer;
+}
+.topnav-item:hover,
+.topnav-item.active{
+  color:#fff;
+  background:var(--blue);
+}
+.account{
+  display:flex;
+  min-width:190px;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+}
+.avatar{
+  display:flex;
+  width:32px;
+  height:32px;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:var(--blue);
+}
+.account small{
+  display:block;
+  margin-top:3px;
+  color:#aeb9d0;
+  font-size:11px;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 70px);
+}
+.sidebar{
+  width:250px;
+  flex-shrink:0;
+  padding:20px 14px;
+  border-right:1px solid var(--border);
+  background:#fff;
+}
+.sidebar-title{
+  margin:2px 10px 15px;
+  color:var(--muted);
+  font-size:12px;
+}
+.menu-group{margin-bottom:10px}
+.menu-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 12px;
+  border-radius:7px;
+  color:#33415c;
+  font-weight:bold;
+  cursor:pointer;
+}
+.menu-head:hover,
+.menu-head.open{
+  color:var(--blue);
+  background:var(--blue-light);
+}
+.menu-arrow{transition:.2s}
+.menu-head.open .menu-arrow{transform:rotate(90deg)}
+.submenu{
+  display:none;
+  padding-left:12px;
+}
+.submenu.show{display:block}
+.subitem{
+  padding:10px 12px;
+  margin:3px 0;
+  border-left:2px solid transparent;
+  border-radius:0 6px 6px 0;
+  color:#69768d;
+  cursor:pointer;
+}
+.subitem:hover,
+.subitem.active{
+  border-left-color:var(--blue);
+  color:var(--blue);
+  background:var(--blue-light);
+}
+
+.main{
+  flex:1;
+  min-width:0;
+  padding:23px 28px;
+  overflow:auto;
+}
+.page-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+.page-header h1{
+  margin:0;
+  font-size:24px;
+}
+.page-header p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+.header-right{
+  color:var(--muted);
+  font-size:12px;
+}
+.page{
+  display:none;
+}
+.page.active{
+  display:block;
+}
+.inner{
+  display:block;
+}
+.inner.hidden{
+  display:none;
+}
+
+.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-bottom:16px;
+  padding:5px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+}
+.tab{
+  color:#64728a;
+  background:transparent;
+}
+.tab.active{
+  color:var(--blue);
+  background:var(--blue-light);
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  margin-bottom:17px;
+}
+.card,.panel{
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 2px 10px rgba(30,50,90,.04);
+}
+.card{padding:16px}
+.card-label{
+  color:var(--muted);
+  font-size:12px;
+}
+.card-value{
+  margin:10px 0 7px;
+  font-size:25px;
+  font-weight:bold;
+}
+.card-desc{
+  color:var(--green);
+  font-size:12px;
+}
+.card-desc.warn{color:var(--orange)}
+.card-desc.danger{color:var(--red)}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.panel{
+  padding:17px;
+  margin-bottom:16px;
+}
+.panel-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  font-weight:bold;
+}
+.panel-title small{
+  color:var(--muted);
+  font-weight:normal;
+}
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-bottom:15px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th{
+  padding:11px;
+  color:#65728a;
+  text-align:left;
+  white-space:nowrap;
+  background:#f7f9fc;
+}
+td{
+  padding:11px;
+  border-bottom:1px solid #edf0f4;
+  white-space:nowrap;
+}
+tr:hover{background:#fafcff}
+
+.badge{
+  display:inline-block;
+  padding:4px 9px;
+  border-radius:14px;
+  color:var(--blue);
+  background:var(--blue-light);
+  font-size:12px;
+}
+.badge.green{color:var(--green);background:#eaf8f1}
+.badge.orange{color:#ad711e;background:#fff5e3}
+.badge.red{color:var(--red);background:#fff0f0}
+.badge.purple{color:var(--purple);background:#f1edff}
+
+.progress{
+  width:110px;
+  height:7px;
+  overflow:hidden;
+  border-radius:10px;
+  background:#edf0f5;
+}
+.progress i{
+  display:block;
+  height:100%;
+  border-radius:10px;
+  background:var(--blue);
+}
+.progress.green i{background:var(--green)}
+.progress.orange i{background:var(--orange)}
+
+.alert{
+  padding:11px 0;
+  border-bottom:1px solid #edf0f4;
+}
+.alert:last-child{border-bottom:0}
+.alert small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+}
+
+.analysis-layout{
+  display:grid;
+  grid-template-columns:220px 1fr 220px;
+  gap:14px;
+}
+.analysis-side{
+  min-height:650px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fff;
+}
+.analysis-side h4{
+  margin:17px 0 8px;
+  color:#53617a;
+  font-size:12px;
+}
+.field{
+  padding:9px 10px;
+  margin:5px 0;
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:#57647b;
+  background:#fafcff;
+  cursor:grab;
+}
+.field:hover{
+  border-color:var(--blue);
+  color:var(--blue);
+  background:var(--blue-light);
+}
+.dropzone{
+  min-height:48px;
+  margin:8px 0 13px;
+  padding:10px;
+  border:1px dashed #b8c8e8;
+  border-radius:7px;
+  color:var(--muted);
+  background:#fbfdff;
+}
+.drop-item{
+  display:inline-block;
+  padding:6px 8px;
+  margin:3px;
+  border-radius:5px;
+  color:var(--blue);
+  background:var(--blue-light);
+  cursor:pointer;
+}
+.chart-box{
+  min-height:280px;
+  padding:18px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fbfdff;
+}
+.chart-bars{
+  display:flex;
+  height:205px;
+  align-items:end;
+  gap:18px;
+  padding:12px;
+  border-bottom:1px solid var(--border);
+}
+.chart-bars i{
+  display:block;
+  width:30px;
+  border-radius:5px 5px 0 0;
+  background:linear-gradient(#72b3ff,var(--blue));
+}
+.chart-labels{
+  display:flex;
+  justify-content:space-around;
+  padding-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+.line-chart{
+  height:220px;
+  padding:16px;
+  border-bottom:1px solid var(--border);
+}
+.line-chart svg{
+  width:100%;
+  height:100%;
+}
+.recommend{
+  padding:11px;
+  margin-top:12px;
+  border-radius:7px;
+  color:#36598e;
+  background:var(--blue-light);
+}
+
+.chat-box{
+  display:flex;
+  flex-direction:column;
+  min-height:430px;
+  max-height:540px;
+  overflow:auto;
+  padding:16px;
+  border-radius:8px;
+  background:#f7f9fc;
+}
+.msg{
+  max-width:84%;
+  padding:12px 14px;
+  margin-bottom:12px;
+  border-radius:8px;
+  line-height:1.7;
+}
+.msg.bot{
+  align-self:flex-start;
+  color:#40516c;
+  background:#fff;
+}
+.msg.user{
+  align-self:flex-end;
+  color:#fff;
+  background:var(--blue);
+}
+.chat-input{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.chat-input input{flex:1}
+
+.dataset-grid,
+.template-grid,
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.dataset-card,
+.template-card,
+.dashboard-card{
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+}
+.dataset-card:hover,
+.template-card:hover,
+.dashboard-card:hover{
+  border-color:var(--blue);
+  box-shadow:0 3px 12px rgba(36,107,254,.1);
+}
+.dataset-card h3,
+.template-card h3,
+.dashboard-card h3{
+  margin:0 0 8px;
+  font-size:15px;
+}
+.dataset-card p,
+.template-card p,
+.dashboard-card p{
+  min-height:36px;
+  margin:6px 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.kpi{
+  color:var(--blue);
+  font-size:32px;
+  font-weight:bold;
+}
+.funnel-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:14px 0;
+}
+.funnel-name{width:85px}
+.funnel-bar{
+  flex:1;
+  height:20px;
+  overflow:hidden;
+  border-radius:15px;
+  background:#edf0f5;
+}
+.funnel-bar i{
+  display:block;
+  height:100%;
+  border-radius:15px;
+  background:linear-gradient(90deg,#69b2ff,var(--blue));
+}
+.funnel-num{
+  width:85px;
+  color:var(--muted);
+  text-align:right;
+}
+.flow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  overflow:auto;
+  padding:5px 0 13px;
+}
+.flow-node{
+  min-width:105px;
+  padding:12px 8px;
+  border:1px solid #c2d4ff;
+  border-radius:8px;
+  color:var(--blue);
+  text-align:center;
+  background:var(--blue-light);
+}
+.flow-arrow{
+  color:#94a2b8;
+  font-size:20px;
+}
+
+.modal-mask{
+  position:fixed;
+  z-index:50;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,20,40,.5);
+}
+.modal{
+  width:900px;
+  max-width:94%;
+  max-height:88vh;
+  overflow:auto;
+  padding:22px;
+  border-radius:10px;
+  background:#fff;
+}
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:17px;
+}
+.modal-head h2{
+  margin:0;
+  font-size:19px;
+}
+.close{
+  color:#8994a8;
+  font-size:26px;
+  cursor:pointer;
+}
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:17px;
+}
+.detail{
+  padding:13px;
+  border-radius:7px;
+  background:#f7f9fc;
+}
+.detail label{
+  display:block;
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:12px;
+}
+.empty{
+  padding:35px;
+  color:#8994a8;
+  text-align:center;
+}
+.toast{
+  position:fixed;
+  right:25px;
+  bottom:24px;
+  z-index:70;
+  display:none;
+  padding:12px 18px;
+  border-radius:7px;
+  color:#fff;
+  background:#1d2b4c;
+}
+
+@media(max-width:1200px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .analysis-layout{grid-template-columns:190px 1fr}
+  .analysis-layout .right-panel{display:none}
+  .dataset-grid,
+  .template-grid,
+  .dashboard-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+@media(max-width:900px){
+  .brand{min-width:auto}
+  .brand-text,.account-info{display:none}
+  .topnav-item{
+    padding:10px 7px;
+    font-size:12px;
+  }
+  .grid2,.analysis-layout{
+    grid-template-columns:1fr;
+  }
+  .analysis-side{min-height:auto}
+  .dataset-grid,
+  .template-grid,
+  .dashboard-grid{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:650px){
+  .sidebar{width:72px}
+  .sidebar-title,
+  .menu-head b,
+  .subitem{
+    font-size:0;
+  }
+  .menu-head{justify-content:center}
+  .submenu.show{display:none}
+  .topnav-item{font-size:0}
+  .topnav-item:first-letter{font-size:18px}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .main{padding:16px 12px}
+  .detail-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-logo">神</div>
+    <div>
+      <b>神龙汽车数据中台</b>
+      <small>Data Intelligence Platform</small>
+    </div>
+  </div>
+
+  <nav class="topnav">
+    <div class="topnav-item" data-top="data">🗄️ 数据管理</div>
+    <div class="topnav-item" data-top="metric">📊 指标体系</div>
+    <div class="topnav-item" data-top="marketing">🎯 营销体系</div>
+    <div class="topnav-item" data-top="scene">🧩 数据场景</div>
+    <div class="topnav-item active" data-top="analysis">🔎 自助分析</div>
+  </nav>
+
+  <div class="account">
+    <div class="avatar">张</div>
+    <div>
+      <b>张明</b>
+      <small>数据产品中心 · 管理员</small>
+    </div>
+    <span>⌄</span>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sidebar-title">自助分析导航</div>
+
+  <div class="menu-group">
+    <div class="menu-head open" onclick="toggleMenu(this)">
+      <b>分析入口</b>
+      <span class="menu-arrow">›</span>
+    </div>
+
+    <div class="submenu show">
+      <div class="subitem active" data-page="drag">
+        拖拽式自助分析
+      </div>
+      <div class="subitem" data-page="chatbi">
+        自然语言问数
+      </div>
+      <div class="subitem" data-page="datasets">
+        数据集市场
+      </div>
+      <div class="subitem" data-page="dashboards">
+        可视化看板中心
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <div class="menu-head" onclick="toggleMenu(this)">
+      <b>分析能力</b>
+      <span class="menu-arrow">›</span>
+    </div>
+
+    <div class="submenu">
+      <div class="subitem" data-page="templates">
+        分析模板库
+      </div>
+      <div class="subitem" data-page="advanced">
+        高级分析
+      </div>
+      <div class="subitem" data-page="share">
+        数据导出与分享
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <div class="menu-head" onclick="toggleMenu(this)">
+      <b>平台运营</b>
+      <span class="menu-arrow">›</span>
+    </div>
+
+    <div class="submenu">
+      <div class="subitem" data-page="operation">
+        数据运营后台
+      </div>
+      <div class="subitem" data-page="experiment">
+        实验与归因平台
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+
+  <div class="page-header">
+    <div>
+      <h1 id="pageTitle">拖拽式自助分析</h1>
+      <p id="pageDesc">通过拖拽维度和指标完成多维分析，不再依赖SQL工单</p>
+    </div>
+
+    <div class="header-right">
+      <span>● 分析服务正常</span>
+      <span id="clock"></span>
+    </div>
+  </div>
+
+  <!-- 1. 拖拽式自助分析 -->
+  <section id="drag" class="page active">
+
+    <div class="toolbar">
+      <select id="analysisDataset">
+        <option>销售漏斗数据集</option>
+        <option>用户画像数据集</option>
+        <option>投放效果数据集</option>
+        <option>车主活跃与服务数据集</option>
+      </select>
+
+      <select>
+        <option>最近30天</option>
+        <option>本月</option>
+        <option>上月</option>
+        <option>最近90天</option>
+      </select>
+
+      <select>
+        <option>全国</option>
+        <option>华东</option>
+        <option>华南</option>
+        <option>华中</option>
+      </select>
+
+      <button onclick="refreshAnalysis()">刷新分析</button>
+      <button class="light" onclick="saveAnalysis()">保存分析</button>
+      <button class="light" onclick="openPage('dashboards')">转为看板</button>
+    </div>
+
+    <div class="analysis-layout">
+
+      <aside class="analysis-side">
+        <b>维度与指标</b>
+
+        <input
+          id="fieldSearch"
+          style="width:100%;margin-top:12px"
+          placeholder="搜索字段"
+          oninput="filterFields()"
+        >
+
+        <h4>维度</h4>
+
+        <div class="field" draggable="true" data-field="日期" data-type="dimension">📅 日期</div>
+        <div class="field" draggable="true" data-field="大区" data-type="dimension">🌏 大区</div>
+        <div class="field" draggable="true" data-field="城市" data-type="dimension">🏙️ 城市</div>
+        <div class="field" draggable="true" data-field="渠道" data-type="dimension">📣 渠道</div>
+        <div class="field" draggable="true" data-field="车型" data-type="dimension">🚗 车型</div>
+        <div class="field" draggable="true" data-field="门店" data-type="dimension">🏪 门店</div>
+        <div class="field" draggable="true" data-field="生命周期" data-type="dimension">🔄 生命周期</div>
+
+        <h4>指标</h4>
+
+        <div class="field" draggable="true" data-field="有效线索数" data-type="metric">
+          📌 有效线索数 <span class="badge purple">P0</span>
+        </div>
+
+        <div class="field" draggable="true" data-field="试驾转化率" data-type="metric">
+          📌 试驾转化率 <span class="badge purple">P0</span>
+        </div>
+
+        <div class="field" draggable="true" data-field="订单转化率" data-type="metric">
+          📌 订单转化率 <span class="badge purple">P0</span>
+        </div>
+
+        <div class="field" draggable="true" data-field="营销ROI" data-type="metric">
+          📌 营销ROI <span class="badge">P1</span>
+        </div>
+
+        <div class="field" draggable="true" data-field="用户活跃率" data-type="metric">
+          📌 用户活跃率 <span class="badge">P1</span>
+        </div>
+      </aside>
+
+      <section>
+
+        <div class="panel">
+          <div class="panel-title">
+            拖拽分析画布
+            <button class="gray" onclick="clearCanvas()">清空</button>
+          </div>
+
+          <div class="grid2">
+            <div>
+              <b>行维度</b>
+              <div id="rowDrop" class="dropzone">
+                将维度拖到这里
+              </div>
+            </div>
+
+            <div>
+              <b>分析指标</b>
+              <div id="metricDrop" class="dropzone">
+                将指标拖到这里
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <select id="drillLevel">
+              <option>全国</option>
+              <option>大区</option>
+              <option>城市</option>
+              <option>门店</option>
+            </select>
+
+            <select id="chartType" onchange="renderAnalysisChart()">
+              <option value="bar">柱状图</option>
+              <option value="line">折线图</option>
+              <option value="table">数据表</option>
+            </select>
+
+            <button onclick="applyAnalysis()">应用分析</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            分析结果
+            <small id="analysisStatus">已加载默认分析</small>
+          </div>
+
+          <div id="analysisChart" class="chart-box"></div>
+
+          <div class="recommend">
+            💡 智能推荐：当前选择“渠道 + 试驾转化率”，建议增加“车型”维度进行交叉分析。
+            <button class="light" onclick="addRecommendedField()">添加车型</button>
+          </div>
+        </div>
+
+      </section>
+
+      <aside class="analysis-side">
+        <b>图表配置</b>
+
+        <h4>筛选条件</h4>
+        <select style="width:100%">
+          <option>全部渠道</option>
+          <option>企微</option>
+          <option>抖音</option>
+          <option>百度</option>
+          <option>小红书</option>
+        </select>
+
+        <h4>指标阈值</h4>
+        <input style="width:100%" placeholder="例如：转化率 > 20%">
+
+        <h4>下钻路径</h4>
+        <div class="dropzone">
+          全国 → 大区 → 城市 → 门店
+        </div>
+
+        <h4>图表设置</h4>
+        <label><input type="checkbox" checked> 显示数据标签</label><br>
+        <label><input type="checkbox" checked> 显示同比变化</label><br>
+        <label><input type="checkbox"> 显示目标线</label>
+
+        <br><br>
+
+        <button style="width:100%" onclick="showToast('图表配置已应用')">
+          应用配置
+        </button>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- 2. ChatBI -->
+  <section id="chatbi" class="page">
+
+    <div class="tabs">
+      <button class="tab active">自然语言问数</button>
+      <button class="tab" onclick="openPage('dashboards')">转为看板</button>
+      <button class="tab" onclick="openPage('share')">导出与分享</button>
+    </div>
+
+    <div class="grid2">
+
+      <div class="panel">
+        <div class="panel-title">
+          ChatBI问数助手
+          <span class="badge green">语义服务正常</span>
+        </div>
+
+        <div id="chatBox" class="chat-box">
+          <div class="msg bot">
+            你好，我是神龙数据中台ChatBI助手。<br>
+            你可以直接问我：<br>
+            · 上个月华东区试驾转化率是多少？<br>
+            · 哪些渠道来的用户成交率最高？<br>
+            · 最近30天高意向新能源用户有多少？
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin-top:12px">
+          <button class="light" onclick="useQuestion('上个月华东区试驾转化率是多少？')">
+            华东试驾转化率
+          </button>
+          <button class="light" onclick="useQuestion('哪些渠道来的用户成交率最高？')">
+            渠道成交率
+          </button>
+          <button class="light" onclick="useQuestion('最近30天高意向新能源用户有多少？')">
+            高意向用户
+          </button>
+        </div>
+
+        <div class="chat-input">
+          <input id="question" placeholder="用大白话问数据">
+          <button onclick="askChat()">发送</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">答案可信机制</div>
+
+        <div class="alert">
+          <b>✓ 标准指标匹配</b>
+          <small>优先使用指标平台中的认证指标。</small>
+        </div>
+
+        <div class="alert">
+          <b>✓ 认证数据集</b>
+          <small>答案来自认证数据集。</small>
+        </div>
+
+        <div class="alert">
+          <b>✓ 数据来源可追溯</b>
+          <small>展示来源、统计时间和更新时间。</small>
+        </div>
+
+        <div class="alert">
+          <b>✓ 权限自动校验</b>
+          <small>根据当前用户组织权限过滤结果。</small>
+        </div>
+
+        <div class="alert">
+          <b>✓ 低置信度拦截</b>
+          <small>无法确认时主动追问，不直接编造。</small>
+        </div>
+
+        <br>
+
+        <button class="light" onclick="showBadcase()">反馈错误</button>
+        <button class="light" onclick="showSQL()">查看SQL</button>
+      </div>
+
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">最近问数记录</div>
+
+      <table>
+        <tr>
+          <th>问题</th>
+          <th>匹配指标</th>
+          <th>结果</th>
+          <th>置信度</th>
+          <th>时间</th>
+          <th>操作</th>
+        </tr>
+        <tr>
+          <td>上个月华东区试驾转化率是多少？</td>
+          <td>试驾转化率</td>
+          <td>24.6%</td>
+          <td><span class="badge green">98%</span></td>
+          <td>今天09:20</td>
+          <td>
+            <button class="light" onclick="useQuestion('上个月华东区试驾转化率是多少？')">
+              再次分析
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>哪些渠道来的用户成交率最高？</td>
+          <td>订单转化率</td>
+          <td>企微12.6%</td>
+          <td><span class="badge green">96%</span></td>
+          <td>今天09:10</td>
+          <td>
+            <button class="light" onclick="useQuestion('哪些渠道来的用户成交率最高？')">
+              再次分析
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3. 数据集市场 -->
+  <section id="datasets" class="page">
+    <div class="panel">
+      <div class="panel-title">
+        数据集市场
+        <button class="light" onclick="showToast('已打开我的订阅')">
+          我的订阅
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <input
+          id="datasetSearch"
+          placeholder="搜索数据集名称、业务域、使用场景"
+          oninput="renderDatasets()"
+        >
+
+        <select id="datasetDomain" onchange="renderDatasets()">
+          <option value="">全部业务域</option>
+          <option value="销售域">销售域</option>
+          <option value="营销域">营销域</option>
+          <option value="用户域">用户域</option>
+          <option value="售后域">售后域</option>
+          <option value="车辆域">车辆域</option>
+        </select>
+
+        <select id="datasetLevel" onchange="renderDatasets()">
+          <option value="">全部安全级别</option>
+          <option value="公开">公开</option>
+          <option value="内部">内部</option>
+          <option value="敏感">敏感</option>
+        </select>
+
+        <button onclick="renderDatasets()">刷新</button>
+      </div>
+
+      <div id="datasetGrid" class="dataset-grid"></div>
+    </div>
+  </section>
+
+  <!-- 4. 看板中心 -->
+  <section id="dashboards" class="page">
+    <div class="tabs">
+      <button class="tab active" onclick="switchDashboardTab(this,'myDashboard')">
+        我的看板
+      </button>
+      <button class="tab" onclick="switchDashboardTab(this,'teamDashboard')">
+        团队看板
+      </button>
+      <button class="tab" onclick="switchDashboardTab(this,'publicDashboard')">
+        公共看板
+      </button>
+      <button class="tab" onclick="switchDashboardTab(this,'dashboardTemplates')">
+        模板市场
+      </button>
+    </div>
+
+    <div id="myDashboard" class="dashboard-content">
+      <div class="toolbar">
+        <button onclick="createDashboard()">+ 新建看板</button>
+        <button class="light" onclick="showToast('看板分享链接已复制')">分享</button>
+        <button class="light" onclick="showToast('看板订阅成功')">订阅</button>
+        <button class="gray" onclick="showToast('看板已刷新')">刷新</button>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>经营驾驶舱</h3>
+          <div class="kpi">0.86台</div>
+          <p>单位营销成本成交台数</p>
+          <span class="badge green">浏览286次</span>
+          <br><br>
+          <button class="light" onclick="openDashboardDetail('经营驾驶舱')">打开</button>
+          <button class="gray" onclick="copyDashboard('经营驾驶舱')">复制</button>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>销售漏斗看板</h3>
+          <div class="kpi">8.2%</div>
+          <p>线索到订单转化率</p>
+          <span class="badge green">浏览186次</span>
+          <br><br>
+          <button class="light" onclick="openDashboardDetail('销售漏斗看板')">打开</button>
+          <button class="gray" onclick="copyDashboard('销售漏斗看板')">复制</button>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>投放ROI看板</h3>
+          <div class="kpi">4.28</div>
+          <p>本月营销ROI</p>
+          <span class="badge orange">待更新</span>
+          <br><br>
+          <button class="light" onclick="openDashboardDetail('投放ROI看板')">打开</button>
+          <button class="gray" onclick="copyDashboard('投放ROI看板')">复制</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="teamDashboard" class="dashboard-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">团队看板</div>
+
+        <table>
+          <tr>
+            <th>看板</th>
+            <th>Owner</th>
+            <th>浏览量</th>
+            <th>订阅数</th>
+            <th>更新时间</th>
+            <th>操作</th>
+          </tr>
+          <tr>
+            <td>市场投放ROI看板</td>
+            <td>市场数据组</td>
+            <td>2,846</td>
+            <td>186</td>
+            <td>今天09:00</td>
+            <td><button class="light" onclick="openDashboardDetail('市场投放ROI看板')">查看</button></td>
+          </tr>
+          <tr>
+            <td>区域销售经营看板</td>
+            <td>销售管理部</td>
+            <td>1,862</td>
+            <td>128</td>
+            <td>今天08:30</td>
+            <td><button class="light" onclick="openDashboardDetail('区域销售经营看板')">查看</button></td>
+          </tr>
+          <tr>
+            <td>售后服务满意度看板</td>
+            <td>客户体验组</td>
+            <td>986</td>
+            <td>86</td>
+            <td>昨天17:20</td>
+            <td><button class="light" onclick="openDashboardDetail('售后服务满意度看板')">查看</button></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="publicDashboard" class="dashboard-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">公共看板</div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3>集团经营总览</h3>
+            <p>销量、订单、交付、毛利、市场份额。</p>
+            <button class="light" onclick="openDashboardDetail('集团经营总览')">查看</button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>营销效率分析</h3>
+            <p>线索、试驾、订单和营销ROI。</p>
+            <button class="light" onclick="openDashboardDetail('营销效率分析')">查看</button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>用户资产分析</h3>
+            <p>用户规模、生命周期和LTV。</p>
+            <button class="light" onclick="openDashboardDetail('用户资产分析')">查看</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dashboardTemplates" class="dashboard-content" style="display:none">
+      <div class="panel">
+        <div class="panel-title">看板模板市场</div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3>管理层驾驶舱</h3>
+            <p>北极星、经营目标、异常预警。</p>
+            <button onclick="applyDashboardTemplate('管理层驾驶舱')">一键套用</button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>销售漏斗看板</h3>
+            <p>线索、到店、试驾、订单、交付。</p>
+            <button onclick="applyDashboardTemplate('销售漏斗看板')">一键套用</button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>投放ROI看板</h3>
+            <p>渠道、素材、人群和归因分析。</p>
+            <button onclick="applyDashboardTemplate('投放ROI看板')">一键套用</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 模板库 -->
+  <section id="templates" class="page">
+    <div class="panel">
+      <div class="panel-title">
+        分析模板库
+        <button onclick="createTemplate()">+ 保存当前分析为模板</button>
+      </div>
+
+      <div class="template-grid">
+        <div class="template-card">
+          <h3>📣 投放复盘模板</h3>
+          <p>渠道ROI、素材效果、人群回流和营销归因。</p>
+          <span class="badge green">使用1,286次</span>
+          <br><br>
+          <button onclick="applyTemplate('投放复盘模板')">一键套用</button>
+          <button class="light" onclick="showTemplateDetail('投放复盘模板')">详情</button>
+        </div>
+
+        <div class="template-card">
+          <h3>🔄 销售漏斗模板</h3>
+          <p>线索、到店、试驾、报价、订单、交付。</p>
+          <span class="badge green">使用986次</span>
+          <br><br>
+          <button onclick="applyTemplate('销售漏斗模板')">一键套用</button>
+          <button class="light" onclick="showTemplateDetail('销售漏斗模板')">详情</button>
+        </div>
+
+        <div class="template-card">
+          <h3>👤 用户分层模板</h3>
+          <p>按生命周期、价值和意向度对用户分层。</p>
+          <span class="badge green">使用862次</span>
+          <br><br>
+          <button onclick="applyTemplate('用户分层模板')">一键套用</button>
+          <button class="light" onclick="showTemplateDetail('用户分层模板')">详情</button>
+        </div>
+
+        <div class="template-card">
+          <h3>⚠️ 车主流失分析模板</h3>
+          <p>流失画像、原因分析和挽回建议。</p>
+          <span class="badge orange">使用426次</span>
+          <br><br>
+          <button onclick="applyTemplate('车主流失分析模板')">一键套用</button>
+          <button class="light" onclick="showTemplateDetail('车主流失分析模板')">详情</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 高级分析 -->
+  <section id="advanced" class="page">
+    <div class="tabs">
+      <button class="tab active" onclick="switchInner(this,'funnelInner')">漏斗分析</button>
+      <button class="tab" onclick="switchInner(this,'cohortInner')">Cohort分析</button>
+      <button class="tab" onclick="switchInner(this,'pathInner')">路径分析</button>
+      <button class="tab" onclick="switchInner(this,'rfmInner')">RFM分析</button>
+      <button class="tab" onclick="switchInner(this,'attrInner')">归因分析</button>
+    </div>
+
+    <div id="funnelInner" class="inner">
+      <div class="panel">
+        <div class="panel-title">销售漏斗分析</div>
+        <div class="funnel-row"><span class="funnel-name">有效线索</span><div class="funnel-bar"><i style="width:100%"></i></div><span class="funnel-num">286,420</span></div>
+        <div class="funnel-row"><span class="funnel-name">到店</span><div class="funnel-bar"><i style="width:72%"></i></div><span class="funnel-num">206,222</span></div>
+        <div class="funnel-row"><span class="funnel-name">试驾</span><div class="funnel-bar"><i style="width:48%"></i></div><span class="funnel-num">137,482</span></div>
+        <div class="funnel-row"><span class="funnel-name">订单</span><div class="funnel-bar"><i style="width:18%"></i></div><span class="funnel-num">51,556</span></div>
+        <div class="funnel-row"><span class="funnel-name">交付</span><div class="funnel-bar"><i style="width:10%"></i></div><span class="funnel-num">28,642</span></div>
+      </div>
+    </div>
+
+    <div id="cohortInner" class="inner" style="display:none">
+      <div class="panel">
+        <div class="panel-title">用户Cohort留存分析</div>
+        <table>
+          <tr><th>注册月份</th><th>首月</th><th>次月</th><th>第3月</th><th>第6月</th><th>第12月</th></tr>
+          <tr><td>2026年01月</td><td>100%</td><td>68.4%</td><td>56.2%</td><td>42.6%</td><td>32.8%</td></tr>
+          <tr><td>2026年02月</td><td>100%</td><td>72.6%</td><td>58.6%</td><td>44.2%</td><td>—</td></tr>
+          <tr><td>2026年03月</td><td>100%</td><td>74.8%</td><td>62.4%</td><td>—</td><td>—</td></tr>
+          <tr><td>2026年04月</td><td>100%</td><td>76.2%</td><td>—</td><td>—</td><td>—</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="pathInner" class="inner" style="display:none">
+      <div class="panel">
+        <div class="panel-title">用户行为路径分析</div>
+        <div class="flow">
+          <div class="flow-node">抖音曝光</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">官网浏览</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">配置器</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">留资</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">试驾</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">成交</div>
+        </div>
+        <p style="color:var(--muted)">该路径贡献成交占比32.6%，是当前最高转化路径。</p>
+      </div>
+    </div>
+
+    <div id="rfmInner" class="inner" style="display:none">
+      <div class="panel">
+        <div class="panel-title">RFM用户分层</div>
+        <table>
+          <tr><th>用户分群</th><th>用户数</th><th>R最近互动</th><th>F互动频率</th><th>M价值分</th><th>运营建议</th></tr>
+          <tr><td>重要价值用户</td><td>286,420</td><td>高</td><td>高</td><td>高</td><td>专属权益和增购</td></tr>
+          <tr><td>重要发展用户</td><td>186,420</td><td>高</td><td>中</td><td>高</td><td>提升互动频率</td></tr>
+          <tr><td>重要挽留用户</td><td>86,420</td><td>低</td><td>高</td><td>高</td><td>流失预警挽回</td></tr>
+          <tr><td>普通用户</td><td>826,420</td><td>中</td><td>低</td><td>中</td><td>自动化运营</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="attrInner" class="inner" style="display:none">
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-title">归因模型</div>
+          <div class="toolbar">
+            <select>
+              <option>首触归因</option>
+              <option>末触归因</option>
+              <option>线性归因</option>
+              <option>时间衰减归因</option>
+              <option>算法归因</option>
+            </select>
+            <button onclick="showToast('归因模型已应用')">应用模型</button>
+          </div>
+          <p style="color:var(--muted)">当前选择：算法归因，适合多触点、多渠道用户转化分析。</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">渠道贡献度</div>
+          <table>
+            <tr><th>渠道</th><th>成交数</th><th>贡献占比</th><th>ROI</th></tr>
+            <tr><td>抖音</td><td>9,286</td><td>30.8%</td><td>4.2</td></tr>
+            <tr><td>企微</td><td>8,624</td><td>28.6%</td><td>6.2</td></tr>
+            <tr><td>小红书</td><td>4,826</td><td>16.2%</td><td>4.6</td></tr>
+            <tr><td>腾讯</td><td>3,286</td><td>10.8%</td><td>3.1</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 数据导出与分享 -->
+  <section id="share" class="page">
+    <div class="panel">
+      <div class="panel-title">数据导出与分享</div>
+
+      <div class="cards">
+        <div class="card"><div class="card-label">我的分析结果</div><div class="card-value">28</div><div class="card-desc">最近30天</div></div>
+        <div class="card"><div class="card-label">已分享链接</div><div class="card-value">12</div><div class="card-desc">有效链接8个</div></div>
+        <div class="card"><div class="card-label">导出次数</div><div class="card-value">186</div><div class="card-desc">Excel/PDF/图片</div></div>
+        <div class="card"><div class="card-label">订阅任务</div><div class="card-value">8</div><div class="card-desc">自动推送中</div></div>
+        <div class="card"><div class="card-label">嵌入应用</div><div class="card-value">6</div><div class="card-desc">企微/OA/门户</div></div>
+      </div>
+
+      <div class="toolbar">
+        <button onclick="exportResult('Excel')">导出Excel</button>
+        <button onclick="exportResult('CSV')">导出CSV</button>
+        <button onclick="exportResult('PDF')">导出PDF</button>
+        <button onclick="exportResult('图片')">导出图片</button>
+        <button class="light" onclick="createShareLink()">生成分享链接</button>
+        <button class="light" onclick="showEmbedConfig()">嵌入配置</button>
+      </div>
+
+      <table>
+        <tr><th>分析名称</th><th>导出格式</th><th>分享范围</th><th>有效期</th><th>权限</th><th>操作</th></tr>
+        <tr><td>华东销售漏斗分析</td><td>PDF</td><td>销售管理部</td><td>7天</td><td>仅查看</td><td><button class="light" onclick="createShareLink()">复制链接</button></td></tr>
+        <tr><td>营销ROI月度分析</td><td>Excel</td><td>市场部</td><td>长期</td><td>可编辑</td><td><button class="light" onclick="showToast('已打开权限设置')">权限</button></td></tr>
+        <tr><td>车主活跃分析</td><td>图片</td><td>运营团队</td><td>30天</td><td>仅查看</td><td><button class="light" onclick="showToast('已重新生成分享链接')">重新生成</button></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 8. 数据运营后台 -->
+  <section id="operation" class="page">
+    <div class="tabs">
+      <button class="tab active" onclick="switchInner(this,'opOverview')">产品总览</button>
+      <button class="tab" onclick="switchInner(this,'opUser')">用户行为</button>
+      <button class="tab" onclick="switchInner(this,'opQuality')">问数质量</button>
+      <button class="tab" onclick="switchInner(this,'opAssets')">资产使用</button>
+      <button class="tab" onclick="switchInner(this,'opValue')">价值度量</button>
+    </div>
+
+    <div id="opOverview" class="inner">
+      <div class="cards">
+        <div class="card"><div class="card-label">产品月活</div><div class="card-value">8,624</div><div class="card-desc">较上月 ↑18.6%</div></div>
+        <div class="card"><div class="card-label">部门覆盖率</div><div class="card-value">86.4%</div><div class="card-desc">覆盖8个部门</div></div>
+        <div class="card"><div class="card-label">问数成功率</div><div class="card-value">94.2%</div><div class="card-desc">目标≥90%</div></div>
+        <div class="card"><div class="card-label">平均查询耗时</div><div class="card-value">8.6秒</div><div class="card-desc">秒级响应</div></div>
+        <div class="card"><div class="card-label">30日留存</div><div class="card-value">68.4%</div><div class="card-desc">目标≥60%</div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-title">核心功能使用排行</div>
+          <table>
+            <tr><th>功能</th><th>使用次数</th><th>用户数</th><th>趋势</th></tr>
+            <tr><td>自然语言问数</td><td>28,620</td><td>6,286</td><td>↑24.6%</td></tr>
+            <tr><td>拖拽式分析</td><td>18,620</td><td>3,826</td><td>↑18.4%</td></tr>
+            <tr><td>看板浏览</td><td>16,420</td><td>4,286</td><td>↑12.6%</td></tr>
+            <tr><td>数据集使用</td><td>8,624</td><td>2,846</td><td>↑8.6%</td></tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">自助分析采用率</div>
+          <div class="detail">
+            自助分析 + ChatBI取数占比
+            <h2 style="color:var(--blue)">62.4%</h2>
+            <div class="progress" style="width:100%">
+              <i style="width:62%"></i>
+            </div>
+            <p style="color:var(--muted)">已达到平台阶段目标。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="opUser" class="inner" style="display:none">
+      <div class="panel">
+        <div class="panel-title">用户行为分析</div>
+        <table>
+          <tr><th>用户分群</th><th>人数</th><th>占比</th><th>主要行为</th><th>运营建议</th></tr>
+          <tr><td>高频用户</td><td>1,286</td><td>14.9%</td><td>创建分析、分享看板</td><td>发展超级用户</td></tr>
+          <tr><td>中频用户</td><td>2,846</td><td>33.0%</td><td>问数、查看看板</td><td>推荐高级分析</td></tr>
+          <tr><td>低频用户</td><td>3,286</td><td>38.1%</td><td>简单查询</td><td>推荐模板和案例</td></tr>
+          <tr><td>流失用户</td><td>1,206</td><td>14.0%</td><td>注册后未使用</td><td>培训和召回</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="opQuality" class="inner" style="display:none">
+      <div class="cards">
+        <div class="card"><div class="card-label">总问数</div><div class="card-value">28,620</div><div class="card-desc">日均953次</div></div>
+        <div class="card"><div class="card-label">总体准确率</div><div class="card-value">94.2%</div><div class="card-desc">较上周 ↑2.4%</div></div>
+        <div class="card"><div class="card-label">零回答率</div><div class="card-value">3.8%</div><div class="card-desc">较上周 ↓1.2%</div></div>
+        <div class="card"><div class="card-label">Badcase</div><div class="card-value">286</div><div class="card-desc danger">待闭环28个</div></div>
+        <div class="card"><div class="card-label">平均修复时效</div><div class="card-value">18.6h</div><div class="card-desc">目标≤48h</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Badcase类型分析</div>
+        <table>
+          <tr><th>类型</th><th>数量</th><th>占比</th><th>责任模块</th><th>状态</th><th>操作</th></tr>
+          <tr><td>指标匹配错误</td><td>86</td><td>30.1%</td><td>指标语义层</td><td><span class="badge orange">处理中</span></td><td><button class="light" onclick="showToast('已分派责任人')">分派</button></td></tr>
+          <tr><td>知识库缺失</td><td>72</td><td>25.2%</td><td>RAG知识库</td><td><span class="badge red">待处理</span></td><td><button class="light" onclick="showToast('已创建补录任务')">处理</button></td></tr>
+          <tr><td>意图识别错误</td><td>62</td><td>21.7%</td><td>NLU模型</td><td><span class="badge orange">处理中</span></td><td><button class="light" onclick="showToast('已打开Badcase样本')">查看</button></td></tr>
+          <tr><td>SQL生成错误</td><td>38</td><td>13.3%</td><td>查询引擎</td><td><span class="badge green">已修复</span></td><td><button class="light" onclick="showToast('已查看修复记录')">查看</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="opAssets" class="inner" style="display:none">
+      <div class="panel">
+        <div class="panel-title">数据资产使用排行</div>
+        <table>
+          <tr><th>资产名称</th><th>类型</th><th>使用次数</th><th>用户数</th><th>平均耗时</th><th>状态</th></tr>
+          <tr><td>试驾转化率</td><td>指标</td><td>3,286</td><td>1,286</td><td>3.2秒</td><td><span class="badge green">高频</span></td></tr>
+          <tr><td>销售漏斗数据集</td><td>数据集</td><td>2,846</td><td>986</td><td>8.6秒</td><td><span class="badge green">高频</span></td></tr>
+          <tr><td>用户画像数据集</td><td>数据集</td><td>2,420</td><td>826</td><td>6.8秒</td><td><span class="badge green">高频</span></td></tr>
+          <tr><td>家庭增购潜力标签</td><td>标签</td><td>12</td><td>8</td><td>—</td><td><span class="badge red">零使用风险</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="opValue" class="inner" style="display:none">
+      <div class="cards">
+        <div class="card"><div class="card-label">取数周期</div><div class="card-value">3天→10分钟</div><div class="card-desc">效率提升99%</div></div>
+        <div class="card"><div class="card-label">自助取数占比</div><div class="card-value">62.4%</div><div class="card-desc">达到目标</div></div>
+        <div class="card"><div class="card-label">节省人力工时</div><div class="card-value">2,864h</div><div class="card-desc">本季度累计</div></div>
+        <div class="card"><div class="card-label">报表制作下降</div><div class="card-value">48.6%</div><div class="card-desc">同比改善</div></div>
+        <div class="card"><div class="card-label">用户满意度</div><div class="card-value">4.62分</div><div class="card-desc">5分制</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">数据价值案例</div>
+        <table>
+          <tr><th>案例</th><th>部门</th><th>使用能力</th><th>业务效果</th><th>状态</th></tr>
+          <tr><td>投放预算优化</td><td>市场部</td><td>渠道ROI+归因</td><td>月度成本下降12.6%</td><td><span class="badge green">已验证</span></td></tr>
+          <tr><td>线索跟进提效</td><td>销售部</td><td>漏斗分析+Agent</td><td>试驾率提升8.6%</td><td><span class="badge green">已验证</span></td></tr>
+          <tr><td>车主流失挽回</td><td>售后部</td><td>流失模型+标签圈选</td><td>回站率提升6.2%</td><td><span class="badge green">已验证</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. 实验与归因 -->
+  <section id="experiment" class="page">
+    <div class="tabs">
+      <button class="tab active" onclick="switchInner(this,'abInner')">A/B实验</button>
+      <button class="tab" onclick="switchInner(this,'channelInner')">渠道归因</button>
+      <button class="tab" onclick="switchInner(this,'mmmInner')">MMM二期</button>
+    </div>
+
+    <div id="abInner" class="inner">
+      <div class="panel">
+        <div class="panel-title">
+          A/B实验管理
+          <button onclick="createExperiment()">+ 创建实验</button>
+        </div>
+
+        <table>
+          <tr><th>实验名称</th><th>实验人群</th><th>分流比例</th><th>核心指标</th><th>样本进度</th><th>提升</th><th>显著性</th><th>建议</th></tr>
+          <tr><td>试驾权益文案实验</td><td>高意向潜客</td><td>50%/50%</td><td>试驾预约率</td><td>82%</td><td>+18.6%</td><td><span class="badge green">显著</span></td><td><span class="badge green">建议上线</span></td></tr>
+          <tr><td>Push发送时间实验</td><td>车主用户</td><td>50%/50%</td><td>打开率</td><td>64%</td><td>+6.8%</td><td><span class="badge orange">观察中</span></td><td><span class="badge orange">继续观察</span></td></tr>
+          <tr><td>召回权益实验</td><td>流失风险车主</td><td>50%/50%</td><td>回站率</td><td>100%</td><td>-2.4%</td><td><span class="badge red">不显著</span></td><td><span class="badge red">终止实验</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="channelInner" class="inner" style="display:none">
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-title">归因模型</div>
+          <div class="toolbar">
+            <select>
+              <option>首触归因</option>
+              <option>末触归因</option>
+              <option>线性归因</option>
+              <option>时间衰减归因</option>
+              <option>算法归因</option>
+            </select>
+            <button onclick="showToast('归因模型已应用')">应用模型</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">渠道贡献度</div>
+          <table>
+            <tr><th>渠道</th><th>成交数</th><th>贡献占比</th><th>ROI</th></tr>
+            <tr><td>抖音</td><td>9,286</td><td>30.8%</td><td>4.2</td></tr>
+            <tr><td>企微</td><td>8,624</td><td>28.6%</td><td>6.2</td></tr>
+            <tr><td>小红书</td><td>4,826</td><td>16.2%</td><td>4.6</td></tr>
+            <tr><td>腾讯</td><td>3,286</td><td>10.8%</td><td>3.1</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">跨渠道转化路径</div>
+        <div class="flow">
+          <div class="flow-node">抖音曝光</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">官网浏览</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">企微沟通</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">到店试驾</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">成交</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mmmInner" class="inner" style="display:none">
+      <div class="panel">
+        <div class="panel-title">
+          营销组合模型 MMM
+          <span class="badge purple">P2二期能力</span>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail"><label>渠道因素贡献</label><b>46.8%</b></div>
+          <div class="detail"><label>价格因素贡献</label><b>18.6%</b></div>
+          <div class="detail"><label>促销因素贡献</label><b>16.4%</b></div>
+          <div class="detail"><label>季节因素贡献</label><b>10.2%</b></div>
+          <div class="detail"><label>车型因素贡献</label><b>8.0%</b></div>
+          <div class="detail"><label>模型可信度</label><b>86.4%</b></div>
+        </div>
+
+        <table>
+          <tr><th>渠道</th><th>当前预算</th><th>边际ROI</th><th>建议预算</th><th>优化建议</th></tr>
+          <tr><td>企微</td><td>18.6万</td><td>6.2</td><td>24.8万</td><td><span class="badge green">增加33%</span></td></tr>
+          <tr><td>抖音</td><td>42.6万</td><td>4.2</td><td>45.0万</td><td><span class="badge">增加5%</span></td></tr>
+          <tr><td>腾讯</td><td>26.8万</td><td>3.1</td><td>18.6万</td><td><span class="badge orange">减少31%</span></td></tr>
+          <tr><td>小红书</td><td>12.6万</td><td>4.6</td><td>16.4万</td><td><span class="badge green">增加30%</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 一级模块占位页 -->
+  <section id="placeholder" class="page">
+    <div class="panel" style="padding:80px;text-align:center">
+      <div style="font-size:48px">🚧</div>
+      <h2 id="placeholderTitle">模块建设中</h2>
+      <p style="color:var(--muted)">
+        当前优先完善自助分析模块，其他一级模块将在后续版本继续建设。
+      </p>
+      <button onclick="openPage('drag')">返回自助分析</button>
+    </div>
+  </section>
+
+</main>
+</div>
+</div>
+
+<div id="modalMask" class="modal-mask">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">详情</h2>
+      <span class="close" onclick="closeModal()">×</span>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* 页面标题配置 */
+const pageMeta = {
+  drag: [
+    "拖拽式自助分析",
+    "通过拖拽维度和指标完成多维分析，不再依赖SQL工单"
+  ],
+  chatbi: [
+    "自然语言问数",
+    "用业务语言提问，快速获得可信的数据答案"
+  ],
+  datasets: [
+    "数据集市场",
+    "像逛数据超市一样发现、理解和使用认证数据集"
+  ],
+  dashboards: [
+    "可视化看板中心",
+    "统一管理个人、团队和公共数据看板"
+  ],
+  templates: [
+    "分析模板库",
+    "基于预置模板快速完成常见业务分析"
+  ],
+  advanced: [
+    "高级分析",
+    "支持漏斗、Cohort、路径、RFM和归因分析"
+  ],
+  share: [
+    "数据导出与分享",
+    "支持Excel、CSV、PDF、图片和链接分享"
+  ],
+  operation: [
+    "数据运营后台",
+    "跟踪平台使用、问数质量、资产使用和业务价值"
+  ],
+  experiment: [
+    "实验与归因平台",
+    "通过A/B实验和多渠道归因验证营销策略"
+  ]
+};
+
+/* 顶部一级导航配置 */
+const topPageMap = {
+  data: {
+    title: "数据管理",
+    desc: "统一管理数据接入、治理、主数据和数据资产"
+  },
+  metric: {
+    title: "指标体系",
+    desc: "统一管理指标、标签、口径和语义层"
+  },
+  marketing: {
+    title: "营销体系",
+    desc: "围绕销售、投放、用户运营和营销触达开展业务经营"
+  },
+  scene: {
+    title: "数据场景",
+    desc: "围绕潜客、车型、车主、服务和智能数据构建场景化应用"
+  }
+};
+
+const datasetList = [
+  {
+    name: "销售漏斗数据集",
+    domain: "销售域",
+    rows: "1,286万",
+    update: "小时",
+    level: "内部",
+    usage: "2,846次",
+    desc: "覆盖线索、到店、试驾、报价、订单和交付全链路。"
+  },
+  {
+    name: "用户画像数据集",
+    domain: "用户域",
+    rows: "1,286万",
+    update: "T+1",
+    level: "敏感",
+    usage: "2,420次",
+    desc: "包含用户属性、生命周期、行为、意向和价值信息。"
+  },
+  {
+    name: "投放效果数据集",
+    domain: "营销域",
+    rows: "8,624万",
+    update: "小时",
+    level: "内部",
+    usage: "1,986次",
+    desc: "覆盖媒体消耗、曝光、点击、留资、成交和ROI。"
+  },
+  {
+    name: "车主活跃与服务数据集",
+    domain: "售后域",
+    rows: "4,862万",
+    update: "日",
+    level: "敏感",
+    usage: "1,286次",
+    desc: "覆盖APP活跃、车机、进店、保养、维修和投诉。"
+  },
+  {
+    name: "车联网使用数据集",
+    domain: "车辆域",
+    rows: "2.86亿",
+    update: "实时",
+    level: "敏感",
+    usage: "862次",
+    desc: "覆盖里程、充电、OTA、车机和车辆健康数据。"
+  },
+  {
+    name: "用户声音数据集",
+    domain: "客户域",
+    rows: "8,624万",
+    update: "小时",
+    level: "内部",
+    usage: "628次",
+    desc: "覆盖投诉、客服、舆情、NPS和用户评价。"
+  }
+];
+
+/* 通用提示 */
+function showToast(message) {
+  const toast = document.getElementById("toast");
+
+  toast.innerText = message;
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 2200);
+}
+
+/* 弹窗 */
+function openModal(title, html) {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalContent").innerHTML = html;
+  document.getElementById("modalMask").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modalMask").style.display = "none";
+}
+
+/* 左侧分组展开收起 */
+function toggleMenu(element) {
+  const submenu = element.nextElementSibling;
+
+  if (!submenu) return;
+
+  const opened = submenu.classList.contains("show");
+
+  submenu.classList.toggle("show", !opened);
+  element.classList.toggle("open", !opened);
+}
+
+/* 页面标题 */
+function updatePageHeader(pageId) {
+  const meta = pageMeta[pageId];
+
+  if (!meta) return;
+
+  document.getElementById("pageTitle").innerText = meta[0];
+  document.getElementById("pageDesc").innerText = meta[1];
+}
+
+/* 隐藏所有页面 */
+function hideAllPages() {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+    page.style.display = "none";
+  });
+}
+
+/* 清除左侧激活状态 */
+function clearSubActive() {
+  document.querySelectorAll(".subitem").forEach(item => {
+    item.classList.remove("active");
+  });
+}
+
+/* 清除顶部激活状态 */
+function clearTopActive() {
+  document.querySelectorAll(".topnav-item").forEach(item => {
+    item.classList.remove("active");
+  });
+}
+
+/* 设置顶部自助分析高亮 */
+function activeAnalysisTop() {
+  const item = document.querySelector(
+    '.topnav-item[data-top="analysis"]'
+  );
+
+  if (item) {
+    item.classList.add("active");
+  }
+}
+
+/* 左侧二级页面跳转 */
+function openPage(pageId) {
+  const target = document.getElementById(pageId);
+
+  if (!target) {
+    console.warn("页面不存在：", pageId);
+    return;
+  }
+
+  hideAllPages();
+
+  target.classList.add("active");
+  target.style.display = "block";
+
+  clearSubActive();
+
+  const sub = document.querySelector(
+    '.subitem[data-page="' + pageId + '"]'
+  );
+
+  if (sub) {
+    sub.classList.add("active");
+  }
+
+  clearTopActive();
+  activeAnalysisTop();
+  updatePageHeader(pageId);
+
+  if (pageId === "datasets") {
+    renderDatasets();
+  }
+
+  if (pageId === "drag") {
+    renderAnalysisChart();
+  }
+}
+
+/* 顶部一级导航跳转 */
+function openTopPage(type) {
+  clearTopActive();
+
+  const currentTop = document.querySelector(
+    '.topnav-item[data-top="' + type + '"]'
+  );
+
+  if (currentTop) {
+    currentTop.classList.add("active");
+  }
+
+  if (type === "analysis") {
+    openPage("drag");
+    return;
+  }
+
+  const config = topPageMap[type];
+
+  if (!config) return;
+
+  hideAllPages();
+  clearSubActive();
+
+  const placeholder = document.getElementById("placeholder");
+
+  placeholder.classList.add("active");
+  placeholder.style.display = "block";
+
+  document.getElementById("placeholderTitle").innerText =
+    config.title + "建设中";
+
+  document.getElementById("pageTitle").innerText = config.title;
+  document.getElementById("pageDesc").innerText = config.desc;
+}
+
+/* 绑定左侧导航 */
+document.querySelectorAll(".subitem[data-page]").forEach(item => {
+  item.addEventListener("click", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    openPage(this.dataset.page);
+  });
+});
+
+/* 绑定顶部导航 */
+document.querySelectorAll(".topnav-item[data-top]").forEach(item => {
+  item.addEventListener("click", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    openTopPage(this.dataset.top);
+  });
+});
+
+/* 页面内Tab切换 */
+function switchInner(button, innerId) {
+  const page = button.closest(".page");
+
+  if (!page) return;
+
+  page.querySelectorAll(".tab").forEach(tab => {
+    tab.classList.remove("active");
+  });
+
+  page.querySelectorAll(".inner").forEach(inner => {
+    inner.style.display = "none";
+  });
+
+  button.classList.add("active");
+
+  const target = document.getElementById(innerId);
+
+  if (target) {
+    target.style.display = "block";
+  }
+}
+
+/* 看板Tab */
+function switchDashboardTab(button, targetId) {
+  const page = button.closest(".page");
+
+  page.querySelectorAll(".tab").forEach(tab => {
+    tab.classList.remove("active");
+  });
+
+  page.querySelectorAll(".dashboard-content").forEach(content => {
+    content.style.display = "none";
+  });
+
+  button.classList.add("active");
+
+  const target = document.getElementById(targetId);
+
+  if (target) {
+    target.style.display = "block";
+  }
+}
+
+/* 字段搜索 */
+function filterFields() {
+  const keyword = document.getElementById("fieldSearch").value.trim();
+
+  document.querySelectorAll(".field").forEach(field => {
+    field.style.display =
+      !keyword || field.innerText.includes(keyword)
+        ? "block"
+        : "none";
+  });
+}
+
+/* 拖拽字段 */
+document.querySelectorAll(".field").forEach(field => {
+  field.addEventListener("dragstart", event => {
+    event.dataTransfer.setData("field", field.dataset.field);
+    event.dataTransfer.setData("type", field.dataset.type);
+  });
+});
+
+["rowDrop", "metricDrop"].forEach(zoneId => {
+  const zone = document.getElementById(zoneId);
+
+  zone.addEventListener("dragover", event => {
+    event.preventDefault();
+  });
+
+  zone.addEventListener("drop", event => {
+    event.preventDefault();
+
+    const field = event.dataTransfer.getData("field");
+    const type = event.dataTransfer.getData("type");
+
+    if (!field) return;
+
+    if (zoneId === "rowDrop" && type !== "dimension") {
+      showToast("行维度区域只能放入维度");
+      return;
+    }
+
+    if (zoneId === "metricDrop" && type !== "metric") {
+      showToast("指标区域只能放入指标");
+      return;
+    }
+
+    if (zone.innerText.includes("拖到这里")) {
+      zone.innerHTML = "";
+    }
+
+    const item = document.createElement("span");
+
+    item.className = "drop-item";
+    item.innerText = field + " ×";
+    item.onclick = () => item.remove();
+
+    zone.appendChild(item);
+    showToast("已添加：" + field);
+  });
+});
+
+/* 清空画布 */
+function clearCanvas() {
+  document.getElementById("rowDrop").innerHTML = "将维度拖到这里";
+  document.getElementById("metricDrop").innerHTML = "将指标拖到这里";
+  document.getElementById("analysisStatus").innerText = "画布已清空";
+  showToast("分析画布已清空");
+}
+
+/* 添加推荐维度 */
+function addRecommendedField() {
+  const zone = document.getElementById("rowDrop");
+
+  if (zone.innerText.includes("拖到这里")) {
+    zone.innerHTML = "";
+  }
+
+  const item = document.createElement("span");
+
+  item.className = "drop-item";
+  item.innerText = "车型 ×";
+  item.onclick = () => item.remove();
+
+  zone.appendChild(item);
+  showToast("已添加推荐维度：车型");
+}
+
+/* 应用分析 */
+function applyAnalysis() {
+  const dimension = document.getElementById("rowDrop").innerText;
+  const metric = document.getElementById("metricDrop").innerText;
+
+  document.getElementById("analysisStatus").innerText =
+    "已应用：" + dimension + " / " + metric;
+
+  renderAnalysisChart();
+  showToast("分析结果已更新");
+}
+
+/* 刷新分析 */
+function refreshAnalysis() {
+  renderAnalysisChart();
+  showToast("分析结果已刷新");
+}
+
+/* 保存分析 */
+function saveAnalysis() {
+  openModal("保存分析", `
+    <div class="detail-grid">
+      <div class="detail">
+        <label>分析名称</label>
+        <input value="渠道试驾转化率分析">
+      </div>
+
+      <div class="detail">
+        <label>保存位置</label>
+        <select>
+          <option>我的分析</option>
+          <option>团队分析</option>
+          <option>公共分析</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>刷新方式</label>
+        <select>
+          <option>手动刷新</option>
+          <option>每日刷新</option>
+          <option>每周刷新</option>
+        </select>
+      </div>
+    </div>
+
+    <button onclick="closeModal();showToast('分析已保存')">
+      确认保存
+    </button>
+  `);
+}
+
+/* 图表渲染 */
+function renderAnalysisChart() {
+  const chartType = document.getElementById("chartType").value;
+  const chart = document.getElementById("analysisChart");
+
+  if (chartType === "table") {
+    chart.innerHTML = `
+      <table>
+        <tr>
+          <th>大区</th>
+          <th>有效线索数</th>
+          <th>试驾转化率</th>
+          <th>订单转化率</th>
+          <th>同比</th>
+        </tr>
+        <tr><td>华东</td><td>86,420</td><td>24.6%</td><td>8.2%</td><td>↑8.6%</td></tr>
+        <tr><td>华南</td><td>72,620</td><td>28.6%</td><td>12.6%</td><td>↑12.4%</td></tr>
+        <tr><td>华中</td><td>48,620</td><td>19.8%</td><td>6.8%</td><td>↓2.4%</td></tr>
+        <tr><td>西南</td><td>36,420</td><td>17.4%</td><td>5.6%</td><td>↓6.8%</td></tr>
+      </table>
+    `;
+    return;
+  }
+
+  if (chartType === "line") {
+    chart.innerHTML = `
+      <div class="line-chart">
+        <svg viewBox="0 0 500 180">
+          <polyline
+            points="10,150 80,122 150,136 220,86 290,100 360,62 440,35 490,48"
+            fill="none"
+            stroke="#246bfe"
+            stroke-width="4"
+          />
+          <circle cx="10" cy="150" r="5" fill="#246bfe"/>
+          <circle cx="80" cy="122" r="5" fill="#246bfe"/>
+          <circle cx="150" cy="136" r="5" fill="#246bfe"/>
+          <circle cx="220" cy="86" r="5" fill="#246bfe"/>
+          <circle cx="290" cy="100" r="5" fill="#246bfe"/>
+          <circle cx="360" cy="62" r="5" fill="#246bfe"/>
+          <circle cx="440" cy="35" r="5" fill="#246bfe"/>
+          <circle cx="490" cy="48" r="5" fill="#246bfe"/>
+        </svg>
+      </div>
+    `;
+    return;
+  }
+
+  chart.innerHTML = `
+    <div class="chart-bars">
+      <i style="height:58%"></i>
+      <i style="height:72%"></i>
+      <i style="height:48%"></i>
+      <i style="height:86%"></i>
+      <i style="height:64%"></i>
+    </div>
+
+    <div class="chart-labels">
+      <span>华东</span>
+      <span>华南</span>
+      <span>华中</span>
+      <span>西南</span>
+      <span>华北</span>
+    </div>
+  `;
+}
+
+/* ChatBI问题 */
+function useQuestion(question) {
+  openPage("chatbi");
+
+  setTimeout(() => {
+    document.getElementById("question").value = question;
+    askChat();
+  }, 50);
+}
+
+function askChat() {
+  const input = document.getElementById("question");
+  const box = document.getElementById("chatBox");
+  const question = input.value.trim();
+
+  if (!question) {
+    showToast("请输入问题");
+    return;
+  }
+
+  const userMessage = document.createElement("div");
+  userMessage.className = "msg user";
+  userMessage.innerText = question;
+  box.appendChild(userMessage);
+
+  const botMessage = document.createElement("div");
+  botMessage.className = "msg bot";
+
+  if (question.includes("试驾")) {
+    botMessage.innerHTML = `
+      <b style="font-size:28px;color:var(--blue)">24.6%</b><br>
+      上个月华东区试驾转化率为24.6%。<br>
+      环比：<span style="color:var(--green)">↑8.6%</span>
+      同比：<span style="color:var(--green)">↑12.4%</span><br>
+      匹配指标：试驾转化率，置信度98%。<br>
+      来源：指标字典v2.0、销售漏斗认证数据集。<br>
+      统计时间：上个月；更新时间：今天08:00。<br><br>
+      <button class="light" onclick="openPage('dashboards')">转为看板</button>
+      <button class="light" onclick="showSQL()">查看SQL</button>
+    `;
+  } else if (
+    question.includes("渠道") ||
+    question.includes("成交")
+  ) {
+    botMessage.innerHTML = `
+      <b>企微渠道成交率最高，为12.6%。</b><br>
+      其次为小红书9.2%、抖音8.6%。<br>
+      来源：投放效果数据集、销售漏斗数据集。<br>
+      口径：订单数 ÷ 有效线索数。<br><br>
+      <button class="light" onclick="openPage('drag')">按渠道下钻</button>
+      <button class="light" onclick="openPage('dashboards')">转为看板</button>
+    `;
+  } else if (
+    question.includes("新能源") ||
+    question.includes("高意向")
+  ) {
+    botMessage.innerHTML = `
+      <b style="font-size:24px;color:var(--blue)">286,420人</b><br>
+      最近30天高意向新能源用户约286,420人。<br>
+      识别条件：新能源偏好命中且意向分≥80。<br>
+      来源：用户画像数据集、标签语义层。<br><br>
+      <button class="light" onclick="showToast('已生成目标人群包')">
+        生成目标人群
+      </button>
+    `;
+  } else {
+    botMessage.innerHTML = `
+      抱歉，当前问题置信度不足。<br>
+      请补充时间、指标、区域、渠道或车型。<br>
+      当前支持：试驾转化率、订单转化率、渠道成交率、高意向新能源用户。
+    `;
+  }
+
+  box.appendChild(botMessage);
+  box.scrollTop = box.scrollHeight;
+  input.value = "";
+}
+
+/* SQL弹窗 */
+function showSQL() {
+  openModal("查询SQL与证据链", `
+    <p style="color:var(--muted)">
+      以下SQL为当前指标语义层自动生成的查询示例。
+    </p>
+
+    <pre style="
+      padding:14px;
+      border-radius:7px;
+      color:#dce8ff;
+      background:#182542;
+      line-height:1.7;
+      overflow:auto;
+    ">SELECT
+  region,
+  SUM(completed_test_drive_users)
+  / SUM(valid_lead_users) AS trial_rate
+FROM ads_sales_funnel
+WHERE region = '华东'
+  AND stat_date BETWEEN '2026-08-01' AND '2026-08-31'
+GROUP BY region;</pre>
+
+    <div class="detail-grid">
+      <div class="detail"><label>匹配指标</label><b>试驾转化率</b></div>
+      <div class="detail"><label>认证数据集</label><b>销售漏斗数据集</b></div>
+      <div class="detail"><label>权限状态</label><b>已通过</b></div>
+    </div>
+  `);
+}
+
+/* Badcase */
+function showBadcase() {
+  openModal("提交Badcase反馈", `
+    <div class="detail-grid">
+      <div class="detail">
+        <label>错误类型</label>
+        <select>
+          <option>口径不对</option>
+          <option>数据不对</option>
+          <option>理解错误</option>
+          <option>图表错误</option>
+          <option>其他</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>问题归因</label>
+        <select>
+          <option>指标匹配错误</option>
+          <option>意图识别错误</option>
+          <option>SQL生成错误</option>
+          <option>知识库缺失</option>
+          <option>权限问题</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>优先级</label>
+        <select>
+          <option>高</option>
+          <option>中</option>
+          <option>低</option>
+        </select>
+      </div>
+    </div>
+
+    <textarea style="width:100%;height:100px" placeholder="请描述问题"></textarea>
+    <br><br>
+
+    <button onclick="closeModal();showToast('Badcase已提交并路由至责任人')">
+      提交反馈
+    </button>
+  `);
+}
+
+/* 数据集市场 */
+function renderDatasets() {
+  const grid = document.getElementById("datasetGrid");
+  const keyword = document.getElementById("datasetSearch").value.trim();
+  const domain = document.getElementById("datasetDomain").value;
+  const level = document.getElementById("datasetLevel").value;
+
+  const result = datasetList.filter(item => {
+    return (
+      (!keyword ||
+        item.name.includes(keyword) ||
+        item.domain.includes(keyword) ||
+        item.desc.includes(keyword)) &&
+      (!domain || item.domain === domain) &&
+      (!level || item.level === level)
+    );
+  });
+
+  grid.innerHTML = result.length
+    ? result.map(item => `
+      <div class="dataset-card" onclick="showDataset('${item.name}')">
+        <h3>📊 ${item.name}</h3>
+        <p>${item.desc}</p>
+        <p>所属域：${item.domain}</p>
+        <p>数据量：${item.rows} · 更新：${item.update}</p>
+        <p>使用热度：⭐ ${item.usage}</p>
+        <span class="badge green">认证数据集</span>
+        <span class="badge">${item.level}</span>
+        <br><br>
+        <button
+          class="light"
+          onclick="event.stopPropagation();useDataset('${item.name}')"
+        >
+          立即使用
+        </button>
+      </div>
+    `).join("")
+    : `<div class="empty">暂无符合条件的数据集</div>`;
+}
+
+function showDataset(name) {
+  const item = datasetList.find(data => data.name === name);
+
+  openModal("数据集详情 · " + name, `
+    <div class="detail-grid">
+      <div class="detail"><label>数据集名称</label><b>${item.name}</b></div>
+      <div class="detail"><label>所属业务域</label><b>${item.domain}</b></div>
+      <div class="detail"><label>数据行数</label><b>${item.rows}</b></div>
+      <div class="detail"><label>更新频率</label><b>${item.update}</b></div>
+      <div class="detail"><label>安全等级</label><b>${item.level}</b></div>
+      <div class="detail"><label>认证状态</label><b>数据委员会已认证</b></div>
+    </div>
+
+    <h3>字段结构预览</h3>
+
+    <table>
+      <tr><th>字段名</th><th>中文名</th><th>数据类型</th><th>敏感字段</th><th>样例</th></tr>
+      <tr><td>user_id</td><td>统一用户ID</td><td>STRING</td><td>否</td><td>UID-00028642</td></tr>
+      <tr><td>channel</td><td>来源渠道</td><td>STRING</td><td>否</td><td>企微</td></tr>
+      <tr><td>model</td><td>意向车型</td><td>STRING</td><td>否</td><td>凡尔赛C5 X</td></tr>
+      <tr><td>lead_status</td><td>线索状态</td><td>STRING</td><td>否</td><td>已试驾</td></tr>
+      <tr><td>mobile</td><td>手机号</td><td>STRING</td><td>是</td><td>138****1001</td></tr>
+    </table>
+
+    <h3>数据血缘</h3>
+
+    <div class="flow">
+      <div class="flow-node">CRM/DMS</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">ODS/DWD</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">${item.name}</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">BI/ChatBI</div>
+    </div>
+
+    <br>
+
+    <button onclick="useDataset('${item.name}')">
+      使用此数据集
+    </button>
+
+    <button class="light" onclick="showToast('数据集权限申请已提交')">
+      申请权限
+    </button>
+  `);
+}
+
+function useDataset(name) {
+  closeModal();
+  openPage("drag");
+  document.getElementById("analysisDataset").value = name;
+  showToast("已载入数据集：" + name);
+}
+
+/* 看板 */
+function createDashboard() {
+  openModal("新建看板", `
+    <div class="detail-grid">
+      <div class="detail">
+        <label>看板名称</label>
+        <input value="我的新看板">
+      </div>
+
+      <div class="detail">
+        <label>归属文件夹</label>
+        <select>
+          <option>我的看板</option>
+          <option>销售分析</option>
+          <option>营销分析</option>
+          <option>用户运营</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>刷新频率</label>
+        <select>
+          <option>手动刷新</option>
+          <option>每小时</option>
+          <option>每日</option>
+          <option>实时</option>
+        </select>
+      </div>
+    </div>
+
+    <button onclick="closeModal();showToast('看板创建成功')">
+      创建看板
+    </button>
+  `);
+}
+
+function openDashboardDetail(name) {
+  openModal("看板预览 · " + name, `
+    <div class="cards">
+      <div class="card"><div class="card-label">核心指标</div><div class="card-value">4.28</div><div class="card-desc">本月ROI</div></div>
+      <div class="card"><div class="card-label">成交订单</div><div class="card-value">28,620</div><div class="card-desc">同比↑18.4%</div></div>
+      <div class="card"><div class="card-label">更新时间</div><div class="card-value">09:30</div><div class="card-desc">数据正常</div></div>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-bars">
+        <i style="height:48%"></i>
+        <i style="height:62%"></i>
+        <i style="height:75%"></i>
+        <i style="height:68%"></i>
+        <i style="height:88%"></i>
+      </div>
+
+      <div class="chart-labels">
+        <span>1月</span>
+        <span>2月</span>
+        <span>3月</span>
+        <span>4月</span>
+        <span>5月</span>
+      </div>
+    </div>
+
+    <br>
+
+    <button onclick="showToast('已进入看板编辑模式')">
+      编辑看板
+    </button>
+
+    <button class="light" onclick="showToast('看板已分享')">
+      分享
+    </button>
+
+    <button class="light" onclick="showToast('看板订阅成功')">
+      订阅
+    </button>
+  `);
+}
+
+function copyDashboard(name) {
+  showToast("已复制看板：" + name);
+}
+
+function applyDashboardTemplate(name) {
+  showToast("已套用看板模板：" + name);
+  setTimeout(() => openPage("dashboards"), 400);
+}
+
+/* 模板 */
+function applyTemplate(name) {
+  showToast("已套用分析模板：" + name);
+  setTimeout(() => openPage("drag"), 400);
+}
+
+function createTemplate() {
+  showToast("当前分析已保存为个人模板");
+}
+
+function showTemplateDetail(name) {
+  openModal("模板详情 · " + name, `
+    <div class="detail-grid">
+      <div class="detail"><label>模板名称</label><b>${name}</b></div>
+      <div class="detail"><label>适用角色</label><b>市场/销售/运营</b></div>
+      <div class="detail"><label>使用次数</label><b>1,286次</b></div>
+    </div>
+
+    <h3>模板包含内容</h3>
+    <p>包含指标卡、趋势图、明细表、漏斗图、渠道对比和自动结论组件。</p>
+
+    <h3>使用流程</h3>
+
+    <div class="flow">
+      <div class="flow-node">选择模板</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">选择时间</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">自动取数</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">生成分析</div>
+    </div>
+
+    <button onclick="closeModal();applyTemplate('${name}')">
+      一键套用
+    </button>
+  `);
+}
+
+/* 导出分享 */
+function exportResult(type) {
+  showToast("分析结果正在导出为" + type);
+}
+
+function createShareLink() {
+  openModal("生成分享链接", `
+    <div class="detail-grid">
+      <div class="detail">
+        <label>分享权限</label>
+        <select>
+          <option>仅查看</option>
+          <option>可编辑</option>
+          <option>可复制</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>有效期</label>
+        <select>
+          <option>7天</option>
+          <option>30天</option>
+          <option>长期有效</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>分享对象</label>
+        <input placeholder="输入用户或部门">
+      </div>
+    </div>
+
+    <button onclick="closeModal();showToast('分享链接已生成并复制')">
+      生成链接
+    </button>
+  `);
+}
+
+function showEmbedConfig() {
+  openModal("嵌入集成配置", `
+    <div class="detail-grid">
+      <div class="detail">
+        <label>嵌入系统</label>
+        <select>
+          <option>企业微信</option>
+          <option>OA门户</option>
+          <option>经销商门户</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>访问方式</label>
+        <select>
+          <option>单点登录</option>
+          <option>链接访问</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>数据权限</label>
+        <select>
+          <option>继承当前用户权限</option>
+          <option>固定权限</option>
+        </select>
+      </div>
+    </div>
+
+    <textarea style="width:100%;height:90px" readonly>https://data-platform.shenlong.com/embed/dashboard/SA-2026-001</textarea>
+    <br><br>
+
+    <button onclick="closeModal();showToast('嵌入配置已保存')">
+      保存配置
+    </button>
+  `);
+}
+
+/* 实验 */
+function createExperiment() {
+  openModal("创建A/B实验", `
+    <div class="detail-grid">
+      <div class="detail">
+        <label>实验名称</label>
+        <input placeholder="例如：试驾权益文案实验">
+      </div>
+
+      <div class="detail">
+        <label>实验人群</label>
+        <select>
+          <option>高意向潜客</option>
+          <option>车主用户</option>
+          <option>流失风险车主</option>
+        </select>
+      </div>
+
+      <div class="detail">
+        <label>分流比例</label>
+        <select>
+          <option>50% / 50%</option>
+          <option>70% / 30%</option>
+          <option>80% / 20%</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="detail">
+      <label>实验假设</label>
+      <textarea style="width:100%;height:80px" placeholder="请输入实验假设"></textarea>
+    </div>
+
+    <br>
+
+    <button onclick="closeModal();showToast('A/B实验已创建')">
+      创建实验
+    </button>
+  `);
+}
+
+/* 时间 */
+function updateClock() {
+  document.getElementById("clock").innerText =
+    new Date().toLocaleString("zh-CN");
+}
+
+/* 初始化 */
+function init() {
+  document.querySelectorAll(".page").forEach(page => {
+    page.style.display = "none";
+    page.classList.remove("active");
+  });
+
+  const firstPage = document.getElementById("drag");
+
+  if (firstPage) {
+    firstPage.style.display = "block";
+    firstPage.classList.add("active");
+  }
+
+  document.querySelectorAll(".subitem").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  const firstSub = document.querySelector(
+    '.subitem[data-page="drag"]'
+  );
+
+  if (firstSub) {
+    firstSub.classList.add("active");
+  }
+
+  clearTopActive();
+  activeAnalysisTop();
+  updatePageHeader("drag");
+  renderAnalysisChart();
+  renderDatasets();
+  updateClock();
+
+  setInterval(updateClock, 1000);
+}
+
+init();
+</script>
+
+<script>
+/* ── 神龙数据中台集成壳 · 双向同步脚本（自动追加，不影响模块自身功能） ── */
+(function(){
+  if(window.__SL_EMBED__) return; window.__SL_EMBED__ = 1;
+  var MOD = "analysis";
+  var st = document.createElement("style");
+  st.textContent = ".sidebar{display:none!important}header.topbar{display:none!important}";
+  document.head.appendChild(st);
+  function post(m){ try{ m.__sl = 1; m.mod = MOD; parent.postMessage(m, "*"); }catch(e){} }
+  function currentPage(){
+    var el = document.querySelector(".subitem.active[data-page],.nav-item.active[data-page]");
+    return el ? el.getAttribute("data-page") : null;
+  }
+  var last = currentPage();
+  setInterval(function(){
+    var c = currentPage();
+    if(c && c !== last){ last = c; post({page:c}); }
+  }, 250);
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest(".topnav-item[data-top],.top-item[data-top]") : null;
+    if(t){
+      var top = t.getAttribute("data-top");
+      if(top && top !== MOD){ e.preventDefault(); e.stopPropagation(); post({module:top}); }
+    }
+  }, true);
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if(!d || d.__slCmd !== 1) return;
+    if(d.goto){
+      var el = document.querySelector('.subitem[data-page="'+d.goto+'"],.nav-item[data-page="'+d.goto+'"]');
+      if(el){ el.click(); return; }
+    }
+    if(d.fn){ try{ (new Function(d.fn))(); }catch(e){} }
+  });
+})();
+</script>
+
+</body>
+</html>
